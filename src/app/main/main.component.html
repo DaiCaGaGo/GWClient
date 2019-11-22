@@ -1,0 +1,194 @@
+<div class="container body">
+  <div class="main_container">
+    <div class="col-md-3 left_col">
+      <div class="left_col scroll-view">
+        <div class="navbar nav_title" style="border: 0;">
+          <a routerLink="home/index" class="site_title">
+            <div class="logo-top logo">
+              <div class="logo logo-full">
+                <img style="width: 88%;" src="../../assets/img/logo-home.png" />
+              </div>
+              <div class="logo logo-mini">
+                <img style="width: 80%;" src="../../assets/img/logo-home-mini.png" />
+              </div>
+            </div>
+          </a>
+        </div>
+        <div class="clearfix"></div>
+        <!-- menu profile quick info -->
+        <div class="profile" style="margin-top: 25px; margin-left: 5px">
+          <div class="profile_info">
+            <div>
+              <span style="font-size: 13px">{{ 'global.welcome' | translate }}, </span>
+              <label (click)="showModalAccountInfo()"
+                style="color: #92c32d; font-size: 13px; font-weight: bold; cursor: pointer;">{{ user.FULL_NAME }}
+                <i class="fa fa-circle" style="color: #42b72a; margin-left: 10px; font-size: 10px"></i>
+              </label>
+            </div>
+          </div>
+        </div>
+        <!-- /menu profile quick info -->
+        <br />
+        <!-- sidebar menu -->
+        <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+          <div class="menu_section">
+            <h3 style="margin-top: 45px">General</h3>
+            <ul class="nav side-menu">
+              <li *ngFor="let menuP of dataMenu">
+                <a onclick="clickParentMenu(this)">
+                  <i class="fa {{ menuP.MENU_ICON }}">
+                  </i>{{ menuP.MENU_NAME }}<span class="fa fa-chevron-down"></span>
+                </a>
+                <ul class="nav child_menu">
+                  <li onclick="clickItemMenu(this)" *ngFor="let menuC of menuP.menuChild">
+                    <a routerLink="{{ menuC.MENU_PATH }}">{{ menuC.MENU_NAME }}</a>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <!-- /sidebar menu -->
+        <!-- /menu footer buttons -->
+        <div class="sidebar-footer hidden-small">
+          <a data-toggle="tooltip" data-placement="top" title="Cài đặt">
+            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+          </a>
+          <a data-toggle="tooltip" data-placement="top" title="Toàn màn hình" onclick="setFullScreen()">
+            <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+          </a>
+          <a data-toggle="tooltip" data-placement="top" title="Reset giao diện" onclick="javascript:location.reload()">
+            <i style="font-size: 20px" class="fa fa-refresh" aria-hidden="true"></i>
+          </a>
+          <a (click)="logout()" data-toggle="tooltip" data-placement="top"
+            title="{{ 'login.submit_logout' | translate }}">
+            <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+          </a>
+        </div>
+        <!-- /menu footer buttons -->
+      </div>
+    </div>
+    <!-- top navigation -->
+    <div class="top_nav">
+      <div class="nav_menu">
+        <nav class="" role="navigation">
+          <div class="nav toggle">
+            <a id="menu_toggle" onclick="toggleNavBar()"><i class="fa fa-bars"></i></a>
+          </div>
+          <ul class="nav navbar-nav navbar-right">
+            <li class="">
+              <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                <img src="{{ user.AVATAR }}" alt="">{{ user.LAST_NAME }}
+                <span class=" fa fa-angle-down"></span>
+              </a>
+              <ul class="dropdown-menu dropdown-usermenu pull-right">
+                <li><a (click)="showModalAccountInfo()">Thông tin</a></li>
+                <li><a (click)="showModalChangePass()">Đổi mật khẩu</a></li>
+                <li class="hidden-desktop">
+                  <div class="language-box">
+                    <a (click)="changeLanguage('vi')" style="cursor: pointer;">
+                      <img src="../../assets/img/vn.png"></a> |
+                    <a (click)="changeLanguage('en')" style="cursor: pointer;">
+                      <img src="../../assets/img/en.png"></a>
+                  </div>
+                </li>
+                <li><a (click)="logout()"><i
+                      class="fa fa-sign-out pull-right"></i>{{ 'login.submit_logout' | translate }}</a>
+                </li>
+              </ul>
+            </li>
+            <li role="presentation" class="dropdown">
+              <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                <i class="fa fa-envelope-o"></i>
+                <span class="badge bg-green">6</span>
+              </a>
+              <ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
+                <li>
+                  <a>
+                    <span class="image"><img src="../../assets/img/img.jpg" alt="Profile Image" /></span>
+                    <span>
+                      <strong>Gateway</strong>
+                      <span class="time">1 mins ago</span>
+                    </span>
+                    <span class="message">
+                      Tài khoản SERVENAM còn 100 tin nhắn sắp hết quota, gia hạn ngay bây giờ ...
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a>
+                    <span class="image"><img src="../../assets/img/img.jpg" alt="Profile Image" /></span>
+                    <span>
+                      <strong>Admin</strong>
+                      <span class="time">3 mins ago</span>
+                    </span>
+                    <span class="message">
+                      Thông báo khuyến mại <span class="badge bg-red">50%</span> quota khi nạp tối thiểu 10 triệu từ
+                      08/07/2019 - 08/8/2019 ...
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a>
+                    <span class="image"><img src="../../assets/img/img.jpg" alt="Profile Image" /></span>
+                    <span>
+                      <strong>System</strong>
+                      <span class="time">7 mins ago</span>
+                    </span>
+                    <span class="message">
+                      Cảnh báo: Hệ thống VIET GUY đang bị quá tải đường truyền vui lòng chuyển sang đối tác khác ...
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a>
+                    <span class="image"><img src="{{ user.AVATAR }}" alt="Profile Image" /></span>
+                    <span>
+                      <strong>Nguyễn Đức Luân</strong>
+                      <span class="time">13 mins ago</span>
+                    </span>
+                    <span class="message">
+                      Hệ thống Gateway lởm quá cần làm lại để khách hàng sử dụng đỡ bực mình ...
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <div class="text-center">
+                    <a>
+                      <strong>Xem tất cả thông báo </strong>
+                      <i class="fa fa-angle-right"></i>
+                    </a>
+                  </div>
+                </li>
+              </ul>
+            </li>
+            <li class="hidden-mobile">
+              <div style="padding: 17px 15px 12px;">
+                <a (click)="changeLanguage('vi')" style="cursor: pointer;">
+                  <img src="../../assets/img/vn.png"></a> |
+                <a (click)="changeLanguage('en')" style="cursor: pointer;">
+                  <img src="../../assets/img/en.png"></a>
+              </div>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+    <!-- /top navigation -->
+    <!-- page content -->
+    <div class="right_col" role="main">
+      <router-outlet></router-outlet>
+    </div>
+    <!-- /page content -->
+    <footer>
+      <marquee onmouseover="this.stop()" onmouseout="this.start()">
+        <span>© 2019 Conek, focus on solution and technologies related SMS services. </span>
+        <a target="_blank" href="http://conektelecom.com/"> Go to Home</a>
+        <span style="margin-left: 50px">Contact: Ms.Cẩm (skype: camdt.onesms, hotline: 0973.796.903)</span>
+      </marquee>
+    </footer>
+  </div>
+</div>
+
+<app-account-info #componentAccountInfo></app-account-info>
+<app-change-pass #componentChangePass></app-change-pass>

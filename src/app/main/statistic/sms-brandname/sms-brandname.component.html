@@ -1,0 +1,142 @@
+<article>
+  <section>
+    <div class="page-title clearfix">
+      <div class="title_left">
+        <h3>{{'sms_brandname.title' | translate}}</h3>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>{{ 'global.search' | translate }}</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask" #formSearch="ngForm"
+              (ngSubmit)="searchSms(formSearch.value)">
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID"
+                  [settings]="settingsFilterAccount" (onSelect)="onItemSelect()" (onDeSelect)="OnItemDeSelect()"
+                  name="accountID">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <angular2-multiselect [data]="dataSender" [(ngModel)]="selectedSenderID"
+                  [settings]="settingsFilterSender" (onSelect)="onItemSelectSender()"
+                  (onDeSelect)="OnItemDeSelectSender()" name="senderID">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <input type="text" class="form-control" name="fromDate" bsDatepicker
+                  [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" (ngModelChange)="onChangeFromDate($event)"
+                  placeholder="{{ 'partner_product.from_date' | translate }}" [(ngModel)]="timeFrom">
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <input type="text" class="form-control" name="toDate" bsDatepicker
+                  [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" placeholder="{{ 'partner_product.to_date' | translate }}"
+                  [(ngModel)]="timeTo" (ngModelChange)="onChangeToDate($event)">
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group" *ngIf="isShowPartner">
+                <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedPartnerID"
+                  [settings]="settingsFilterPartner" (onSelect)="onItemSelectPartner()"
+                  (onDeSelect)="OnItemDeSelectPartner()" name="partnerCode">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <angular2-multiselect [data]="dataSmsType" [(ngModel)]="selectedSmsType"
+                  [settings]="settingsFilterSmsType" name="smsType" (onSelect)="onItemSelectSmsType()"
+                  (onDeSelect)="OnItemDeSelectSmsType()">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 form-group">
+                <button type="button" style="float: right; margin-right: 0;" class="btn btn-success btn-sm"
+                  (click)="exportExcel()"> {{ 'global.export_excel' | translate }}</button>
+                <button type="submit" style="float: right; margin-right: 0;" class="btn btn-primary btn-sm">
+                  {{ 'global.search' | translate }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <!-- <th class="text-center" style="width: 60px;">{{'global.order' | translate}}</th> -->
+                        <th class="text-center">{{'sms_list.choose_sender' | translate}}</th>
+                        <th class="text-center">Service type</th>
+                        <th class="text-center">{{'sms_list.partner' | translate}}</th>
+                        <th class="text-center" style="width: 100px">Telco</th>
+                        <th class="text-center" style="width: 100px;">{{'sms_brandname.sum_sms' | translate}}</th>
+                        <th class="text-center" style="width: 100px">{{'sms_brandname.sum_success' | translate}}</th>
+                        <th class="text-center" style="width: 100px">{{'sms_brandname.sum_failed' | translate}}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container *ngFor="let item of dataSmsNew">
+                        <tr>
+                          <td [attr.rowspan]="item.LENGTH_SENDER" style="vertical-align: inherit">
+                            {{item.SENDER_NAME}}</td>
+                          <td [attr.rowspan]="item.LIST_SERVICE[0].LENGTH_TYPE" style="vertical-align: inherit">
+                            {{item.LIST_SERVICE[0].SMS_TYPE}}</td>
+                          <td [attr.rowspan]="item.LIST_SERVICE[0].LIST_PARTNER[0].LENGTH_PARTNER"
+                            style="vertical-align: inherit">
+                            {{item.LIST_SERVICE[0].LIST_PARTNER[0].PARTNER_NAME}}</td>
+                          <td> {{item.LIST_SERVICE[0].LIST_PARTNER[0].LIST_SMS[0].TELCO}}</td>
+                          <td>{{item.LIST_SERVICE[0].LIST_PARTNER[0].LIST_SMS[0].SUM_SMS}}</td>
+                          <td>{{item.LIST_SERVICE[0].LIST_PARTNER[0].LIST_SMS[0].SUM_SMS_SUCCESS}}</td>
+                          <td>{{item.LIST_SERVICE[0].LIST_PARTNER[0].LIST_SMS[0].SUM_SMS_FAILE}}</td>
+                        </tr>
+
+                        <ng-container *ngFor="let i3 of item.LIST_SERVICE; let i13= index;">
+                          <tr *ngIf="i13!=0">
+                            <td [attr.rowspan]="i3.LENGTH_TYPE" style="vertical-align: inherit">{{i3.SMS_TYPE}}</td>
+                            <td>{{i3.LIST_PARTNER[0].PARTNER_NAME}}</td>
+                            <td>{{i3.LIST_PARTNER[0].LIST_SMS[0].TELCO}}</td>
+                            <td>{{i3.LIST_PARTNER[0].LIST_SMS[0].SUM_SMS}}</td>
+                            <td>{{i3.LIST_PARTNER[0].LIST_SMS[0].SUM_SMS_SUCCESS}}</td>
+                            <td>{{i3.LIST_PARTNER[0].LIST_SMS[0].SUM_SMS_FAILE}}</td>
+                          </tr>
+                          <ng-container *ngFor="let i2 of i3.LIST_PARTNER; let i12= index;">
+                            <tr *ngIf="i12!=0">
+                              <td [attr.rowspan]="i2.LENGTH_PARTNER" style="vertical-align: inherit">{{i2.PARTNER_NAME}}</td>
+                              <td>{{i2.LIST_SMS[0].TELCO}}</td>
+                              <td>{{i2.LIST_SMS[0].SUM_SMS}}</td>
+                              <td>{{i2.LIST_SMS[0].SUM_SMS_SUCCESS}}</td>
+                              <td>{{i2.LIST_SMS[0].SUM_SMS_FAILE}}</td>
+                            </tr>
+                            <ng-container *ngFor="let i1 of i2.LIST_SMS; let i11= index;">
+                              <tr *ngIf="i11!=0">
+                                <td>{{i1.TELCO}}</td>
+                                <td>{{i1.SUM_SMS}}</td>
+                                <td>{{i1.SUM_SMS_SUCCESS}}</td>
+                                <td>{{i1.SUM_SMS_FAILE}}</td>
+                              </tr>
+                            </ng-container>
+                          </ng-container>
+                        </ng-container>
+                      </ng-container>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>

@@ -1,0 +1,514 @@
+<article>
+  <section>
+    <div class="clearfix"></div>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+        <div class="x_panel portlet" style="padding-bottom: 0; margin-bottom:0 !important">
+          <div class="x_title clearfix">
+            <h2>{{ 'send_sms.send_sms_title' | translate }}</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link" onclick="closeBox(this)"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <div class="row" style="margin-bottom: 5px !important">
+              <div class="col-md-6 col-sm-6 col-xs-12 form-group">
+                <label style="color: red;" name="lbQuyTinCSKH">{{'global.quota_cskh' | translate}}:
+                  {{ viewQuyTinCSKH }}</label>&nbsp;&nbsp;&nbsp;
+                <label style="color: red;" name="lbQuyTinQC">{{'global.quota_qc' | translate}}: {{ viewQuyTinQC }}</label>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 form-group text-right">
+                <button type="submit" class="btn btn-primary btn-sm"
+                  *ngIf="role.IS_ADD"
+                  (click)="showModalSendSMS()">{{ 'send_sms.send' | translate }}</button>
+                <button type="button" class="btn btn-primary btn-sm"
+                  (click)="showModalUpload()">{{ 'send_sms.up_load' | translate }}</button>
+                <button type="button" class="btn btn-primary btn-sm"
+                  (click)="confirmSMSTemplateModal()">{{ 'campaign.btn_sms_temp' | translate }}</button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-2 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedItemComboboxAccount"
+                  [settings]="settingsFilterAccount" name="slAccount" (onSelect)="changeAccount()"
+                  (onDeSelect)="deSelectAccount()">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-2 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataSmsType" [(ngModel)]="selectedSmsType"
+                  [settings]="settingsFilterSmsType" (onSelect)="onItemSelectSmsType()"
+                  (onDeSelect)="OnItemDeSelectSmsType()" name="smsType">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-2 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataSenderName" [(ngModel)]="selectedItemComboboxSender"
+                  [settings]="settingsFilterSender" name="slSenderName">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-6 col-sm-12 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataPhoneList" [(ngModel)]="selectedItemComboboxPhoneList"
+                  [settings]="settingsFilterPhoneList" name="slPhoneList" (onSelect)="getPhoneNumber($event)"
+                  (onDeSelect)="getPhoneNumber($event)">
+                </angular2-multiselect>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6 col-sm-12 col-xs-12">
+                <div class="col-md-12 col-sm-12 col-xs-12" style="padding: 0">
+                  <label style="margin-bottom: 0; padding-top: 10px">{{'campaign.text_countmes1' | translate}} (<span
+                      style="display:inline-block !important">{{numberChar}}</span>
+                    {{'campaign.text_countmes2' | translate}}) (<span
+                      style="display:inline-block !important">{{numberSMS}}</span>{{'campaign.text_countmes3' | translate}})
+                  </label>
+                </div>
+                <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback" style="padding: 0">
+                  <textarea type="text" class="form-control has-feedback-left modal-popup" name="smsContent" rows="3"
+                    placeholder="{{ 'campaign.iSms_content' | translate }}" [(ngModel)]="smsContent"
+                    (change)="countSMS($event.target.value)" (keyup)="countSMS($event.target.value)"
+                    (keydow)="countSMS($event.target.value)"></textarea>
+                </div>
+              </div>
+              <div class="col-md-6 col-sm-12 col-xs-12">
+                <div class="col-md-12 col-sm-12 col-xs-12" style="padding: 0">
+                  <label style="margin-bottom: 0; padding-top: 10px">{{'campaign.text_add_phone_number' | translate}}
+                    (<span id="numberPhone"
+                      style="display:inline-block !important">{{numberPhone}}</span>{{ 'campaign.text_num' | translate }})
+                  </label>
+                </div>
+                <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback" style="padding: 0">
+                  <textarea class="form-control has-feedback-left modal-popup" name="phoneList" rows="3"
+                    placeholder="{{ 'campaign.iText_add_phone_number' | translate }}" [(ngModel)]="phoneList"
+                    (change)="countPhone($event.target.value)" (keyup)="countPhone($event.target.value)"
+                    (keydow)="countPhone($event.target.value)"></textarea>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-3 col-sm-6 col-xs-12">
+                <input type="text" class="form-control" name="codeName" [(ngModel)]="codeName"
+                  placeholder="{{ 'send_sms.code_name' | translate }}">
+              </div>
+              <div class="col-md-1 col-sm-6 col-xs-3 form-group has-feedback">
+                <div class="checkbox" style="margin: 0;">
+                  <label><input type="checkbox" value="" class="checkbox"
+                      (change)="checkTimeSchedule($event.currentTarget.checked)">
+                    <span>{{ 'campaign.timer' | translate }}</span> </label>
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-6 col-xs-6 form-group has-feedback"
+                [ngStyle]="{'visibility':isShowDateTime ? 'visible' : 'hidden'}">
+                <input type="text" class="form-control has-feedback-left modal-popup" name="timeSchedule" bsDatepicker
+                  [bsConfig]="{adaptivePosition: true, dateInputFormat: 'DD/MM/YYYY HH:mm'}" [minDate]="minDate"
+                  [(ngModel)]="timeSchedule" placeholder="{{ 'campaign.date_time' | translate }}">
+              </div>
+              <div class="col-md-2 col-sm-6 col-xs-6 form-group has-feedback">
+                <div class="checkbox" style="margin: 0;">
+                  <label><input type="checkbox" value="" class="checkbox" name="reportByMail"
+                      [(ngModel)]="reportByMail">
+                    <span>{{ 'send_sms.report_mail' | translate }}</span> </label>
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-6 col-xs-6 form-group has-feedback"
+                [ngStyle]="{'visibility':isShowByType ? 'visible' : 'hidden'}">
+                <div class="checkbox" style="margin: 0;">
+                  <label><input type="checkbox" value="" class="checkbox" name="isVirtual" [(ngModel)]="isVirtual">
+                    <span>{{ 'campaign.virtual' | translate }}</span> </label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="col-md-10 col-sm-12 col-xs-12 form-group has-feedback" style="padding:0">
+                <div style="display: inline-block; padding-right:25px">
+                  <label>
+                    <span style="display:inline-block !important">{{ 'send_sms.total_num' | translate }}</span>
+                    (<span
+                      style="display:inline-block !important">{{countAll}}</span>{{ 'campaign.text_num' | translate }})
+                  </label>
+                </div>
+                <div style="display: inline-block; padding-right:15px">
+                  <div class="checkbox" style="padding-top:0">
+                    <label><input type="checkbox" class="checkbox" name="countVTL" checked
+                        (change)="CalcNumber('Viettel',$event.currentTarget.checked)">
+                      <span style="display:inline-block !important">{{ 'send_sms.viettel' | translate }}</span>
+                      (<span
+                        style="display:inline-block !important">{{countVTL}}</span>{{ 'campaign.text_num' | translate }})
+                    </label>
+                  </div>
+                </div>
+                <div style="display: inline-block; padding-right:15px">
+                  <div class="checkbox" style="padding-top:0">
+                    <label><input type="checkbox" class="checkbox" name="countGPC" checked
+                        (change)="CalcNumber('GPC',$event.currentTarget.checked)">
+                      <span style="display:inline-block !important">{{ 'send_sms.gpc' | translate }}</span>
+                      (<span
+                        style="display:inline-block !important">{{countGPC}}</span>{{ 'campaign.text_num' | translate }})
+                    </label>
+                  </div>
+                </div>
+                <div style="display: inline-block; padding-right:15px">
+                  <div class="checkbox" style="padding-top:0">
+                    <label><input type="checkbox" class="checkbox" name="countVMS" checked
+                        (change)="CalcNumber('VMS',$event.currentTarget.checked)">
+                      <span style="display:inline-block !important">{{ 'send_sms.vms' | translate }}</span>
+                      (<span
+                        style="display:inline-block !important">{{countVMS}}</span>{{ 'campaign.text_num' | translate }})
+                    </label>
+                  </div>
+                </div>
+                <div style="display: inline-block; padding-right:15px">
+                  <div class="checkbox" style="padding-top:0">
+                    <label><input type="checkbox" class="checkbox" name="countVNM" checked
+                        (change)="CalcNumber('VNM',$event.currentTarget.checked)">
+                      <span style="display:inline-block !important">{{ 'send_sms.vnm' | translate }}</span>
+                      (<span
+                        style="display:inline-block !important">{{countVNM}}</span>{{ 'campaign.text_num' | translate }})
+                    </label>
+                  </div>
+                </div>
+                <div style="display: inline-block; padding-right:15px">
+                  <div class="checkbox" style="padding-top:0">
+                    <label><input type="checkbox" class="checkbox" name="countGtel" checked
+                        (change)="CalcNumber('Gtel',$event.currentTarget.checked)">
+                      <span style="display:inline-block !important">{{ 'send_sms.gtel' | translate }}</span>
+                      (<span
+                        style="display:inline-block !important">{{countGtel}}</span>{{ 'campaign.text_num' | translate }})
+                    </label>
+                  </div>
+                </div>
+                <div style="display: inline-block;">
+                  <div class="checkbox" style="padding-top:0">
+                    <label><input type="checkbox" class="checkbox" name="countSFone" checked
+                        (change)="CalcNumber('SFone',$event.currentTarget.checked)">
+                      <span style="display:inline-block !important">{{ 'send_sms.sfone' | translate }}</span>
+                      (<span
+                        style="display:inline-block !important">{{countSFone}}</span>{{ 'campaign.text_num' | translate }})
+                    </label>
+                  </div>
+                </div>
+                <!-- <div class="col-md-3 col-sm-4 col-xs-6" style="display: inline-block;">
+                  <div class="checkbox" style="padding-top:0">
+                    <label><input type="checkbox" class="checkbox" name="countDDMobile" checked
+                        (change)="CalcNumber('DDMobile',$event.currentTarget.checked)">
+                      <span style="display:inline-block !important">{{ 'send_sms.ddmobile' | translate }}</span>
+                      (<span
+                        style="display:inline-block !important">{{countDDMobile}}</span>{{ 'campaign.text_num' | translate }})
+                    </label>
+                  </div>
+                </div> -->
+              </div>
+              <div class="col-md-2 col-sm-6 col-xs-12 form-group has-feedback content-end" style="padding-right: 0">
+                <button type="button" class="btn btn-success btn-sm"
+                  (click)="exportPhoneNumber()">{{ 'send_sms.export' | translate }}</button>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width:7%">STT</th>
+                        <th class="text-center">{{ 'send_sms.phone' | translate }}</th>
+                        <th class="text-center">{{ 'send_sms.telco' | translate }}</th>
+                        <th class="text-center" style="width:7%">{{ 'global.tool' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of dataPhone; let i = index" [attr.data-index]="i">
+                        <td scope="row">{{i+1}}</td>
+                        <td>{{item.PHONE}}</td>
+                        <td>{{item.TELCO}}</td>
+                        <td class="text-center">
+                          <div class="tool">
+                            <button type="submit" (click)="showConfirmDelete(item.LIST_ID,item.PHONE)"
+                              *ngIf="role.IS_DELETE"
+                              class="btn btn-danger btn-sm">{{ 'global.delete' | translate }}</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999999">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6 col-xs-6 minibox" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- Xóa số điện thoại -->
+<div class="modal fade" bsModal #confirmDeleteModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">Xác nhận</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          Bạn có chắc chắn muốn xóa số điện thoại "<b class="text-success">{{phone}}</b>" không?
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default"
+          (click)="confirmDeleteModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success"
+          (click)="confirmDelete(lstId, phone)">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal mẫu tin nhắn-->
+<div class="modal fade" bsModal #showSMSTemplateModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'campaign.list_sms_temp' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="showSMSTemplateModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="row">
+          <div class="table-responsive">
+            <table class="table table-bordered clear-bottom">
+              <thead>
+                <tr>
+                  <th class="text-center">{{ 'campaign.temp_name' | translate }}</th>
+                  <th class="text-center">{{ 'campaign.temp_content' | translate }}</th>
+                  <th class="text-center">{{ 'global.tool' | translate }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let item of dataSMSTemp; let i = index" [attr.data-index]="i">
+                  <td style="width:30%">{{item.TEMP_NAME}}</td>
+                  <td>{{item.TEMPLATE_CONTENT}}</td>
+                  <td class="text-center" style="width:5%">
+                    <div class="tool">
+                      <button type="submit" class="btn btn-success"
+                        (click)="confirmSMSTemp(item.TEMPLATE_CONTENT)">{{ 'global.choose' | translate }}</button>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default"
+          (click)="showSMSTemplateModal.hide()">{{ 'global.cancel' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- upload excel -->
+<div class="modal fade" bsModal #uploadExcelModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-md">
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+        <div class="x_panel portlet" style="padding-bottom: 0; margin-bottom:0 !important">
+          <div class="x_panel portlet">
+            <div class="x_title clearfix">
+              <h2 style="display: inline-block;margin:0">{{ 'send_sms.phone_list_manage' | translate }}</h2>
+              <button type="button" class="close pull-right" aria-label="Close" (click)="uploadExcelModal.hide()">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="x_content">
+              <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control" name="lstName" [(ngModel)]="lstName"
+                  placeholder="{{ 'send_sms.code_name' | translate }}">
+              </div>
+              <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="input-group">
+                  <input type="file" #uploadFile name="uploadFile" class="form-control">
+                  <div class="input-group-btn">
+                    <button type="button" title="Loại bỏ các tệp đã chọn" (click)="clearData()"
+                      class="btn btn-default fileinput-remove fileinput-remove-button"
+                      style="background-color:rgba(128, 128, 128, 0.10);">
+                      <i class="glyphicon glyphicon-trash"></i>
+                    </button>
+                    <button type="button" class="btn btn-primary btn-sm"
+                      (click)="excelTemplate()">{{'sms_customize.export_template' | translate}}</button>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback text-right">
+                <img *ngIf="loading" class="pl-2" style="margin-right: 10px"
+                  src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+
+                <button type="submit" class="btn btn-success" (click)="submitUploadFile()"
+                  [disabled]="loading">{{'global.confirm' | translate}}</button>
+              </div>
+            </div>
+          </div>
+          <div class="x_panel portlet">
+            <div class="x_content">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback text-right" style="padding: 0">
+                <button type="button" class="btn btn-danger btn-sm"
+                  (click)="confirmDeleteMulti()">{{ 'global.delete' | translate }}</button>
+              </div>
+              <div class="row">
+                <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                  <div class="table-responsive">
+                    <table class="table table-bordered clear-bottom">
+                      <thead>
+                        <tr>
+                          <th class="text-center" style="width:7%">STT</th>
+                          <th class="box-checkbox-table">
+                            <div class="tool tool-check">
+                              <input type="checkbox" [checked]="isCheckedDelete"
+                                (change)="checkAllDelete($event.currentTarget.checked)" class="checkbox" />
+                            </div>
+                          </th>
+                          <th class="text-center">{{ 'send_sms.list_file' | translate }}</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr [ngClass]="{'row-hidden-delete': arrIdDelete.indexOf(item.id) >= 0 }"
+                          *ngFor="let item of dataPhoneList; let i=index" [attr.data-index]="i">
+                          <td scope="row">{{i+1}}</td>
+                          <td class="box-checkbox-table">
+                            <input type="checkbox" [checked]="isCheckedDelete"
+                              (change)="checkRowDelete($event.currentTarget.checked, item.id, item.itemName)"
+                              value="{{item.id}}" class="checkbox" />
+                          </td>
+                          <td>{{item.itemName}}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12 col-xs-12 form-group has-feedback text-right" style="padding: 0">
+            <button type="button" class="btn btn-default"
+              (click)="uploadExcelModal.hide()">{{'global.cancel' | translate}}</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- confirm gửi tin -->
+<div class="modal fade" bsModal #confirmSendSMSModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmSendSMSModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>
+          <div>{{'global.ask_send_sms' | translate}}</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <img *ngIf="loading" class="pl-2" style="margin-right: 10px"
+          src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+        <button type="button" class="btn btn-default"
+          (click)="confirmSendSMSModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success" (click)="confirmSendSMS()"
+          [disabled]="loading">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm after send sms success -->
+<div class="modal fade" bsModal #confirmAfterSuccessModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmAfterSuccessModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <!-- <div class="modal-body">
+        <div>
+          Bạn có chắc chắn muốn xóa số điện thoại "<b class="text-success">{{phone}}</b>" không?
+        </div>
+      </div> -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default"
+          (click)="confirmAfterSuccess()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success"><a routerLink="../{{ moveCampaign }}"
+            style="color: #fff">{{'send_sms.move_campaign' | translate}}</a></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa nhiều file-->
+<div class="modal fade" bsModal #confirmDeleteMultiModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">Xác nhận</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteMultiModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>Bạn có chắc chắn muốn xóa file này "<b class="text-success">{{lstFileName}}</b>" không?</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm" (click)="confirmDeleteMultiModal.hide()">Hủy</button>
+        <button type="submit" class="btn btn-success btn-sm" (click)="deleteMulti()">Xác nhận</button>
+      </div>
+    </div>
+  </div>
+</div>

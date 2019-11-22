@@ -1,0 +1,340 @@
+<article>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask">
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedItemComboboxPartner"
+                  [settings]="settingsFilterPartner" name="partnerId" (onSelect)="onItemSelectPartner()"
+                  (onDeSelect)="onItemSelectPartner()">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="txtErrCode" (keyup.enter)="getData()"
+                  placeholder="{{ 'partner_errCode.iErr_code' | translate }}" [(ngModel)]="txtErrCode">
+                <span class="fa fa-indent form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="txtErrMessage" (keyup.enter)="getData()"
+                  placeholder="{{ 'partner_errCode.iErr_name' | translate }}" [(ngModel)]="txtErrMessage">
+                <span class="fa fa-indent form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <button type="button" style="float: right; margin-right: 0;" (click)="getData()"
+                  class="btn btn-primary btn-sm">{{ 'global.search' | translate }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="form-group">
+                <div class="form-group has-feedback content-end">
+                  <button type="button" class="btn btn-primary btn-sm" *ngIf="role.IS_ADD"
+                    (click)="confirmShowModalCreate()">{{ 'global.add_new' | translate }}</button>
+                  <button type="button" class="btn btn-danger btn-sm" *ngIf="role.IS_DELETE"
+                    (click)="confirmDeleteMultiPartnerErrCode()">{{ 'global.multi_delete' | translate }}</button>
+                  <button type="submit" class="btn btn-success btn-sm"
+                    (click)="exportExcel()">{{ 'global.export_excel' | translate }}</button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr style="white-space:nowrap">
+                        <th class="text-center" style="width: 5%">STT</th>
+                        <th class="box-checkbox-table">
+                          <div class="tool tool-check">
+                            <input type="checkbox" [checked]="isCheckedDelete"
+                              (change)="checkAllDelete($event.currentTarget.checked)" class="checkbox" />
+                          </div>
+                        </th>
+                        <th class="text-center">Đối tác</th>
+                        <th class="text-center">Mã lỗi</th>
+                        <th class="text-center">Tên lỗi</th>
+                        <th class="text-center">Nguồn lỗi</th>
+                        <th class="text-center">Gửi lại</th>
+                        <th class="text-center">Số lần gửi lại</th>
+                        <th class="text-center">Thành công</th>
+                        <th class="text-center">Mô tả</th>
+                        <th class="text-center" style="width: 8%">Công cụ</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of dataPrErrCode; let i = index" [attr.data-index]="i">
+                        <td class="text-center">{{item.STT}}</td>
+                        <td class="box-checkbox-table">
+                          <input type="checkbox" [checked]="isCheckedDelete"
+                            (change)="checkRowDelete($event.currentTarget.checked, item.ID, item.ERROR_CODE)"
+                            value="{{item.ID}}" id="isAdmin" class="checkbox" />
+                        </td>
+                        <td>{{item.PARTNER_NAME}}</td>
+                        <td>{{item.ERROR_CODE}}</td>
+                        <td>{{item.ERROR_MESAGE}}</td>
+                        <td>{{item.ERROR_SOURE == 1 ? "HTTP" : "SMPP"}}</td>
+                        <td>
+                          <input type="checkbox" class="text-center" [checked]="item.ENABLE_RETRY == 1 ? true : false"
+                            class="checkbox" disabled />
+                        </td>
+                        <td>{{item.NUM_RETRY}}</td>
+                        <td>
+                          <input type="checkbox" class="text-center" [checked]="item.IS_DONE == 1 ? true : false"
+                            class="checkbox" disabled />
+                        </td>
+                        <td>{{item.ERROR_DESCRIPTION}}</td>
+                        <td class="text-center">
+                          <div class="tool">
+                            <button type="submit" (click)="confirmUpdateModal(item.ID)" *ngIf="role.IS_EDIT"
+                              class="btn btn-success btn-sm">{{ 'global.edit' | translate }}</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999999">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6 col-xs-6 minibox" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- Thêm mã lỗi đối tác -->
+<div class="modal fade" bsModal #showModalCreate="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'partner_errCode.create_new' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="showModalCreate.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #formAdd="ngForm" (ngSubmit)="createPartnerErrCode(formAdd)">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <label>{{'partner_errCode.partner' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedItemComboboxPartnerModal"
+                [settings]="settingsFilterPartner" name="slPartner">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <label>{{'partner_errCode.err_code' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" id="errCode" class="form-control" name="errCode"
+                placeholder="{{ 'partner_errCode.iErr_code' | translate }}" required="" ngModel>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <label>{{'partner_errCode.err_name' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" class="form-control" name="errMessage"
+                placeholder="{{ 'partner_errCode.iErr_name' | translate }}" required="" ngModel>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <label>{{'partner_errCode.err_source' | translate}} <span style="color:red;">(*)</span></label>
+              <select name="sourceType" class="form-control" ngModel>
+                <option value="" selected disabled hidden>{{'partner_errCode.iErr_source' | translate}}</option>
+                <option value="1">HTTP</option>
+                <option value="2">SMPP</option>
+              </select>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="col-md-5 col-sm-12 col-xs-12 checkbox" style="padding: 0">
+                <label><input type="checkbox" value="" class="checkbox" name="enableRetry"
+                    (change)="checkEnableRetry($event.currentTarget.checked)">
+                  <span>{{'partner_errCode.send_again' | translate}}</span> </label>
+              </div>
+              <div class="col-md-7 col-sm-12 col-xs-12" style="padding: 0">
+                <input type="text" class="form-control" name="numRetry" [disabled]="isDisableNumRetry"
+                  placeholder="{{ 'partner_errCode.num_retry' | translate }}" required="" ngModel>
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="checkbox">
+                <label><input type="checkbox" value="" class="checkbox" name="isDone" required="" ngModel>
+                  <span>{{'partner_errCode.success' | translate}}</span> </label>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <label>{{'partner_errCode.description' | translate}}</label>
+              <input type="text" id="errDescription" class="form-control" name="errDescription"
+                placeholder="{{ 'partner_errCode.err_description' | translate }}" required="" ngModel>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default"
+            (click)="showModalCreate.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal sửa mã lỗi đối tác-->
+<div class="modal fade" bsModal #showModalUpdate="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'partner_errCode.update_errcode' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="showModalUpdate.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="formEditPartnerErrCode" (ngSubmit)="editPartnerErrCode()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <label>{{'partner_errCode.partner' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="hidden" formControlName="id" />
+              <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedItemComboboxPartnerModal"
+                [settings]="settingsFilterPartner" formControlName="slPartnerErrCode">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <label>{{'partner_errCode.err_code' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" class="form-control" formControlName="errCode"
+                placeholder="{{ 'partner_errCode.iErr_code' | translate }}">
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <label>{{'partner_errCode.err_name' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" class="form-control" formControlName="errMessage"
+                placeholder="{{ 'partner_errCode.iErr_name' | translate }}">
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <label>{{'partner_errCode.err_source' | translate}} <span style="color:red;">(*)</span></label>
+              <select formControlName="sourceType" class="form-control">
+                <option value="" selected disabled hidden>{{'partner_errCode.iErr_source' | translate}}</option>
+                <option value="1">HTTP</option>
+                <option value="2">SMPP</option>
+              </select>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="col-md-5 col-sm-12 col-xs-12" style="padding: 0">
+                <div class="checkbox">
+                  <label><input type="checkbox" value="" class="checkbox"
+                      (change)="checkEnableRetry($event.currentTarget.checked)" formControlName="enableRetry">
+                    <span>{{'partner_errCode.send_again' | translate}}</span> </label>
+                </div>
+              </div>
+              <div class="col-md-7 col-sm-12 col-xs-12" style="padding: 0">
+                <input type="text" class="form-control" formControlName="numRetry"
+                  placeholder="{{ 'partner_errCode.num_retry' | translate }}">
+              </div>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <div class="checkbox">
+                <label><input type="checkbox" value="" class="checkbox" formControlName="isDone">
+                  <span>{{'partner_errCode.success' | translate}}</span> </label>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <label>{{'partner_errCode.description' | translate}}</label>
+              <input type="text" class="form-control" formControlName="errDescription"
+                placeholder="{{ 'partner_errCode.err_description' | translate }}">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default"
+            (click)="showModalUpdate.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal xóa mã lỗi-->
+<!-- <div class="modal fade" bsModal #showModalDelete="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">Xác nhận</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="showModalDelete.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>Bạn có chắc chắn muốn xóa nhóm quyền "<b class="text-success">{{err_Code}}</b>" không?</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" (click)="showModalDelete.hide()">Hủy</button>
+        <button type="submit" class="btn btn-success" (click)="confirmDelete(errCodeId)">Xác nhận</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<!-- modal xác nhận xóa nhiều mã lỗi-->
+<div class="modal fade" bsModal #confirmDeleteMultiModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{ 'global.confirm' | translate }}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteMultiModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- <div>Bạn có chắc chắn muốn xóa mã lỗi "<b class="text-success">{{err_Code}}</b>" không?</div> -->
+        <div>{{'global.ask_delete' | translate}}</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm" (click)="confirmDeleteMultiModal.hide()">{{ 'global.cancel' | translate }}</button>
+        <button type="submit" class="btn btn-success btn-sm" (click)="deleteMultiPartnerErrCode()">{{ 'global.confirm' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>

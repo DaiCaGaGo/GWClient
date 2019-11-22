@@ -1,0 +1,228 @@
+<article>
+    <section>
+        <div class="page-title clearfix">
+            <div class="title_left">
+                <h3>{{ 'sender_name.sender_expiring' | translate }}</h3>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel portlet">
+                    <div class="x_content">
+                        <div class="row">
+                            <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered clear-bottom">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">STT</th>
+                                                <th class="text-center">{{ 'sender_name.sender_name' | translate }}</th>
+                                                <th class="text-center">{{ 'sender_name.sender_name_VTL' | translate }}
+                                                </th>
+                                                <th class="text-center">{{ 'sender_name.sender_name_GPC' | translate }}
+                                                </th>
+                                                <th class="text-center">{{ 'sender_name.sender_name_VMS' | translate }}
+                                                </th>
+                                                <th class="text-center">{{ 'sender_name.sender_name_VNM' | translate }}
+                                                </th>
+                                                <th class="text-center">{{ 'sender_name.sender_name_GTEL' | translate }}
+                                                </th>
+                                                <th class="text-center">{{ 'sender_name.active_date' | translate }}</th>
+                                                <th class="text-center">{{ 'sender_name.time_end' | translate }}</th>
+                                                <th class="text-center">{{ 'global.tool' | translate }}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let item of dataSender; let i = index" [attr.data-index]="i">
+                                                <td class="text-center">{{i + 1}}</td>
+                                                <td>{{item.NAME}}</td>
+                                                <td>{{item.SENDER_NAME_VTL}}</td>
+                                                <td>{{item.SENDER_NAME_GPC}}</td>
+                                                <td>{{item.SENDER_NAME_VMS}}</td>
+                                                <td>{{item.SENDER_NAME_VNM}}</td>
+                                                <td>{{item.SENDER_NAME_GTEL}}</td>
+                                                <td style="white-space: nowrap">{{convertStringDate(item.ACTIVE_DATE)}}
+                                                </td>
+                                                <td style="white-space: nowrap">{{convertStringDate(item.EXPIRED_TIME)}}
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="tool">
+                                                        <button type="submit" (click)="confirmUpdateModal(item.ID)"
+                                                            class="btn btn-success btn-sm">{{ 'global.edit' | translate }}</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</article>
+
+<!-- modal sửa thương hiệu-->
+<div class="modal fade" bsModal #showModalUpdate="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg" style="width: 90%">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'sender_name.edit_sender_name' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="showModalUpdate.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="formEditSenderName">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'sender_name.sender_name' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" class="form-control has-feedback-left modal-popup" formControlName="iSenderName"
+                maxlength="25" placeholder="{{ 'sender_name.iSender_name' | translate }}">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'sender_name.sender_group_VTL' | translate}}</label>
+              <angular2-multiselect [data]="dataSenderGroup" [(ngModel)]="selectedItemComboboxSenderGroupVTL"
+                [settings]="settingsFilterSenderGroup" formControlName="senderGrVTL">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+              <label>{{'sender_name.sender_name_VTL' | translate}}</label>
+              <input type="text" class="form-control has-feedback-left modal-popup" formControlName="senderNameVTL"
+                placeholder="{{ 'sender_name.sender_name_VTL' | translate }}">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>Thời gian hết hạn VIETTEL</label>
+              <input type="text" class="form-control" formControlName="expiredDateVIETTEL" bsDatepicker
+                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" placeholder="Thời gian hết hạn">
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="checkbox">
+                <label><input type="checkbox" value="" class="checkbox" formControlName="fillterTemp"
+                    (change)="checkFillter($event.currentTarget.checked)">
+                  <span>{{'sender_name.fillter_template' | translate}}</span> </label>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'sender_name.sender_group_GPC' | translate}}</label>
+              <angular2-multiselect [data]="dataSenderGroup" [(ngModel)]="selectedItemComboboxSenderGroupGPC"
+                [settings]="settingsFilterSenderGroup" formControlName="senderGrGPC">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'sender_name.sender_name_GPC' | translate}}</label>
+              <input type="text" class="form-control has-feedback-left modal-popup" formControlName="senderNameGPC"
+                placeholder="{{ 'sender_name.sender_name_GPC' | translate }}">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>Thời gian hết hạn GPC</label>
+              <input type="text" class="form-control" formControlName="expiredDateGPC" bsDatepicker
+                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" placeholder="Thời gian hết hạn">
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <textarea class="form-control has-feedback-left modal-popup" formControlName="tempContent" rows="2"
+                placeholder="{{ 'sender_name.temp_content' | translate }}" [readonly]="this.isDisableTemp" ></textarea>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'sender_name.sender_group_VMS' | translate}}</label>
+              <angular2-multiselect [data]="dataSenderGroup" [(ngModel)]="selectedItemComboboxSenderGroupVMS"
+                [settings]="settingsFilterSenderGroup" formControlName="senderGrVMS">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'sender_name.sender_name_VMS' | translate}}</label>
+              <input type="text" class="form-control has-feedback-left modal-popup" formControlName="senderNameVMS"
+                placeholder="{{ 'sender_name.sender_name_VMS' | translate }}">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>Thời gian hết hạn VMS</label>
+              <input type="text" class="form-control" formControlName="expiredDateVMS" bsDatepicker
+                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" placeholder="Thời gian hết hạn">
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+              <label>{{'sender_name.description' | translate}}</label>
+              <input type="text" class="form-control has-feedback-left modal-popup" formControlName="description"
+                placeholder="{{ 'sender_name.description' | translate }}">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'sender_name.sender_group_VNM' | translate}}</label>
+              <angular2-multiselect [data]="dataSenderGroup" [(ngModel)]="selectedItemComboboxSenderGroupVNM"
+                [settings]="settingsFilterSenderGroup" formControlName="senderGrVNM">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+              <label>{{'sender_name.sender_name_VNM' | translate}}</label>
+              <input type="text" class="form-control has-feedback-left modal-popup" formControlName="senderNameVNM"
+                placeholder="{{ 'sender_name.sender_name_VNM' | translate }}">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>Thời gian hết hạn VNM</label>
+              <input type="text" class="form-control" formControlName="expiredDateVNM" bsDatepicker
+                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" placeholder="Thời gian hết hạn">
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{ 'sender_name.active_date' | translate }}</label>
+              <input type="text" class="form-control" formControlName="fromDate" bsDatepicker
+                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" placeholder="Thời gian bắt đầu" [attr.disabled]="true">
+            </div>
+
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'sender_name.sender_group_GTEL' | translate}}</label>
+              <angular2-multiselect [data]="dataSenderGroup" [(ngModel)]="selectedItemComboboxSenderGroupGTEL"
+                [settings]="settingsFilterSenderGroup" formControlName="senderGrGTEL">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+              <label>{{'sender_name.sender_name_GTEL' | translate}}</label>
+              <input type="text" class="form-control has-feedback-left modal-popup" formControlName="senderNameGTEL"
+                placeholder="{{ 'sender_name.sender_name_GTEL' | translate }}">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>Thời gian hết hạn GTEL</label>
+              <input type="text" class="form-control" formControlName="expiredDateGTEL" bsDatepicker
+                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" placeholder="Thời gian hết hạn">
+            </div>
+
+            <div class="col-md-4 col-sm-6 col-xs-12" style="display: none">
+              <label>{{'sender_name.sender_group_SFONE' | translate}}</label>
+              <angular2-multiselect [data]="dataSenderGroup" [(ngModel)]="selectedItemComboboxSenderGroupSFONE"
+                [settings]="settingsFilterSenderGroup" formControlName="senderGrSFONE">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12 form-group has-feedback" style="display: none">
+              <label>{{'sender_name.sender_name_SFONE' | translate}}</label>
+              <input type="text" class="form-control has-feedback-left modal-popup" formControlName="senderNameSFONE"
+                placeholder="{{ 'sender_name.sender_name_SFONE' | translate }}">
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{ 'sender_name.time_end' | translate }} <span style="color:red;">(*)</span></label>
+              <input type="text" class="form-control" formControlName="expiredDate" bsDatepicker
+                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" placeholder="Thời gian kết thúc">
+            </div>
+            
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default"
+            (click)="showModalUpdate.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="button" (click)="editSenderName()" class="btn btn-success">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

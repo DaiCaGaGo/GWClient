@@ -1,0 +1,43 @@
+<div style="text-align: center; margin-top: 10px">
+  <a (click)="changeLanguage('vi')" style="cursor: pointer;">
+    <img src="../../assets/img/vn.png"></a> |
+  <a (click)="changeLanguage('en')" style="cursor: pointer;">
+    <img src="../../assets/img/en.png"></a>
+</div>
+<div class="login">
+  <div class="login_wrapper">
+    <div class="animate form login_form" style="padding: 0 5% 0 5%;">
+      <section class="login_content">
+        <form (ngSubmit)="resetPass(resetPassForm)" #resetPassForm="ngForm">
+          <h1>SMS Gateway</h1>
+          <img src="../../assets/img/logo-login.png" style="width: 100%; margin-bottom: 20px" />
+          <div>
+            <h3>Quên mật khẩu ?</h3>
+            <h5 style="text-align: left;">Hãy nhập email của bạn để khôi phục mật khẩu.</h5>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+              <input type="text" class="form-control" name="email" placeholder="{{ 'global.email' | translate }}"
+                ngModel>
+            </div>
+          </div>
+          <div>
+            <button type="submit" class="btn btn-success submit"
+              [disabled]="loading">{{ 'global.confirm' | translate }}</button>
+            <img *ngIf="loading" class="pl-2" style="margin-left: 5px"
+              src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+            <a class="reset_pass" routerLink="/login">Quay lại trang login</a>
+          </div>
+          <div class="clearfix"></div>
+          <div class="separator">
+            <div class="clearfix"></div>
+            <br>
+            <div>
+              <h1>Conek</h1>
+              <p>©2019 Conek, focus on solution and technologies related SMS services.</p>
+            </div>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+</div>

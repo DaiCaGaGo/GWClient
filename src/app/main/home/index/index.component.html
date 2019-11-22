@@ -1,0 +1,315 @@
+<article>
+  <div class="row top_tiles">
+    <section>
+      <div class="animated flipInY col-lg-2 col-md-3 col-sm-6 col-xs-12">
+        <a [routerLink]="['../../statistic/sms-error']">
+          <div class="tile-stats" style="cursor: pointer">
+            <div class="icon"><i class="fa fa-bar-chart-o"></i></div>
+            <div class="count">{{smsErr}}</div>
+            <h4>Tin lỗi trong tháng</h4>
+            <p>Lorem ipsum psdea itgum rixt.</p>
+          </div>
+        </a>
+      </div>
+      <div class="animated flipInY col-lg-2 col-md-3 col-sm-6 col-xs-12">
+        <div class="tile-stats" style="cursor: pointer">
+          <div class="icon"><i class="fa fa-comments-o"></i></div>
+          <div class="count">1056</div>
+          <h4>Tin trùng lặp</h4>
+          <p>Lorem ipsum psdea itgum rixt.</p>
+        </div>
+      </div>
+      <div class="animated flipInY col-lg-2 col-md-3 col-sm-6 col-xs-12">
+        <a [routerLink]="['../../sms/campaign']" [queryParams]="{ redirectFrom: 'home', currentDate: currentDate }">
+          <div class="tile-stats" style="cursor: pointer">
+            <div class="icon"><i class="fa fa-check-square-o"></i></div>
+            <div class="count">{{totalSmsWaitApprove}}</div>
+            <h4>Tin cần duyệt</h4>
+            <p>Lorem ipsum psdea itgum rixt.</p>
+          </div>
+        </a>
+      </div>
+      <div class="animated flipInY col-lg-2 col-md-3 col-sm-6 col-xs-12">
+        <a [routerLink]="['../../system/account']" [queryParams]="{ redirectFrom: 'home' }">
+          <div class="tile-stats" style="cursor: pointer">
+            <div class="icon"><i class="fa fa-sort-amount-desc"></i></div>
+            <div class="count">{{newCustomer}}</div>
+            <h4>{{ 'home.new_customer' | translate }}</h4>
+            <p>Lorem ipsum psdea itgum rixt.</p>
+          </div>
+        </a>
+      </div>
+      <div class="animated flipInY col-lg-2 col-md-3 col-sm-6 col-xs-12">
+        <a [routerLink]="['../../system/account']" [queryParams]="{ redirectFrom: 'quota_expired' }">
+          <div class="tile-stats" style="cursor: pointer">
+            <div class="icon"><i class="fa fa-edit"></i></div>
+            <div class="count">{{accountExpiredQuota}}</div>
+            <h4>{{ 'home.account_expired_quota' | translate }}</h4>
+            <p>Lorem ipsum psdea itgum rixt.</p>
+          </div>
+        </a>
+      </div>
+      <div class="animated flipInY col-lg-2 col-md-3 col-sm-6 col-xs-12">
+        <a [routerLink]="['../../manager/sender']" [queryParams]="{ redirectTo: 'sender_expired' }">
+          <div class="tile-stats" style="cursor: pointer">
+            <div class="icon"><i class="fa fa-edit"></i></div>
+            <div class="count">{{totalSenderExpired}}</div>
+            <h4>{{ 'home.sender_expired' | translate }}</h4>
+            <p>Lorem ipsum psdea itgum rixt.</p>
+          </div>
+        </a>
+      </div>
+    </section>
+  </div>
+  <section>
+    <div class="row" style="margin-top: 20px">
+      <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>SMS theo nhà mạng</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link" onclick="closeBox(this)"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <dx-chart id="chart" title="" [dataSource]="grossSmsTelco" (onPointClick)="onPointClick($event)">
+              <dxi-series valueField="monthOld2" name="Tháng {{month_old2}}"></dxi-series>
+              <dxi-series valueField="monthOld1" name="Tháng {{month_old1}}"></dxi-series>
+              <dxi-series valueField="monthNow" name="Tháng {{month_now}}"></dxi-series>
+              <dxo-common-series-settings argumentField="state" type="bar" hoverMode="allArgumentPoints"
+                selectionMode="allArgumentPoints">
+                <dxo-label [visible]="true" [format]="{
+                            type: 'fixedPoint',
+                            precision: '0'
+                        }">
+                </dxo-label>
+              </dxo-common-series-settings>
+              <dxo-legend verticalAlignment="bottom" horizontalAlignment="center">
+              </dxo-legend>
+              <dxo-export [enabled]="false"></dxo-export>
+            </dx-chart>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <!-- <h2>Thống kê tin nhắn</h2> -->
+            <h2>Tìm kiếm SĐT</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link" onclick="closeBox(this)"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask" #formSearch="ngForm"
+              (ngSubmit)="searchSms(formSearch.value)">
+              <div class="col-md-4 col-sm-6 col-xs-12 form-group">
+                <angular2-multiselect [data]="dataSender" [(ngModel)]="selectedSenderID"
+                  [settings]="settingsFilterSender" name="senderID">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-4 col-sm-6 col-xs-12 form-group">
+                <input type="text" class="form-control" placeholder="{{'global.phone' | translate}}" name="phone"
+                  ngModel>
+              </div>
+              <div class="col-md-4 col-sm-12 col-xs-12">
+                <button type="submit" style="float: right; margin-right: 0;" class="btn btn-primary btn-sm">
+                  {{ 'global.search' | translate }}</button>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive" style="min-height: 266px; max-height: 266px;">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width: 60px; vertical-align: middle;">
+                          {{'global.order' | translate}}</th>
+                        <th class="text-center" style="width: 120px; vertical-align: middle;">
+                          {{'sms_list.choose_sender' | translate}}</th>
+                        <th class="text-center" style="width: 120px; vertical-align: middle;">
+                          Phone</th>
+                        <th class="text-center" style="vertical-align: middle">
+                          {{'sms_list.content' | translate}}</th>
+                        <th class="text-center" style="vertical-align: middle">
+                          {{'sms_list.status' | translate}}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of dataSmsByPhone; let i = index" [attr.data-index]="i">
+                        <td class="text-center">
+                          {{pagination.pageSize * (pagination.pageIndex -1) + (i+1)}}</td>
+                        <td>{{item.SENDER_NAME}}</td>
+                        <td>{{item.PHONE}}</td>
+                        <td>{{item.SMS_CONTENT}}</td>
+                        <td>{{item.ERROR_MESAGE}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }}
+                    trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)" [value]="pagination.pageSize">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999999">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- <dx-pie-chart id="pie" title="" palette="bright" [dataSource]="dataSMS">
+              <dxo-legend orientation="horizontal" itemTextPosition="right" horizontalAlignment="center"
+                verticalAlignment="bottom" [columnCount]="4"></dxo-legend>
+              <dxo-export [enabled]="false"></dxo-export>
+              <dxi-series argumentField="type" valueField="value">
+                <dxo-label [visible]="true" position="columns" [customizeText]="customizeLabelPieChart">
+                  <dxo-font [size]="16"></dxo-font>
+                  <dxo-connector [visible]="true" [width]="0.5"></dxo-connector>
+                </dxo-label>
+              </dxi-series>
+            </dx-pie-chart> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row" style="margin-top: 20px">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>SMS theo đối tác</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link" onclick="closeBox(this)"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <dx-chart id="chart" title="" [dataSource]="grossProductData" (onPointClick)="onPointClick($event)">
+              <dxi-series valueField="year2017" name="Tháng {{month_old2}}"></dxi-series>
+              <dxi-series valueField="year2018" name="Tháng {{month_old1}}"></dxi-series>
+              <dxi-series valueField="year2019" name="Tháng {{month_now}}"></dxi-series>
+              <dxo-common-series-settings argumentField="state" type="bar" hoverMode="allArgumentPoints"
+                selectionMode="allArgumentPoints">
+                <dxo-label [visible]="true" [format]="{
+                            type: 'fixedPoint',
+                            precision: '0'
+                        }">
+                </dxo-label>
+              </dxo-common-series-settings>
+              <dxo-legend verticalAlignment="bottom" horizontalAlignment="center">
+              </dxo-legend>
+              <dxo-export [enabled]="false"></dxo-export>
+            </dx-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row" style="margin-top: 20px">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>SMS trong tháng theo nhóm thương hiệu</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link" onclick="closeBox(this)"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <dx-chart id="chart" title="" [dataSource]="grossSmsGroupSender" (onPointClick)="onPointClick($event)">
+              <dxi-series valueField="viettel" name="VIETTEL"></dxi-series>
+              <dxi-series valueField="gpc" name="GPC"></dxi-series>
+              <dxi-series valueField="vms" name="VMS"></dxi-series>
+              <dxi-series valueField="vnm" name="VNM"></dxi-series>
+              <dxi-series valueField="gtel" name="GTEL"></dxi-series>
+              <dxo-common-series-settings argumentField="state" type="bar" hoverMode="allArgumentPoints"
+                selectionMode="allArgumentPoints">
+                <dxo-label [visible]="true" [format]="{
+                            type: 'fixedPoint',
+                            precision: '0'
+                        }">
+                </dxo-label>
+              </dxo-common-series-settings>
+              <dxo-legend verticalAlignment="bottom" horizontalAlignment="center">
+              </dxo-legend>
+              <dxo-export [enabled]="false"></dxo-export>
+            </dx-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row" style="margin-bottom: 40px; margin-top: 6px">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>SMS theo loại tin tháng</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link" onclick="closeBox(this)"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <dx-chart id="chart" [dataSource]="weatherData" defaultPane="bottomPane" title="">
+              <dxi-series pane="topPane" color="#b0daff" type="rangeArea" rangeValue1Field="minT"
+                rangeValue2Field="maxT" name="Thống kê SMS theo tháng">
+              </dxi-series>
+              <dxi-series pane="topPane" valueField="avgT" name="Thống kê tin lỗi SMS">
+                <dxo-label [visible]="true" [customizeText]="temperatureCustomizeText">
+                </dxo-label>
+              </dxi-series>
+              <dxi-series type="bar" valueField="prec" name="Tin gửi, SMS">
+                <dxo-label [visible]="true" [customizeText]="precipitationCustomizeText">
+                </dxo-label>
+              </dxi-series>
+              <dxo-common-series-settings argumentField="month"></dxo-common-series-settings>
+              <dxi-pane name="topPane"></dxi-pane>
+              <dxi-pane name="bottomPane"></dxi-pane>
+              <dxi-value-axis pane="bottomPane">
+                <dxo-grid [visible]="true"></dxo-grid>
+                <dxo-title text="Biểu đồ, SMS"></dxo-title>
+              </dxi-value-axis>
+              <dxi-value-axis pane="topPane">
+                <dxo-grid [visible]="true"></dxo-grid>
+                <dxo-title text="Biểu đồ, SMS"></dxo-title>
+              </dxi-value-axis>
+              <dxo-legend verticalAlignment="bottom" horizontalAlignment="center">
+              </dxo-legend>
+              <dxo-export [enabled]="false"></dxo-export>
+            </dx-chart>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>

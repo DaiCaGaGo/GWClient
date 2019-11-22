@@ -1,0 +1,218 @@
+<article>
+  <section>
+    <div class="page-title clearfix">
+      <div class="title_left">
+        <h3>{{'account-product.title' | translate}}</h3>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <div class="row">
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID"
+                  [settings]="settingsFilter" (onSelect)="onItemSelect($event)" (onDeSelect)="OnItemDeSelect($event)"
+                  name="comboboxAccountSearch">
+                </angular2-multiselect>
+              </div>
+              <div class="col-sm-9 col-xs-6 form-group has-feedback">
+                <form class="form-horizontal form-label-left input_mask">
+                  <div class="form-group">
+                    <div class="form-group has-feedback content-end">
+                      <button type="button" class="btn btn-primary btn-sm" *ngIf="role.IS_ADD"
+                        (click)="createModal.show()">{{ 'global.add_new' | translate }}</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width: 60px">{{'global.order' | translate}}</th>
+                        <th class="text-center">Product</th>
+                        <th class="text-center">Date</th>
+                        <th class="text-center" style="width: 160px">{{'global.operate' | translate}}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of dataAccountProduct; let i = index" [attr.data-index]="i">
+                        <td class="text-center">{{i+1}}</td>
+                        <td>{{item.PRODUCT_NAME}}</td>
+                        <td>{{convertStringDate(item.FROM_DATE) + " - " + convertStringDate(item.TO_DATE)}}</td>
+                        <td class="text-center">
+                          <div class="tool">
+                            <button type="submit" class="btn btn-success btn-sm" *ngIf="role.IS_EDIT"
+                              (click)="showFormEdit(item.ID)">{{ 'global.edit' | translate }}</button>
+                            <button type="button" class="btn btn-danger btn-sm" *ngIf="role.IS_DELETE"
+                              (click)="showConfirmDelete(item.ID)">{{ 'global.delete' | translate }}</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- modal thêm product vao account-->
+<div class="modal fade" bsModal #createModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'account-product.add_detail' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="createModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #product="ngForm" (ngSubmit)="createProduct(product.value)">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 col-sm-6 col-xs-12 form-group">
+              <label>{{'account-sender.account_name' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID" [settings]="settingsFilter"
+                name="accountID">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <label>Product <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataProduct" [(ngModel)]="selectedProductID" [settings]="settingsFilterProduct"
+              name="productID">
+            </angular2-multiselect>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <label>{{'partner_product.from_date' | translate}}</label>
+              <input type="text" class="form-control" name="fromDate" bsDatepicker
+                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" placeholder="{{ 'partner_product.from_date' | translate }}"
+                [(ngModel)]="from_date_now">
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <label>{{'partner_product.to_date' | translate}}</label>
+              <input type="text" class="form-control" name="toDate" bsDatepicker
+                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" placeholder="{{ 'partner_product.to_date' | translate }}"
+                [(ngModel)]="to_date_now">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default"
+            (click)="createModal.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal sửa -->
+<div class="modal fade" bsModal #editModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'account-product.edit_detail' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="editModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="formEdit" (ngSubmit)="editData()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 col-sm-6 col-xs-12 form-group">
+              <label>{{'account-sender.account_name' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataAccount" [settings]="settingsFilterAccountEdit" formControlName="accountID">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <label>Product <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataProduct" [settings]="settingsFilterProductEdit"
+              formControlName="productID">
+            </angular2-multiselect>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <label>{{'partner_product.from_date' | translate}}</label>
+              <input type="text" class="form-control" formControlName="fromDate" bsDatepicker
+                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}"
+                placeholder="{{ 'partner_product.from_date' | translate }}">
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <label>{{'partner_product.to_date' | translate}}</label>
+              <input type="text" class="form-control" formControlName="toDate" bsDatepicker
+                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" placeholder="{{ 'partner_product.to_date' | translate }}">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="editModal.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa -->
+<div class="modal fade" bsModal #confirmDeleteModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>{{'global.ask_delete' | translate}}</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmDeleteModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="deleteDetail(account_product_id)">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa nhiều-->
+<div class="modal fade" bsModal #confirmDeleteMultiModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteMultiModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>Bạn có chắc chắn muốn xóa?</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmDeleteMultiModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="deleteMultiAccountProduct()">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>

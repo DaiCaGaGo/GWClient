@@ -1,0 +1,229 @@
+<article>
+    <section>
+        <div class="page-title clearfix">
+            <div class="title_left">
+                <h3>{{'account_cimast.quota_manager' | translate}}</h3>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel portlet">
+                    <div class="x_content">
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                            <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID"
+                                [settings]="settingsFilterAccount" (onSelect)="onItemSelect()"
+                                (onDeSelect)="OnItemDeSelect()" name="accountID">
+                            </angular2-multiselect>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel portlet">
+                    <div class="x_content">
+                        <form class="form-horizontal form-label-left input_mask">
+                            <div class="form-group">
+                                <div class="form-group has-feedback content-end">
+                                    <!-- <button type="button" class="btn btn-primary btn-sm" *ngIf="role.IS_ADD"
+                                        (click)="openFormCapTin()">{{'account_cimast.create_trans' | translate}}</button> -->
+                                        <button type="button" class="btn btn-primary btn-sm"
+                                        (click)="openFormCapTin()">{{'account_cimast.create_trans' | translate}}</button>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="row">
+                            <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered clear-bottom">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center" style="width: 60px">
+                                                    {{'global.order' | translate}}</th>
+                                                <th class="text-center" style="width: 80px">
+                                                    {{'account_cimast.service' | translate}}</th>
+                                                <th class="text-center">{{'account_cimast.quota_remain' | translate}}
+                                                </th>
+                                                <th class="text-center">{{'account_cimast.money_debit' | translate}}
+                                                </th>
+                                                <th class="text-center">{{'account_cimast.quota_sum' | translate}}</th>
+                                                <th class="text-center">{{'account_cimast.create_user' | translate}}</th>
+                                                <th class="text-center" style="width: 80px">{{'account_cimast.detail' | translate}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-content">
+                                            <tr *ngFor="let item of dataAccountCimast; let i = index"
+                                                [attr.data-index]="i">
+                                                <td class="text-center">{{i + 1}}</td>
+                                                <td>{{item.SERVICENAME}}</td>
+                                                <td>{{item.VOL}}</td>
+                                                <td>{{item.DEBIT_AMT}}</td>
+                                                <td>{{item.IN_VOL}}</td>
+                                                <td>{{item.CREATE_USER}}</td>
+                                                <td class="text-center">
+                                                    <div class="tool">
+                                                        <button type="submit" class="btn btn-success btn-sm"
+                                                            (click)="showConfirmViewHis(item.ACCOUNT_ID, item.SERVICENAME)">{{'global.view' | translate}}</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</article>
+
+<!-- modal cấp tin tài khoản-->
+<div class="modal fade" bsModal #createAccountCimastTransModel="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+    role="dialog" aria-labelledby="dialog-static-name">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-static-name" class="modal-title pull-left">
+                    {{'account_cimast_tran.quota_trans' | translate}}</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="closeFormCreate()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form #trans="ngForm" (ngSubmit)="createAccountCimastTrans(trans.value)">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <label>{{'account_cimast_tran.account_id' | translate}}<span style="color:red;">
+                                    (*)</span></label>
+                            <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID"
+                                [settings]="settingsFilterAccount" name="accountID">
+                            </angular2-multiselect>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <label>{{'account_cimast_tran.type_services' | translate}} <span
+                                    style="color:red;">(*)</span></label>
+                            <angular2-multiselect [data]="dataSmsType" [(ngModel)]="selectedSmsType"
+                                [settings]="settingsFilterSmsType" name="smsType">
+                            </angular2-multiselect>
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <label>{{'account_cimast_tran.input_type' | translate}}<span style="color:red;">
+                                    (*)</span></label>
+                            <angular2-multiselect [data]="dataInputType" [(ngModel)]="selectedInputType"
+                                [settings]="settingsFilterInputType" name="inputType"
+                                (onSelect)="onItemSelectInputType()" (onDeSelect)="OnItemDeSelectInputType()">
+                            </angular2-multiselect>
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;"
+                        [ngStyle]="{'display' : isInputMoney == true? 'block' : 'none'}">
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <label>{{'account_cimast_tran.money_bye' | translate}}</label>
+                            <input type="number" class="form-control" min="0" name="amtBye_money"
+                                (change)="changeAmtNumber($event.target.value)"
+                                (keyup)="changeAmtNumber($event.target.value)"
+                                (keydow)="changeAmtNumber($event.target.value)" [(ngModel)]="valueAmt">
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <label>{{'account_cimast_tran.money_pay' | translate}}</label>
+                            <input type="number" class="form-control" min="0" name="amt_pay" [(ngModel)]="moneypay">
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <label>{{'account_cimast_tran.quota' | translate}}</label>
+                            <input type="number" class="form-control" min="0" name="volBye_money"
+                                [(ngModel)]="changeAmt">
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;"
+                        [ngStyle]="{'display' : isInputMoney == false? 'block' : 'none'}">
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <label>{{'account_cimast_tran.quota' | translate}}</label>
+                            <input type="number" class="form-control" min="0" name="volBye_sms"
+                                (change)="changeSmsNumber($event.target.value)"
+                                (keyup)="changeSmsNumber($event.target.value)"
+                                (keydow)="changeSmsNumber($event.target.value)" [(ngModel)]="valueSms">
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <label>{{'account_cimast_tran.money_bye' | translate}}</label>
+                            <input type="number" class="form-control" min="0" name="amtBye_sms" [(ngModel)]="changeSms">
+                        </div>
+                        <div class="col-md-4 col-sm-6 col-xs-12">
+                            <label>{{'account_cimast_tran.money_pay' | translate}}</label>
+                            <input type="number" class="form-control" min="0" name="amt_pay1" [(ngModel)]="moneypay">
+                        </div>
+                    </div>
+                    <div class="row" style="margin-top: 10px;">
+                        <div class="col-md-12 col-sm-12 col-xs-12">
+                            <label>{{'account_cimast_tran.description' | translate}}</label>
+                            <textarea type="text" class="form-control"
+                                placeholder="{{'account_cimast_tran.input_description' | translate}}" rows="3"
+                                name="description" [(ngModel)]="description_reset"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-sm"
+                        (click)="closeFormCreate()">{{ 'global.cancel' | translate }}</button>
+                    <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- modal Xem lich su cap tin-->
+<div class="modal fade" bsModal #viewAccountCimastTransModel="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+    role="dialog" aria-labelledby="dialog-static-name">
+    <div class="modal-dialog modal-lg" style="width: 90%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-static-name" class="modal-title pull-left">{{'account_cimast_tran.quota_his' | translate}}
+                    {{serviceNameViewQuota}} {{'account_cimast_tran.account' | translate}} {{accountViewQuota}}
+                </h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="closeFormHis()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                        <div class="table-responsive">
+                            <table class="table table-bordered clear-bottom">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" style="width: 60px">
+                                            {{'global.order' | translate}}</th>
+                                        <th class="text-center">{{'account_cimast_tran.tx_num' | translate}}</th>
+                                        <th class="text-center">{{'account_cimast_tran.curren_date' | translate}}</th>
+                                        <th class="text-center">{{'account_cimast_tran.quota_bye' | translate}}</th>
+                                        <th class="text-center">{{'account_cimast_tran.money_bye' | translate}}</th>
+                                        <th class="text-center">{{'account_cimast_tran.money_pay' | translate}}</th>
+                                        <th class="text-center">{{'account_cimast_tran.description' | translate}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-content">
+                                    <tr *ngFor="let item of dataQuotaHistory; let i = index" [attr.data-index]="i">
+                                        <td class="text-center">{{i + 1}}</td>
+                                        <td>{{item.TX_NUM}}</td>
+                                        <td>{{item.TX_DATE}}</td>
+                                        <td>{{item.VOL}}</td>
+                                        <td>{{item.AMT}}</td>
+                                        <td>{{item.AMT_PAY}}</td>
+                                        <td>{{item.DESCRIPTION}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

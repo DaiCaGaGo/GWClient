@@ -1,0 +1,359 @@
+<article>
+  <section>
+    <div class="page-title clearfix">
+      <div class="title_left">
+        <h3>{{ 'account_cimast_tran.list_acc_cimast' | translate }}</h3>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask" #formSearch="ngForm"
+              (ngSubmit)="SearchAccountCimastTran(formSearch.value)">
+
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataCombobox" [(ngModel)]="selectedItemCombobox"
+                  [settings]="settingsFilter" (onSelect)="onItemSelect($event)" (onDeSelect)="OnItemDeSelect($event)"
+                  name="comboboxAccountSearch">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="curren_date_fillter" bsDatepicker
+                  [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}"
+                  placeholder="{{ 'account_cimast.curren_date' | translate }}">
+                <span class="fa fa-indent form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="tx_num_fillter" ngModel
+                  placeholder="{{ 'account_cimast_tran.tx_num' | translate }}">
+                <span class="fa fa-list-ul form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="number" class="form-control has-feedback-left" name="amt_fillter" ngModel
+                  placeholder="{{ 'account_cimast_tran.account_amt' | translate }}">
+                <span class="fa fa-cog form-control-feedback left" aria-hidden="true"></span>
+              </div>
+
+
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <select name="status_tran_fillter" class="form-control has-feedback-left" ngModel>
+                  <option value="">Trạng thái</option>
+                  <option value="0">Chờ duyệt</option>
+                  <option value="1">Đã duyệt</option>
+                  <option value="2">Đã xóa</option>
+                </select>
+                <span class="glyphicon glyphicon-lock form-control-feedback left" aria-hidden="true"></span>
+              </div>
+
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <angular2-multiselect [data]="dataServicename" [(ngModel)]="selectedServicename"
+                  (onSelect)="onItemSelect($event)" [settings]="settingsFilterService" name="servicename_fillter">
+                </angular2-multiselect>
+              </div>
+
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="number" class="form-control has-feedback-left" name="vol_fillter" ngModel
+                  placeholder="{{ 'account_cimast_tran.account_vol' | translate }}">
+                <span class="fa fa-cog form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="description_fillter" ngModel
+                  placeholder="{{ 'account_cimast_tran.description' | translate }}">
+                <span class="fa fa-cog form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+              </div>
+              <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback content-end">
+                <button type="submit" style="float: right; margin-right: 10;"
+                  class="btn btn-primary btn-sm">{{ 'global.search' | translate }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="form-group">
+                <div class="form-group has-feedback content-end">
+                  <!-- <button type="button" class="btn btn-danger btn-sm"
+                    (click)="confirmDeleteMultiAccount()">{{ 'global.multi_delete' | translate }}</button> -->
+                  <button type="button" class="btn btn-primary btn-sm"
+                    (click)="createNewModal.show()">{{ 'global.add_new' | translate }}</button>
+                  <button type="submit" class="btn btn-success btn-sm"
+                    (click)="exportExcelaccountCimastTran()">{{ 'global.export_excel' | translate }}</button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width: 60px">STT</th>
+                        <th class="text-center">{{ 'account_cimast_tran.account_id' | translate }}</th>
+                        <th class="text-center">{{ 'account_cimast_tran.curren_date' | translate }}</th>
+                        <th class="text-center">{{ 'account_cimast_tran.tx_num' | translate }}</th>
+                        <th class="text-center">{{ 'account_cimast_tran.account_amt' | translate }}</th>
+                        <th class="text-center">{{ 'account_cimast_tran.account_vol' | translate }}</th>
+                        <th class="text-center">{{ 'account_cimast_tran.description' | translate }}</th>
+                        <th class="text-center">{{ 'account_cimast_tran.status_tran' | translate }}</th>
+                        <th class="text-center">{{ 'account_cimast_tran.type_services' | translate }}</th>
+                        <th class="text-center" style="width: 80px">{{ 'global.tool' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-content">
+                      <tr [ngClass]="{'row-hidden-delete': idDelete.indexOf(cimasttran.ACCOUNT_ID) >= 0 }"
+                        *ngFor="let cimasttran of dataAccountCimastTran; let i = index" [attr.data-index]="i">
+                        <!-- <td scope="row">{{i+1}}</td> -->
+                        <td class="text-center">{{cimasttran.STT}}</td>
+                        <td class="text-center">{{cimasttran.USER_NAME}}</td>
+                        <td class="text-center">{{cimasttran.TX_DATE}}</td>
+                        <td>{{cimasttran.TX_NUM}}</td>
+                        <td>{{cimasttran.AMT}}</td>
+                        <td>{{cimasttran.VOL}}</td>
+                        <td>{{cimasttran.DESCRIPTION }}</td>
+                        <td>{{cimasttran.STATUS_TRAN}}</td>
+                        <td>{{cimasttran.SERVICENAME }}</td>
+                        <td class="text-center">
+                          <div class="tool">
+                            <button type="submit" class="btn btn-success btn-sm"
+                              (click)="showConfirmEditAccount(cimasttran.TRAN_ID)">{{ 'global.edit' | translate }}</button>
+                            <button type="button" class="btn btn-danger btn-sm"
+                              (click)="showConfirmDeleteAccountCimastTran(cimasttran.TRAN_ID, cimasttran.TX_NUM)">{{ 'global.delete' | translate }}</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="ALL">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- modal thêm mới-->
+<div class="modal fade" bsModal #createNewModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">Thêm tài khoản giao dịch</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="createNewModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #accountCimasttran="ngForm" (ngSubmit)="createaccountCimastTran(accountCimasttran.value)">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account_cimast_tran.account_id' | translate}} <span style="color:red;">(*)</span></label>
+              <!-- <label for="roleName">{{'role.role_name' | translate}} <span style="color:red;">(*)</span></label> -->
+              <angular2-multiselect [data]="dataCombobox" [(ngModel)]="selectedItemCombobox" [settings]="settingsFilter"
+                (onSelect)="onItemSelect($event)" (onDeSelect)="OnItemDeSelect($event)" name="comboboxAccount">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account_cimast_tran.curren_date' | translate}}</label>
+              <input type="text" class="form-control has-feedback-left" name="TX_DATE" bsDatepicker
+                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}"
+                placeholder="{{ 'account_cimast_tran.curren_date' | translate }}" ngModel>
+              <span class="fa fa-indent form-control-feedback left" aria-hidden="true"></span>
+            </div>
+
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account_cimast_tran.tx_num' | translate}}</label>
+              <input type="text" min=0 id="TX_NUM" class="form-control" name="TX_NUM" required="" ngModel>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account_cimast_tran.account_amt' | translate}}</label>
+              <input type="number" min=0 id="AMT" class="form-control" name="AMT" required="" ngModel>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 10px">
+            <!-- <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="SERVICENAME">Loại dịch vụ</label>
+              <input type="text" min=0 id="SERVICENAME" class="form-control" name="SERVICENAME" required="" ngModel>
+            </div> -->
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account_cimast_tran.type_services' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataServicename" ngModel [settings]="settingsAddService" name="SERVICENAME">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account_cimast_tran.status_tran' | translate}} <span style="color:red;">(*)</span></label>
+              <select name="STATUS_TRAN" class="form-control has-feedback-left" ngModel>
+                <option value="0">Chờ duyệt</option>
+                <option value="1">Đã duyệt</option>
+                <option value="2">Đã xóa</option>
+              </select>
+              <span class="glyphicon glyphicon-lock form-control-feedback left" aria-hidden="true"></span>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account_cimast_tran.account_vol' | translate}}</label>
+              <input type="number" min=0 id="VOL" class="form-control" name="VOL" required="" ngModel>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account_cimast_tran.description' | translate}}</label>
+              <input type="text" id="DESCRIPTION" class="form-control" name="DESCRIPTION" required="" ngModel>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="createNewModal.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal sửa -->
+<div class="modal fade" bsModal #editAccountModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">Sửa tài khoản giao dịch</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="createNewModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="formEditAccountCimastTran" (ngSubmit)="editAccountCimastTran()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+              <label>{{'account_cimast_tran.account_id' | translate}}</label>
+              <angular2-multiselect [data]="dataCombobox" [settings]="settingsFilter"
+                formControlName="comboboxAccountedit">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account_cimast_tran.tx_num' | translate}}</label>
+              <input type="text" class="form-control" formControlName="tx_num" required="">
+            </div>
+
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+              <label>{{'account_cimast.curren_date' | translate}}</label>
+              <input type="text" class="form-control has-feedback-left" formControlName="tx_date" bsDatepicker
+                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}"
+                placeholder="{{ 'account_cimast.curren_date' | translate }}">
+              <span class="fa fa-indent form-control-feedback left" aria-hidden="true"></span>
+            </div>
+
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account_cimast_tran.account_amt' | translate}}</label>
+              <input type="number" min=0 class="form-control" formControlName="amt" required="">
+            </div>
+          </div>
+          <div class="row">
+            <!-- <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>Loại dịch vụ</label>
+              <input type="text" min=0 class="form-control" formControlName="servicename" required="">
+            </div> -->
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+              <label>{{'account_cimast_tran.type_services' | translate}}</label>
+              <angular2-multiselect [data]="dataServicename" [settings]="settingsEditService"
+                formControlName="servicename">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+              <label>{{'account_cimast_tran.status_tran' | translate}}</label>
+              <select formControlName="status_tran" class="form-control has-feedback-left">
+                <option value="0">Chờ duyệt</option>
+                <option value="1">Đã duyệt</option>
+                <option value="2">Đã xóa</option>
+              </select>
+              <span class="glyphicon glyphicon-lock form-control-feedback left" aria-hidden="true"></span>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account_cimast_tran.account_vol' | translate}}</label>
+              <input type="number" min=0 class="form-control" formControlName="vol" required="">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account_cimast_tran.description' | translate}}</label>
+              <input type="text" class="form-control" formControlName="description" required="">
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="editAccountModal.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- modal xác nhận xóa -->
+<div class="modal fade" bsModal #confirmDeleteModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">Xác nhận</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>Bạn có chắc chắn muốn xóa tài khoản giao dịch "<span class="text-success">{{tx_Num}}</span>" không?</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm" (click)="confirmDeleteModal.hide()">Hủy</button>
+        <button type="submit" class="btn btn-success btn-sm" (click)="deleteAccountCimastTran(accountCimasTranId)">Xác
+          nhận</button>
+      </div>
+    </div>
+  </div>
+</div>

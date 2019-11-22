@@ -1,0 +1,140 @@
+<article>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <div class="row">
+              <div class="col-md-6 col-sm-8 col-xs-8 form-group has-feedback">
+                <select class="form-control has-feedback-left" (change)="onChangeAccount($event.target.value)"
+                  [(ngModel)]="account_id">
+                  <option *ngFor="let item of listAccount" value="{{item.ACCOUNT_ID}}">{{item.USER_NAME}}</option>
+                </select>
+                <span class="fa fa-tasks form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-sm-6 col-xs-4 col-xs-4 form-group has-feedback">
+                <form class="form-horizontal form-label-left input_mask">
+                  <div class="form-group">
+                    <div class="form-group has-feedback content-end">
+                      <button type="button" class="btn btn-success btn-sm"
+                        (click)="confirmEditPermission()">{{ 'global.edit' | translate }}</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center">{{'global.order' | translate}}</th>
+                        <th class="text-center">Menu</th>
+                        <th class="box-checkbox-table">
+                          <div class="tool tool-check">
+                            {{'global.view' | translate}} &nbsp; <input type="checkbox"
+                              (change)="checkAllView($event.currentTarget.checked)" class="checkbox"
+                              style="margin-top:4px;" />
+                          </div>
+                        </th>
+                        <th class="box-checkbox-table">
+                          <div class="tool tool-check">
+                            {{'global.add' | translate}} &nbsp; <input type="checkbox"
+                              (change)="checkAllAdd($event.currentTarget.checked)" class="checkbox"
+                              style="margin-top:4px;" />
+                          </div>
+                        </th>
+                        <th class="box-checkbox-table">
+                          <div class="tool tool-check">
+                            {{'global.edit' | translate}} &nbsp; <input type="checkbox"
+                              (change)="checkAllEdit($event.currentTarget.checked)" class="checkbox"
+                              style="margin-top:4px;" />
+                          </div>
+                        </th>
+                        <th class="box-checkbox-table">
+                          <div class="tool tool-check">
+                            {{'global.delete' | translate}} &nbsp; <input type="checkbox"
+                              (change)="checkAllDel($event.currentTarget.checked)" class="checkbox"
+                              style="margin-top:4px;" />
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of dataAccountMenu; let i = index" [attr.data-index]="i">
+                        <td class="text-center">{{i+1}}</td>
+                        <td>{{item.MENU_NAME}}</td>
+                        <td class="box-checkbox-table">
+                          <input type="checkbox"
+                            [checked]="item.ACCOUNT_MENU_ID != null ? (item.IS_VIEW == 1 ? true: false): (item.IS_VIEW_ROLE == 1? true: false)"
+                            class="checkbox" (change)="checkRowView($event.currentTarget.checked, i)" />
+                        </td>
+                        <td class="box-checkbox-table">
+                          <input type="checkbox"
+                            [checked]="item.ACCOUNT_MENU_ID != null ? (item.IS_ADD == 1 ? true: false): (item.IS_ADD_ROLE == 1? true: false)"
+                            class="checkbox" (change)="checkRowAdd($event.currentTarget.checked, i)" />
+                        </td>
+                        <td class="box-checkbox-table">
+                          <input type="checkbox"
+                            [checked]="item.ACCOUNT_MENU_ID != null ? (item.IS_EDIT == 1 ? true: false): (item.IS_EDIT_ROLE == 1? true: false)"
+                            class="checkbox" (change)="checkRowEdit($event.currentTarget.checked, i)" />
+                        </td>
+                        <td class="box-checkbox-table">
+                            <input type="checkbox"
+                            [checked]="item.ACCOUNT_MENU_ID != null ? (item.IS_DEL == 1 ? true: false): (item.IS_DEL_ROLE == 1? true: false)"
+                            class="checkbox" (change)="checkRowDel($event.currentTarget.checked, i)" />
+                        </td>
+
+                        <!-- <td class="box-checkbox-table">
+                            <input type="checkbox" [checked]="item.IS_VIEW == 1? true:false" class="checkbox"
+                              (change)="checkRowView($event.currentTarget.checked, i)" />
+                          </td>
+                          <td class="box-checkbox-table">
+                            <input type="checkbox" [checked]="item.IS_ADD == 1? true:false" class="checkbox"
+                              (change)="checkRowAdd($event.currentTarget.checked, i)" />
+                          </td>
+                          <td class="box-checkbox-table">
+                            <input type="checkbox" [checked]="item.IS_EDIT == 1? true:false" class="checkbox"
+                              (change)="checkRowEdit($event.currentTarget.checked, i)" />
+                          </td>
+                          <td class="box-checkbox-table">
+                            <input type="checkbox" [checked]="item.IS_DEL == 1? true:false" class="checkbox"
+                              (change)="checkRowDel($event.currentTarget.checked, i)" />
+                          </td> -->
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- modal xác nhận sửa -->
+<div class="modal fade" bsModal #confirmEditPermissionModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmEditPermissionModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>{{ 'global.ask_save' | translate }}</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmEditPermissionModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="editPermission()">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>

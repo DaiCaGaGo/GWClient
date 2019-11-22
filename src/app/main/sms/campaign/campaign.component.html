@@ -1,0 +1,330 @@
+<article>
+  <section>
+    <div class="clearfix"></div>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>{{'global.search' | translate}}</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask">
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID"
+                  [settings]="settingsFilterAccount" (onSelect)="onItemSelect()" (onDeSelect)="OnItemDeSelect()"
+                  name="accountID">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <angular2-multiselect [data]="dataSmsType" [(ngModel)]="selectedSmsType"
+                  [settings]="settingsFilterSmsType" (onSelect)="onItemSelectSmsType()"
+                  (onDeSelect)="onItemSelectSmsType()" name="smsType">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataSender" [(ngModel)]="selectedSenderID"
+                  [settings]="settingsFilterSender" (onSelect)="onItemSelectSender()"
+                  (onDeSelect)="OnItemDeSelectSender()" name="senderID">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataCampaignStatus" [(ngModel)]="selectedCampaignStatusID"
+                  [settings]="settingsFilterCampaignStatus" (onSelect)="onItemSelectStatus()"
+                  (onDeSelect)="OnItemDeSelectStatus()" name="statusID">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="fromDate" bsDatepicker
+                  [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" (ngModelChange)="onChangeFromDate($event)"
+                  placeholder="{{ 'partner_product.from_date' | translate }}" [(ngModel)]="timeFrom">
+                <span class="fa fa-clock-o form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="toDate" bsDatepicker
+                  [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" placeholder="{{ 'partner_product.to_date' | translate }}"
+                  [(ngModel)]="timeTo" (ngModelChange)="onChangeToDate($event)">
+                <span class="fa fa-clock-o form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback" style="text-align: right;">
+                <!-- <button type="button" style="float: right; margin-right: 0;" (click)="getData()"
+                  class="btn btn-primary btn-sm">{{ 'global.search' | translate }}</button> -->
+                <button class="btn btn-success btn-sm"
+                  [routerLink]="['../send-sms']">{{'campaign.sms_send' | translate}}</button>
+                <button class="btn btn-success btn-sm"
+                  [routerLink]="['../sms-customize']">{{'campaign.sms_customize' | translate}}</button>
+                <button class="btn btn-success btn-sm"
+                  [routerLink]="['../customer-sms']">{{'campaign.sms_customer' | translate}}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>{{ 'campaign.list_campaign' | translate }}</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width: 40px">{{'global.order' | translate}}</th>
+                        <th class="text-center" style="width: 150px">{{ 'campaign.sender_name' | translate }}</th>
+                        <th class="text-center">{{ 'campaign.code_name' | translate }}</th>
+                        <th class="text-center">{{ 'campaign.sms_template' | translate }}</th>
+                        <th class="text-center" style="width: 80px">{{ 'campaign.sms_type' | translate }}</th>
+                        <th class="text-center" style="width: 80px">Tổng tin</th>
+                        <th class="text-center" style="width: 120px">Trạng thái</th>
+                        <th class="text-center" style="width: 150px">{{ 'campaign.timeschedule' | translate }}</th>
+                        <th class="text-center" style="width: 120px">{{'campaign.note' | translate}}</th>
+                        <th class="text-center" style="width: 200px">{{ 'global.tool' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of dataCampaign; let i = index" [attr.data-index]="i">
+                        <td class="text-center">{{item.STT}}</td>
+                        <td>{{item.SENDER_NAME}}</td>
+                        <td>{{item.CODE_NAME}}</td>
+                        <td>{{item.SMS_TEMPLATE}}</td>
+                        <td class="text-center">{{item.SMS_TYPE}}</td>
+                        <td class="text-center">{{item.COUNT_SMS}}</td>
+                        <td>
+                          {{item.STATUS == '0' ? 'Chờ duyệt' : item.STATUS == '1' ? 'Chờ kết quả' : item.STATUS == '2'? "Hoàn thành" : item.STATUS == '3' ? "Hủy đơn"  : ''}}
+                        </td>
+                        <td>{{convertStringDate(item.TIMESCHEDULE)}}</td>
+                        <td class="text-center">{{item.DESCRIPTION}}</td>
+                        <td class="text-center">
+                          <div class="tool">
+                            <button type="button" (click)="showConfirmApproveSms(item.ID)"
+                              class="btn btn-primary btn-sm"
+                              [ngStyle]="{'display':(item.STATUS == 1 || item.STATUS == 2 || item.STATUS == 3) ? 'none' : 'block'}">{{ 'global.approve' | translate }}</button>
+                            <button type="button" (click)="exportExcel(item.ID)" class="btn btn-success btn-sm"
+                              [ngStyle]="{'display':item.STATUS == 1 ? 'block' : 'none'}">Export</button>
+                            <!-- <button type="button" (click)="updateStatusSend(item.ID)" class="btn btn-success btn-sm"
+                              [ngStyle]="{'display':(item.STATUS == 1 && item.IS_SEND != 1 && item.SMS_TYPE=='QC') ? 'block' : 'none'}">{{'campaign.update' | translate}}</button> -->
+                            <button type="button" (click)="showFormEditContent(item.ID)" class="btn btn-success btn-sm"
+                              [ngStyle]="{'display':(item.STATUS == 1 || item.STATUS == 2 || item.STATUS == 3) ? 'none' : 'block'}">{{ 'global.edit' | translate }}</button>
+                            <button type="button" (click)="showConfirmApproveSmsStatus(item.ID)"
+                              class="btn btn-success btn-sm"
+                              [ngStyle]="{'display':item.STATUS == 1 ? 'block' : 'none'}">{{'campaign.update' | translate}}</button>
+                            <button type="button" (click)="showConfirmDelete(item.ID)" class="btn btn-danger btn-sm"
+                              [ngStyle]="{'display':(item.STATUS == 1 || item.STATUS == 2 || item.STATUS == 3) ? 'none' : 'block'}">{{'global.cancel' | translate}}</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)" [value]="pagination.pageSize">
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999999">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- modal xác nhận duyệt tin-->
+<div class="modal fade" bsModal #confirmApproveModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmApproveModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>{{'campaign.ask_approve' | translate}}</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmApproveModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="approveSms(campaignID)">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận duyệt đơn hàng-->
+<div class="modal fade" bsModal #confirmApproveStatusModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmApproveStatusModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>{{'campaign.ask_update' | translate}}</div>
+      </div>
+      <div class="modal-footer">
+        <img *ngIf="loading" class="pl-2" style="margin-right: 10px"
+          src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmApproveStatusModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="approveStatusCampaign(campaignID)">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa đơn hàng -->
+<div class="modal fade" bsModal #confirmDeleteModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'campaign.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- <div>Bạn có chắc chắn muốn xóa?</div> -->
+        <div>
+          <textarea type="text" class="form-control" placeholder="{{'campaign.input_reason' | translate}}"
+            name="contentSMS" rows="3" [(ngModel)]="reasonContent"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmDeleteModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="deleteCampaign(campaignID)">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Edit nội dung đơn hàng -->
+<div class="modal fade" bsModal #editContentCampaignModel="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'campaign.edit_content' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="editContentCampaignModel.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="formEditContent" (ngSubmit)="editContentSms()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <label>{{'campaign.content_old' | translate}}</label>
+              <textarea class="form-control" formControlName="contentOld" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <label>{{'campaign.content_new' | translate}} (<span
+                  style="display:inline-block !important">{{numberChar}}</span>
+                {{'campaign.text_countmes2' | translate}}) (<span
+                  style="display:inline-block !important">{{numberSMS}}</span>{{'campaign.text_countmes3' | translate}})</label>
+              <textarea class="form-control" formControlName="contentNew" rows="3"
+                placeholder="{{'campaign.input_content' | translate}}" (change)="countSMS($event.target.value)"
+                (keyup)="countSMS($event.target.value)" (keydow)="countSMS($event.target.value)"></textarea>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12" style="padding-top: 15px">
+              <label>{{'campaign.timeschedule' | translate}}</label>
+              <input type="text" class="form-control has-feedback-left modal-popup" formControlName="timeSchedule"
+                bsDatepicker [bsConfig]="{adaptivePosition: true, dateInputFormat: 'DD/MM/YYYY HH:mm'}"
+                [minDate]="minDate" placeholder="{{ 'campaign.date_time' | translate }}">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="editContentCampaignModel.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- upload excel -->
+<div class="modal fade" bsModal #uploadExcelModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{ 'campaign.update_status' | translate }}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="uploadExcelModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-9 col-sm-12 col-xs-12 form-group has-feedback">
+              <div class="input-group">
+                <input type="file" #uploadFile name="uploadFile" class="form-control" (change)="UploadFileStatus()">
+                <div class="input-group-btn">
+                  <button type="button" title="Loại bỏ các tệp đã chọn" (click)="clearFileUpload()"
+                    class="btn btn-default fileinput-remove fileinput-remove-button"
+                    style="background-color:rgba(128, 128, 128, 0.10);">
+                    <i class="glyphicon glyphicon-trash"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-12 col-xs-12 form-group has-feedback">
+              <button type="button" class="btn btn-primary btn-sm"
+                (click)="exportExcelTemplate()">{{'sms_customize.export_template' | translate}}</button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default"
+            (click)="uploadExcelModal.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success"
+            (click)="updateStatusPartner(campaignID)">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,563 @@
+<article>
+  <section>
+    <div class="page-title clearfix">
+      <div class="title_left">
+        <h3>{{ 'account_vendor.acc_vendor' | translate }}</h3>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>{{ 'account_vendor.acc_vendor' | translate }}</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link" onclick="closeBox(this)"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <form (ngSubmit)="onSubmitSearch(searchForm)" #searchForm="ngForm"
+              class="form-horizontal form-label-left input_mask">
+              <div class="row">
+                <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                  <input type="text" class="form-control has-feedback-left" name="accountName"
+                    [(ngModel)]="defaultAccountName" placeholder="{{ 'account_vendor.acc_name' | translate }}">
+                  <span class="fa fa-list-ul form-control-feedback left" aria-hidden="true"></span>
+                </div>
+                <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                  <input type="text" class="form-control has-feedback-left" name="nameEmail" ngModel
+                    placeholder="{{ 'account_vendor.name_email' | translate }}">
+                  <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
+                </div>
+                <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                  <input type="text" class="form-control has-feedback-left" name="nameCompany" ngModel
+                    placeholder="{{ 'account_vendor.acc_company' | translate }}">
+                  <span class="fa fa-list-ul form-control-feedback left" aria-hidden="true"></span>
+                </div>
+                <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                  <select class="form-control has-feedback-left" name="accountType">
+                    <option value="" hidden>{{'account_vendor.acc_type' | translate}}</option>
+                    <option *ngFor="let item of dataAccount" value="{{item.ACCOUNT_ID}}">{{item.USER_NAME}}</option>
+                  </select>
+                  <span class="glyphicon glyphicon-lock form-control-feedback left" aria-hidden="true"></span>
+                </div>
+                <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                  <input type="text" class="form-control has-feedback-left" name="accountStatus" ngModel
+                    placeholder="{{ 'account_vendor.acc_status' | translate }}">
+                  <span class="fa fa-cog form-control-feedback left" aria-hidden="true"></span>
+                </div>
+                <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                  <input type="text" class="form-control has-feedback-left" name="accountBlock" ngModel
+                    placeholder="{{ 'global.block' | translate }}">
+                  <span class="glyphicon glyphicon-lock form-control-feedback left" aria-hidden="true"></span>
+                </div>
+                <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                  <angular2-multiselect [data]="itemList1" [(ngModel)]="selectedItems1" [settings]="settingsSingle"
+                    (onSelect)="onItemSelect($event)" (onDeSelect)="onItemDeSelect($event)" name="comboboxDemo">
+                  </angular2-multiselect>
+                </div>
+                <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                  <angular2-multiselect [data]="dataCombobox" [(ngModel)]="selectedItemCombobox"
+                    [settings]="settingsFilter" name="comboboxAccount">
+                  </angular2-multiselect>
+                </div>
+              </div>
+              <div style="text-align: right;">
+                <div class="form-group has-feedback">
+                  <button type="submit" class="btn btn-primary btn-sm">{{ 'global.search' | translate }}</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>{{ 'account_vendor.list_vendor' | translate }}</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link" onclick="closeBox(this)"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="form-group">
+                <div class="form-group has-feedback content-end">
+                  <button type="button" class="btn btn-danger btn-sm" *ngIf="role.IS_DELETE"
+                    (click)="confirmDeleteMultiAccount()">{{ 'global.multi_delete' | translate }}</button>
+                  <button type="button" class="btn btn-primary btn-sm" *ngIf="role.IS_ADD"
+                    (click)="createAccountModal.show()">{{ 'global.add_new' | translate }}</button>
+                  <button class="btn btn-primary btn-sm"
+                    type="reset">{{ 'account_vendor.config_quota' | translate }}</button>
+                  <button type="submit" class="btn btn-success btn-sm"
+                    (click)="exportExcelAccountVendor()">{{ 'global.export_excel' | translate }}</button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive" style="min-height: 230px">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center col-min-width">STT</th>
+                        <th class="box-checkbox-table col-min-width">
+                          <div class="tool tool-check">
+                            <input type="checkbox" [checked]="isCheckedDelete"
+                              (change)="checkAllDelete($event.currentTarget.checked)" class="checkbox" />
+                          </div>
+                        </th>
+                        <th class="text-center">ID khách hàng</th>
+                        <th class="text-center">Tên tài khoản</th>
+                        <th class="text-center">Mật khẩu</th>
+                        <th class="text-center">Tên người dùng</th>
+                        <th class="text-center">Email</th>
+                        <th class="text-center">Loại tài khoản</th>
+                        <th class="text-center">Công ty</th>
+                        <th class="text-center">Kích hoạt</th>
+                        <th class="text-center col-min-width">Khóa</th>
+                        <th class="text-center col-min-width">Công cụ</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-content">
+                      <tr [ngClass]="{'row-hidden-delete': arrIdDelete.indexOf(account.ACCOUNT_ID) >= 0 }"
+                        *ngFor="let account of dataAccount; let i = index" [attr.data-index]="i">
+                        <!-- <td scope="row">{{i+1}}</td> -->
+                        <td class="text-center">{{account.STT}}</td>
+                        <td class="box-checkbox-table">
+                          <input type="checkbox" [checked]="isCheckedDelete"
+                            (change)="checkRowDelete($event.currentTarget.checked, account.ACCOUNT_ID)"
+                            value="{{account.ACCOUNT_ID}}" id="isAdmin" class="checkbox" />
+                        </td>
+                        <td class="text-center">{{account.ACCOUNT_ID}}</td>
+                        <td>{{account.USER_NAME}}</td>
+                        <td>{{account.PASSWORD}}</td>
+                        <td>{{account.FULL_NAME}}</td>
+                        <td>{{account.EMAIL}}</td>
+                        <td>{{account.ACCOUNT_TYPE}}</td>
+                        <td>{{account.COMPANY_NAME}}</td>
+                        <td></td>
+                        <td></td>
+                        <td class="text-center padding-top-6">
+                          <div class="tool">
+                            <button type="submit" class="btn btn-success btn-sm" *ngIf="role.IS_EDIT"
+                              (click)="showConfirmEditAccount(account.ACCOUNT_ID)">{{ 'global.edit' | translate }}</button>
+                            <button type="button" class="btn btn-danger btn-sm" *ngIf="role.IS_DELETE"
+                              (click)="showConfirmDeleteAccount(account.ACCOUNT_ID, account.USER_NAME)">{{ 'global.delete' | translate }}</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row box-pagination">
+                  <div class="col-md-6 col-sm-6 col-xs-6 minibox" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)" [value]="pagination.pageSize">
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="ALL">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6 col-xs-6 minibox" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>Upload Image</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link" onclick="closeBox(this)"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="row">
+                <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                  <input type="file" #uploadImage name="avatar" class="form-control" (change)="submitUploadImage()">
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback text-center" style="min-height: 308px">
+                <img src="{{ urlImageUpload }}" style="max-width: 100%;" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-6 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>Import Excel</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link" onclick="closeBox(this)"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="row">
+                <div class="col-sm-6 col-xs-6 form-group has-feedback">
+                  <input type="file" #importExcel name="importExcel" class="form-control"
+                    (change)="submitImportExcel()">
+                </div>
+                <div class="col-sm-6 col-xs-6 form-group has-feedback">
+                  <button type="submit" class="btn btn-success btn" (click)="exportExcelTemplate()">Xuất template</button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive" style="min-height: 230px">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th *ngFor="let key of arrKeys" class="text-center">{{key}}</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-content">
+                      <tr *ngFor="let data of dataImportExcelPaging; let i = index" [attr.data-index]="i">
+                        <td *ngFor="let key of arrKeys" class="text-center">{{ data[key] }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row box-pagination">
+                  <div class="col-md-6 col-sm-6 col-xs-6 minibox" style="margin: 25px 0 0 0">
+                    Tổng số {{ paginationImport.totalRow }} bản ghi trong {{ paginationImport.totalPage }} trang. Hiển
+                    thị
+                    <select (change)="changePageSizeImport($event.target.value)">
+                      <option value="5" selected>5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="ALL">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6 col-xs-6 minibox" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="paginationImport.pageSize"
+                      [totalItems]="paginationImport.totalRow" (pageChanged)="pageChangedImport($event)"
+                      (numPages)="paginationImport.totalPage = $event" [(ngModel)]="paginationImport.pageIndex"
+                      [rotate]="true" [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;"
+                      nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- modal thêm tài khoản-->
+<div class="modal fade" bsModal #createAccountModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg" style="width:90%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">Thêm tài khoản đối tác</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="createAccountModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #accountVendor="ngForm" (ngSubmit)="createAccountVendor(accountVendor)">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="userName">Tên tài khoản</label>
+              <input type="text" id="userName" class="form-control" name="userName" required="" ngModel>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="password">Mật khẩu</label>
+              <input type="password" id="password" class="form-control" name="password" required="" ngModel>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="fullName">Họ tên</label>
+              <input type="text" id="fullName" class="form-control" name="fullName" required="" ngModel>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <!-- <input type="text" id="group" class="form-control" name="group" required="" ngModel> -->
+            </div>
+          </div>
+          <div class="row" style="margin-top: 10px">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="phone">Số điện thoại</label>
+              <input type="text" id="phone" class="form-control" name="phone" required="" ngModel>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="email">Email</label>
+              <input type="email" id="email" class="form-control" name="email" required="" ngModel>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>Loại tài khoản</label>
+              <select name="paymentType" class="form-control" ngModel>
+                <option value="" selected disabled hidden>Chọn kiểu tài khoản</option>
+                <option value="1">Trả trước</option>
+                <option value="2">Trả sau</option>
+              </select>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 10px">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="checkbox">
+                <label><input type="checkbox" value="" id="isAdmin" class="checkbox" name="isAdmin" required="" ngModel>
+                  <span>Là admin</span> </label>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="bankName">Tên ngân hàng</label>
+              <input type="text" id="bankName" class="form-control" name="bankName" required="" ngModel>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="hanMucThangCSKH">Hạn mức tin/tháng CSKH</label>
+              <input type="number" min=0 id="hanMucThangCSKH" class="form-control" name="hanMucThangCSKH" required=""
+                ngModel>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="hanMucThangQC">Hạn mức tin/tháng QC</label>
+              <input type="number" min=0 id="hanMucThangQC" class="form-control" name="hanMucThangQC" required=""
+                ngModel>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 10px">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="checkbox">
+                <label><input type="checkbox" value="" id="isActive" class="checkbox" name="isActive" required=""
+                    ngModel> <span>Kích hoạt tài khoản</span> </label>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="bankAccount">Số tài khoản</label>
+              <input type="text" id="bankAccount" class="form-control" name="bankAccount" required="" ngModel>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="hanMucNgayCSKH">Hạn mức tin/ngày CSKH</label>
+              <input type="number" min=0 id="hanMucNgayCSKH" class="form-control" name="hanMucNgayCSKH" required=""
+                ngModel>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="hanMucNgayQC">Hạn mức tin/ngày QC</label>
+              <input type="number" min=0 id="hanMucNgayQC" class="form-control" name="hanMucNgayQC" required="" ngModel>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 10px">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="checkbox">
+                <label><input type="checkbox" value="" id="enableSmsCSKH" class="checkbox" name="enableSmsCSKH"
+                    required="" ngModel> <span>Gửi tin CSKH</span> </label>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="bankAccountName">Tên tài khoản</label>
+              <input type="text" id="bankAccountName" class="form-control" name="bankAccountName" required="" ngModel>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="quotaThangCSKH">Số tin CSKH cấp trong tháng</label>
+              <input type="number" min=0 id="quotaThangCSKH" class="form-control" name="quotaThangCSKH" required=""
+                ngModel>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="quotaThangQC">Số tin QC cấp trong tháng</label>
+              <input type="number" min=0 id="quotaThangQC" class="form-control" name="quotaThangQC" required="" ngModel>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 10px">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="checkbox">
+                <label><input type="checkbox" value="" id="enableSmsQC" class="checkbox" name="enableSmsQC" required=""
+                    ngModel> <span>Gửi tin QC</span> </label>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="checkbox">
+                <label><input type="checkbox" value="" id="enableOTT" class="checkbox" name="enableOTT" required=""
+                    ngModel> <span>Gửi tin OTT</span> </label>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="quotaNgayCSKH">Số tin CSKH cấp trong ngày</label>
+              <input type="number" min=0 id="quotaNgayCSKH" class="form-control" name="quotaNgayCSKH" required=""
+                ngModel>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="quotaNgayQC">Số tin QC cấp trong ngày</label>
+              <input type="number" min=0 id="quotaNgayQC" class="form-control" name="quotaNgayQC" required="" ngModel>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 10px">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="checkbox">
+                <label><input type="checkbox" value="" id="enableDauSoNgan" class="checkbox" name="enableDauSoNgan"
+                    required="" ngModel> <span>Gửi tin đầu số ngắn</span> </label>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="checkbox">
+                <label><input type="checkbox" value="" id="enableOTP" class="checkbox" name="enableOTP" required=""
+                    ngModel> <span>Gửi tin OTP</span> </label>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="quotaConCSKH">Số tin CSKH còn lại</label>
+              <input type="number" min=0 id="quotaConCSKH" class="form-control" name="quotaConCSKH" required="" ngModel>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="quotaConQC">Số tin QC còn lại</label>
+              <input type="number" min=0 id="quotaConQC" class="form-control" name="quotaConQC" required="" ngModel>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 10px">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="checkbox">
+                <label><input type="checkbox" value="" id="dlvr" class="checkbox" name="dlvr" required="" ngModel>
+                  <span>Nhận báo cáo SMS</span> </label>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="dlvrURL">URL nhận kết quả</label>
+              <input type="text" id="dlvrURL" class="form-control" name="dlvrURL" required="" ngModel>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label for="emailReport">URL báo cáo hàng tháng</label>
+              <input type="text" id="emailReport" class="form-control" name="emailReport" required="" ngModel>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="createAccountModal.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal sửa tài khoản-->
+<div class="modal fade" bsModal #editAccountModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">Sửa tài khoản đối tác</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="editAccountModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="formEditAccountVendor" (ngSubmit)="editAccountVendor()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>ID tài khoản</label>
+              <input type="text" class="form-control" formControlName="accountId" readonly>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>Tên tài khoản</label>
+              <input type="text" class="form-control" formControlName="userName" required="">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>Họ tên</label>
+              <input type="text" class="form-control" formControlName="fullName" required="">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="editAccountModal.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa tài khoản-->
+<div class="modal fade" bsModal #confirmDeleteModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{ 'global.confirm' | translate }}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>Bạn có chắc chắn muốn xóa tài khoản "<span class="text-success">{{userNameAcount}}</span>" không?</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmDeleteModal.hide()">{{ 'global.cancel' | translate }}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="deleteAccountVendor(accountVendorId)">{{ 'global.confirm' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa nhiều tài khoản-->
+<div class="modal fade" bsModal #confirmDeleteMultiModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{ 'global.confirm' | translate }}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteMultiModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>Bạn có chắc chắn muốn xóa nhóm tài khoản "<span class="text-success">{{userNameAcount}}</span>" không?
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmDeleteMultiModal.hide()">{{ 'global.cancel' | translate }}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="deleteMultiAccount()">{{ 'global.confirm' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,178 @@
+<article>
+  <section>
+    <div class="page-title clearfix">
+      <div class="title_left">
+        <h3>{{'general.title' | translate}}</h3>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>{{ 'global.search' | translate }}</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask">
+              <div class="col-md-5ths col-sm-6 col-xs-12 form-group">
+                <angular2-multiselect [data]="dataSender" [(ngModel)]="selectedItemComboboxSender"
+                  [settings]="settingsFilterSender" (onSelect)="onItemSelectSender()"
+                  (onDeSelect)="OnItemDeSelectSender()" name="senderID">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-5ths col-sm-6 col-xs-12 form-group" *ngIf="isPartner">
+                <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedItemComboboxPartner"
+                  [settings]="settingsFilterPartner" (onSelect)="onItemSelectPartner()"
+                  (onDeSelect)="OnItemDeSelectPartner()" name="partnerCode">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-5ths col-sm-6 col-xs-12 form-group">
+                <input type="text" class="form-control" name="fromDate" bsDatepicker
+                  [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" (ngModelChange)="onChangeFromDate($event)"
+                  placeholder="{{ 'partner_product.from_date' | translate }}" [(ngModel)]="timeFrom">
+              </div>
+              <div class="col-md-5ths col-sm-6 col-xs-12 form-group">
+                <input type="text" class="form-control" name="toDate" bsDatepicker
+                  [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" placeholder="{{ 'partner_product.to_date' | translate }}"
+                  [(ngModel)]="timeTo" (ngModelChange)="onChangeToDate($event)">
+              </div>
+              <div class="col-md-5ths col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataType" [(ngModel)]="selectedItemComboboxType"
+                  [settings]="settingsFilterType" name="type" (onSelect)="onItemSelectSmsType()"
+                  (onDeSelect)="OnItemDeSelectSmsType()">
+                </angular2-multiselect>
+              </div>
+              <div>
+                <div class="col-md-9 col-sm-6 col-xs-12 form-group">
+                  <div class="checkbox" style="display: inline-block">
+                    <label> <input type="checkbox" class="checkbox" name="viettel" [(ngModel)]="viettel">
+                      <span>Viettel</span> </label>
+                  </div>
+                  <div class="checkbox" style="display: inline-block; margin-left: 20px;">
+                    <label><input type="checkbox" class="checkbox" name="mobiphone" [(ngModel)]="mobiphone">
+                      <span>Mobiphone</span> </label>
+                  </div>
+                  <div class="checkbox" style="display: inline-block; margin-left: 20px;">
+                    <label><input type="checkbox" class="checkbox" name="vinaphone" [(ngModel)]="vinaphone">
+                      <span>Vinaphone</span> </label>
+                  </div>
+                  <div class="checkbox" style="display: inline-block; margin-left: 20px;">
+                    <label><input type="checkbox" class="checkbox" name="vietnameMobile" [(ngModel)]="vietnameMobile">
+                      <span>VietnamMobile</span> </label>
+                  </div>
+                  <div class="checkbox" style="display: inline-block; margin-left: 20px;">
+                    <label><input type="checkbox" class="checkbox" name="gtel" [(ngModel)]="gtel">
+                      <span>Gtel</span> </label>
+                  </div>
+                  <div class="checkbox" style="display: inline-block; margin-left: 20px;">
+                    <label><input type="checkbox" class="checkbox" name="sfone" [(ngModel)]="sfone">
+                      <span>Sfone</span> </label>
+                  </div>
+                </div>
+                <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                  <button type="submit" style="float: right; margin-right: 0;" class="btn btn-primary btn-sm"
+                    (click)="getData()">
+                    {{ 'global.search' | translate }}</button>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <div class="content-end">
+              <button type="submit" class="btn btn-success btn-sm"
+                (click)="exportGeneral()">{{ 'global.export_excel' | translate }}</button>
+            </div>
+          </div>
+          <div class="x_content">
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="vertical-align: middle;">
+                          {{'general.type' | translate}}</th>
+                        <th class="text-center" style="vertical-align: middle;">
+                          {{'general.sender' | translate}}</th>
+                        <th class="text-center" style="vertical-align: middle;">
+                          {{'general.telco' | translate}}</th>
+                        <th class="text-center" style="vertical-align: middle;">
+                          {{'general.port' | translate}}</th>
+                        <th class="text-center" style="vertical-align: middle;">
+                          {{'general.success' | translate}}</th>
+                        <th class="text-center" style="vertical-align: middle">
+                          {{'general.fail' | translate}}</th>
+                        <th class="text-center" style="vertical-align: middle;">
+                          {{'general.total_sms' | translate}}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container *ngFor="let item of dataGeneral">
+                        <tr>
+                          <td [attr.rowspan]="item.LIST_GENERAL.length" style="vertical-align: inherit">
+                            {{item.SMS_TYPE}}</td>
+                          <td [attr.rowspan]="item.LIST_GENERAL.length" style="vertical-align: inherit">
+                            {{item.SENDER_NAME}}</td>
+                          <td>{{item.LIST_GENERAL[0].TELCO}}</td>
+                          <td>{{item.LIST_GENERAL[0].PARTNER_NAME}}</td>
+                          <td class="text-center">{{item.LIST_GENERAL[0].TOTAL_SMS_SUCCESS}}</td>
+                          <td class="text-center">{{item.LIST_GENERAL[0].TOTAL_SMS_FAIL}}</td>
+                          <td class="text-center">{{item.LIST_GENERAL[0].TOTAL_SMS}}</td>
+                        </tr>
+                        <ng-container *ngFor="let number of item.LIST_GENERAL; let i= index;">
+                          <tr *ngIf="i!=0">
+                            <td>{{number.TELCO}}</td>
+                            <td>{{number.PARTNER_NAME}}</td>
+                            <td class="text-center">{{number.TOTAL_SMS_SUCCESS}}</td>
+                            <td class="text-center">{{number.TOTAL_SMS_FAIL}}</td>
+                            <td class="text-center">{{number.TOTAL_SMS}}</td>
+                          </tr>
+                        </ng-container>
+                      </ng-container>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- <div class="row">
+                                    <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                                        Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }}
+                                        trang. Hiển thị
+                                        <select (change)="changePageSize($event.target.value)"
+                                            [value]="pagination.pageSize">
+                                            <option value="5" selected="">5</option>
+                                            <option value="10">10</option>
+                                            <option value="20">20</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                            <option value="99999999">Tất cả</option>
+                                        </select>
+                                        bản ghi.
+                                    </div>
+                                    <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                                        <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                                            [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                                            (numPages)="pagination.totalPage = $event"
+                                            [(ngModel)]="pagination.pageIndex" [rotate]="true" [maxSize]="5"
+                                            class="pagination-sm content-end" previousText="&lsaquo;"
+                                            nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+                                        </pagination>
+                                    </div>
+                                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>

@@ -1,0 +1,105 @@
+<article>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="form-group">
+                <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                  <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedPartner"
+                    [settings]="settingsFilterPartner" name="inPartner" (onSelect)="OnItemSelectPartner()"
+                    (onDeSelect)="OnItemDeSelectPartner()">
+                  </angular2-multiselect>
+                </div>
+                <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                  <angular2-multiselect [data]="dataSender" [(ngModel)]="selectedSenderName"
+                    [settings]="settingsFilterSenderName" name="inSenderName" (onSelect)="OnItemSelectSender()"
+                    (onDeSelect)="OnItemDeSelectSendner()">
+                  </angular2-multiselect>
+                </div>
+                <div class="col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                  <button class="btn btn-primary btn-sm"
+                    [routerLink]="['../../manager/mapping']" style="float: right;">{{'partner.thread_sending' | translate}}</button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center">{{ 'partner_sender.sender_name' | translate }}</th>
+                        <th class="text-center">Service</th>
+                        <th class="text-center">{{ 'partner_sender.telco' | translate }}</th>
+                        <th class="text-center">{{ 'partner_sender.partner_name' | translate }}</th>
+                        <th class="text-center">{{ 'partner_sender.fee_in_month' | translate }}</th>
+                        <th class="text-center">{{ 'partner_sender.order' | translate }}</th>
+                        <th class="text-center">{{ 'partner_sender.order_tmp' | translate }}</th>
+                        <th class="text-center">{{ 'partner_sender.time_reset' | translate }}</th>
+                        <th class="text-center">{{ 'partner_sender.create_date' | translate }}</th>
+                        <th class="text-center">{{ 'partner_sender.create_user' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container *ngFor="let item of dataPartnerSender">
+                        <tr>
+                          <td [attr.rowspan]="item.LIST_PARTNER_SENDER.length" style="vertical-align: inherit">
+                            {{item.SENDER_NAME}}</td>
+                            <td [attr.rowspan]="item.LIST_PARTNER_SENDER.length" style="vertical-align: inherit">{{item.SMS_TYPE}}</td>
+                          <td>{{item.LIST_PARTNER_SENDER[0].TEL_NAME}}</td>
+                          <td>{{item.LIST_PARTNER_SENDER[0].PARTNER_NAME}}</td>
+                          <td>{{item.LIST_PARTNER_SENDER[0].FEE_IN_MONTH}}</td>
+                          <td>{{item.LIST_PARTNER_SENDER[0].ORDER_REAL}}</td>
+                          <td>{{item.LIST_PARTNER_SENDER[0].ORDER_TMP}}</td>
+                          <td>{{item.LIST_PARTNER_SENDER[0].TIME_RESET}}</td>
+                          <td class="text-center">{{convertStringDate(item.LIST_PARTNER_SENDER[0].CREATE_DATE)}}</td>
+                          <td>{{item.LIST_PARTNER_SENDER[0].CREATE_USER}}</td>
+                        </tr>
+                        <ng-container *ngFor="let number of item.LIST_PARTNER_SENDER; let i= index;">
+                          <tr *ngIf="i!=0">
+                            <td>{{number.TEL_NAME}}</td>
+                            <td>{{number.PARTNER_NAME}}</td>
+                            <td>{{number.FEE_IN_MONTH}}</td>
+                            <td>{{number.ORDER_REAL}}</td>
+                            <td>{{number.ORDER_TMP}}</td>
+                            <td>{{number.TIME_RESET}}</td>
+                            <td class="text-center">{{convertStringDate(number.CREATE_DATE)}}</td>
+                            <td>{{number.CREATE_USER}}</td>
+                          </tr>
+                        </ng-container>
+                      </ng-container>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999999">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6 col-xs-6 minibox" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>

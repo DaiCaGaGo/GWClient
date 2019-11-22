@@ -1,0 +1,138 @@
+<article>
+
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>Danh sách đầu số MO</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link" onclick="closeBox(this)"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="form-group">
+                <div class="form-group has-feedback content-end">
+                  <button type="submit" class="btn btn-success btn-sm"
+                    (click)="exportExcelPrgShortNumber()">{{ 'global.export_excel' | translate }}</button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width: 55px">STT</th>
+                        <th class="text-center">Nhà mạng</th>
+                        <th class="text-center">SĐT</th>
+                        <th class="text-center">Đầu số</th>
+                        <th class="text-center" style="width: 95px">Trạng thái</th>
+                        <th class="text-center" style="width: 120px">Thời gian</th>
+                        <th class="text-center">Message</th>
+                        <th class="text-center" style="width: 95px">Detail</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-content">
+                      <tr *ngFor="let prgShort of dataPrgShortNumberMO; let i = index" [attr.data-index]="i">
+                        <td class="text-center" scope="row">{{i+1}}</td>
+                        <td class="text-center">{{prgShort.MOBILE_OPERATOR}}</td>
+                        <td class="text-center">{{prgShort.PHONE}}</td>
+                        <td class="text-center">{{prgShort.SHORT_NUMBER}}</td>
+                        <td class="text-center">{{prgShort.PROCESSS_TATUS}}</td>
+                        <td class="text-center">{{prgShort.REQUEST_TIME}}</td>
+                        <td class="text-center">{{prgShort.MESSAGE}}</td>
+                        <td class="text-center">
+                          <button type="submit" class="btn btn-primary btn-sm"
+                            (click)="showConfirmPRGMT(prgShort.MO_ID)">Xem</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999999">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+
+<div class="modal fade" bsModal #createNewModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">Chi tiết MT</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="createNewModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #PRG_MO="ngForm" (ngSubmit)="exportPRG_MO(PRG_MO.value)">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-sm-12 col-xs-12 form-group has-feedback">
+              <div class="table-responsive">
+                <table class="table table-bordered clear-bottom">
+                  <thead>
+                    <tr>
+                      <th class="text-center" style="width: 55px">STT</th>
+                      <th class="text-center">Nhà mạng</th>
+                      <th class="text-center">Đầu số</th>
+                      <th class="text-center">MESSAGE</th>
+                      <th class="text-center" style="width: 95px">Trạng thái</th>
+                      <th class="text-center" style="width: 120px">Thời gian</th>
+                      <th class="text-center" style="width: 95px">Mã code</th>
+                    </tr>
+                  </thead>
+                  <tbody class="table-content">
+                    <tr *ngFor="let prgMT of dataPrgShortNumberMT; let i = index" [attr.data-index]="i">
+                      <td class="text-center" scope="row">{{i+1}}</td>
+                      <td class="text-center">{{prgMT.MOBILE_OPERATOR}}</td>
+                      <td class="text-center">{{prgMT.SHORT_NUMBER}}</td>
+                      <td class="text-center">{{prgMT.MESSAGE}}</td>
+                      <td class="text-center">{{prgMT.PROCESSS_TATUS}}</td>
+                      <td class="text-center">{{prgMT.REQUEST_TIME}}</td>
+                      <td class="text-center">{{prgMT.PROCESS_CODE}}</td>
+
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

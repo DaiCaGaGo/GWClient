@@ -1,0 +1,558 @@
+<article>
+  <section>
+    <div class="page-title clearfix">
+      <div class="title_left">
+        <h3>{{'product.list' | translate}}</h3>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask" #formSearch="ngForm"
+              (ngSubmit)="searchProduct(formSearch.value)">
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataProductType" [(ngModel)]="selectedProductTypeID"
+                  [settings]="settingsFilterProductType" (onSelect)="onItemSelectProductType()"
+                  (onDeSelect)="OnItemDeSelectProductType()" name="productType">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 form-group">
+                <input type="text" class="form-control" placeholder="{{'product.name_des' | translate}}"
+                  name="fillterName" ngModel>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <button type="submit" style="float: right; margin-right: 0;" class="btn btn-primary btn-sm">
+                  {{ 'global.search' | translate }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="form-group">
+                <div class="form-group has-feedback content-end">
+                  <button type="button" class="btn btn-primary btn-sm" *ngIf="role.IS_ADD"
+                    (click)="createProductModal.show()">{{ 'global.add_new' | translate }}</button>
+                  <button type="submit" class="btn btn-success btn-sm"
+                    (click)="exportExcel()">{{ 'global.export_excel' | translate }}</button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width: 60px">{{'global.order' | translate}}</th>
+                        <th class="text-center">{{'product.name_code' | translate}}</th>
+                        <th class="text-center">{{'global.name' | translate}}</th>
+                        <th class="text-center" style="width: 80px">{{'product.type' | translate}}</th>
+                        <th class="text-center">{{'product.description' | translate}}</th>
+                        <th class="text-center" style="width: 80px">{{'global.operate' | translate}}</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-content">
+                      <tr *ngFor="let product of dataProduct; let i = index" [attr.data-index]="i">
+                        <td class="text-center">{{i + 1}}</td>
+                        <td>{{product.PRODUCT_CODE}}</td>
+                        <td>{{product.PRODUCT_NAME}}</td>
+                        <td>
+                          <div [ngStyle]="{'display':product.PRODUCT_TYPE == 1? 'block' : 'none'}">
+                            {{'product.buy' | translate}}</div>
+                          <div [ngStyle]="{'display':product.PRODUCT_TYPE == 2? 'block' : 'none'}">
+                            {{'product.sell' | translate}}</div>
+                        </td>
+                        <td>{{product.DESCRIPTION}}</td>
+                        <td class="text-center">
+                          <div class="tool">
+                            <button type="submit" class="btn btn-success btn-sm" *ngIf="role.IS_EDIT"
+                              (click)="showConfirmEditProduct(product.ID)">{{ 'global.edit' | translate }}</button>
+                            <button type="button" class="btn btn-danger btn-sm" *ngIf="role.IS_DELETE"
+                              (click)="showConfirmDeleteProduct(product.ID)">{{ 'global.delete' | translate }}</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999999">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- modal thêm product-->
+<div class="modal fade" bsModal #createProductModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg" style="width: 90%">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'product.add_product' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="closeFormCreateProduct()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #Product="ngForm" (ngSubmit)="createProduct(Product.value)">
+        <div class="modal-body">
+          <div class="row">
+            <div class="x_panel portlet">
+              <div class="x_title clearfix">
+                <h2>{{'product.infor' | translate}}</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+              </div>
+              <div class="x_content">
+                <div class="row">
+                  <div class="col-md-2 col-sm-6 col-xs-12">
+                    <label for="productCode">{{'product.name_code' | translate}}<span style="color:red;">
+                        (*)</span></label>
+                    <input type="text" id="productCode" class="form-control" name="productCode" required=""
+                      [(ngModel)]="reset_code">
+                  </div>
+                  <div class="col-md-4 col-sm-6 col-xs-12">
+                    <label for="productName">{{'product.name' | translate}} <span style="color:red;">(*)</span></label>
+                    <input type="text" id="productName" class="form-control" name="productName" required=""
+                      [(ngModel)]="reset_name">
+                  </div>
+                  <div class="col-md-2 col-sm-6 col-xs-12">
+                    <label>{{'product.type' | translate}}<span style="color:red;"> (*)</span></label>
+                    <angular2-multiselect [data]="dataProductType" [(ngModel)]="selectedProductTypeID"
+                      [settings]="settingsFilterProductType" name="productType">
+                    </angular2-multiselect>
+                  </div>
+                  <div class="col-md-4 col-sm-6 col-xs-12">
+                    <label for="description">{{'product.description' | translate}}</label>
+                    <input type="text" id="description" class="form-control" name="description" required=""
+                      [(ngModel)]="reset_description">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="x_panel portlet">
+              <div class="x_title clearfix">
+                <h2>{{'product.add_detail' | translate}}</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+              </div>
+              <div class="x_content">
+                <div class="row">
+                  <div class="col-md-2 col-sm-6 col-xs-12">
+                    <label>{{'product_detail.sender_group' | translate}} <span style="color:red;">(*)</span></label>
+                    <angular2-multiselect [data]="dataGroupSender" [(ngModel)]="selectedGroupSenderID"
+                      [settings]="settingsFilterGroupSender" name="senderGroupID">
+                    </angular2-multiselect>
+                  </div>
+                  <div class="col-md-2 col-sm-6 col-xs-12">
+                    <label>{{'partner_product.from_date' | translate}}</label>
+                    <input type="text" class="form-control" name="fromDate" bsDatepicker
+                      [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}"
+                      placeholder="{{ 'partner_product.from_date' | translate }}" [(ngModel)]="from_date_now">
+                  </div>
+                  <div class="col-md-2 col-sm-6 col-xs-12">
+                    <label>{{'partner_product.to_date' | translate}}</label>
+                    <input type="text" class="form-control" name="toDate" bsDatepicker
+                      [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}"
+                      placeholder="{{ 'partner_product.to_date' | translate }}" [(ngModel)]="to_date_now">
+                  </div>
+                  <div class="col-md-2 col-sm-6 col-xs-12">
+                    <label>{{'product_detail.price_type' | translate}}</label>
+                    <select name="priceType" (change)="onChangePriceType($event.target.value)" class="form-control"
+                      [(ngModel)]="price_type">
+                      <option value="1">{{'product_detail.straight_price' | translate}}</option>
+                      <option value="2">{{'product_detail.ladder_price' | translate}}</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2 col-sm-6 col-xs-12"
+                    [ngStyle]="{'visibility':isShowGiaThang ? 'visible' : 'hidden'}">
+                    <label>{{'product_detail.amount' | translate}}</label>
+                    <input type="number" class="form-control" name="giaThang" min="0" [(ngModel)]="price_thang">
+                  </div>
+                  <div class="col-md-2 col-sm-6 col-xs-12">
+                    <button type="button" class="btn btn-primary btn-sm" style="margin-top: 25px"
+                      (click)="addNewProductDetail(Product.value)">{{ 'global.add_new' | translate }}</button>
+                  </div>
+                </div>
+                <div class="row" style="margin-top: 10px; margin-left: 0px; width: 98%;">
+                  <div class="table-responsive">
+                    <table class="table table-bordered clear-bottom">
+                      <thead>
+                        <tr>
+                          <th class="text-center" style="width: 60px">{{'global.order' | translate}}</th>
+                          <th class="text-center">{{'product_detail.sender_group' | translate}}</th>
+                          <th class="text-center">{{'product_detail.time' | translate}}</th>
+                          <th class="text-center" style="width: 150px">{{'product.price_type' | translate}}</th>
+                          <th class="text-center" style="width: 80px">{{'product.price' | translate}}</th>
+                          <th class="text-center" style="width: 80px">{{'global.operate' | translate}}</th>
+                        </tr>
+                      </thead>
+                      <tbody class="table-content">
+                        <tr *ngFor="let item of arrProductDetail; let i = index" [attr.data-index]="i">
+                          <td class="text-center">{{i+1}}</td>
+                          <td>{{item.SENDER_GROUP_NAME}}</td>
+                          <td>{{item.FROM_DATE_STR + " - " + item.FROM_DATE_STR}}</td>
+                          <td>
+                            <div [ngStyle]="{'display':item.PRICE_TYPE == 1? 'block' : 'none'}">
+                              {{'product_detail.straight_price' | translate}}</div>
+                            <div [ngStyle]="{'display':item.PRICE_TYPE == 2? 'block' : 'none'}">
+                              {{'product_detail.ladder_price' | translate}}</div>
+                          </td>
+                          <td class="text-center">
+                            <div [ngStyle]="{'display':item.PRICE_TYPE == 1? 'block' : 'none'}">{{item.PRICE}}</div>
+                            <!-- <div [ngStyle]="{'display':item.PRICE_TYPE == 2? 'block' : 'none'}">
+                              <button type="button" class="btn btn-primary btn-sm"
+                                (click)="viewPriceModal.show()">Detail</button>
+                            </div> -->
+                          </td>
+                          <td style="text-align: center">
+                            <button type="button" class="btn btn-danger btn-sm"
+                              (click)="deleteCreateProductDetail(i)">{{ 'global.delete' | translate }}</button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="closeFormCreateProduct()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal sửa product -->
+<div class="modal fade" bsModal #editProductModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg" style="width: 98%">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'product.edit_product' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="closefromEditProduct()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="formEditProduct" (ngSubmit)="editProduct()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="x_panel portlet">
+              <div class="x_title clearfix">
+                <h2>{{'product.infor' | translate}}</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+              </div>
+              <div class="x_content">
+                <div class="row">
+                  <div class="col-md-2 col-sm-6 col-xs-12">
+                    <label>{{'product.name_code' | translate}}<span style="color:red;"> (*)</span></label>
+                    <input type="text" class="form-control" formControlName="productCode">
+                  </div>
+                  <div class="col-md-4 col-sm-6 col-xs-12">
+                    <label>{{'product.name' | translate}} <span style="color:red;">(*)</span></label>
+                    <input type="text" class="form-control" formControlName="productName">
+                  </div>
+                  <div class="col-md-2 col-sm-6 col-xs-12">
+                    <label>{{'product.type' | translate}}<span style="color:red;"> (*)</span></label>
+                    <angular2-multiselect [data]="dataProductType" [settings]="settingsFilterProductType" formControlName="productType">
+                    </angular2-multiselect>
+                  </div>
+                  <div class="col-md-4 col-sm-6 col-xs-12">
+                    <label for="description">{{'product.description' | translate}}</label>
+                    <input type="text" class="form-control" formControlName="description">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="x_panel portlet">
+              <div class="x_title clearfix">
+                <h2>{{'product.add_detail' | translate}}</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+              </div>
+              <div class="x_content">
+                <div class="row">
+                  <div class="col-md-2 col-sm-6 col-xs-12">
+                    <label>{{'product_detail.sender_group' | translate}} <span style="color:red;">(*)</span></label>
+                    <angular2-multiselect [data]="dataGroupSender" [settings]="settingsFilterGroupSender"
+                      formControlName="senderGroupID">
+                    </angular2-multiselect>
+                  </div>
+                  <div class="col-md-2 col-sm-6 col-xs-12">
+                    <label>{{'partner_product.from_date' | translate}}</label>
+                    <input type="text" class="form-control" formControlName="fromDate" bsDatepicker
+                      [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}"
+                      placeholder="{{ 'partner_product.from_date' | translate }}">
+                  </div>
+                  <div class="col-md-2 col-sm-6 col-xs-12">
+                    <label>{{'partner_product.to_date' | translate}}</label>
+                    <input type="text" class="form-control" formControlName="toDate" bsDatepicker
+                      [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}"
+                      placeholder="{{ 'partner_product.to_date' | translate }}">
+                  </div>
+                  <div class="col-md-2 col-sm-6 col-xs-12">
+                    <label>{{'product_detail.price_type' | translate}}</label>
+                    <select formControlName="priceType" (change)="onChangePriceType($event.target.value)"
+                      class="form-control">
+                      <option value="1">{{'product_detail.straight_price' | translate}}</option>
+                      <option value="2">{{'product_detail.ladder_price' | translate}}</option>
+                    </select>
+                  </div>
+                  <div class="col-md-2 col-sm-6 col-xs-12"
+                    [ngStyle]="{'visibility':isShowGiaThang ? 'visible' : 'hidden'}">
+                    <label>{{'product_detail.amount' | translate}}</label>
+                    <input type="number" class="form-control" min="0" formControlName="giaThang">
+                  </div>
+                  <div class="col-md-2 col-sm-6 col-xs-12">
+                    <button type="button" class="btn btn-primary btn-sm" style="margin-top: 25px"
+                      (click)="addNewProductDetailEdit(formEditProduct.value)">{{ 'global.add_new' | translate }}</button>
+                  </div>
+                </div>
+                <div class="row" style="margin-top: 10px; margin-left: 0px; width: 98%;">
+                  <div class="table-responsive">
+                    <table class="table table-bordered clear-bottom">
+                      <thead>
+                        <tr>
+                          <th class="text-center" style="width: 60px">{{'global.order' | translate}}</th>
+                          <th class="text-center">{{'product_detail.sender_group' | translate}}</th>
+                          <th class="text-center">{{'product_detail.time' | translate}}</th>
+                          <th class="text-center" style="width: 150px">{{'product.price_type' | translate}}</th>
+                          <th class="text-center" style="width: 80px">{{'product.price' | translate}}</th>
+                          <th class="text-center" style="width: 190px">{{'global.operate' | translate}}</th>
+                        </tr>
+                      </thead>
+                      <tbody class="table-content">
+                        <tr *ngFor="let item of arrProductDetail; let i = index" [attr.data-index]="i">
+                          <td class="text-center">{{i+1}}</td>
+                          <td>{{item.SENDER_GROUP_NAME}}</td>
+                          <td>{{item.FROM_DATE_STR + " - " + item.FROM_DATE_STR}}</td>
+                          <td>
+                            <div [ngStyle]="{'display':item.PRICE_TYPE == 1? 'block' : 'none'}">
+                              {{'product_detail.straight_price' | translate}}</div>
+                            <div [ngStyle]="{'display':item.PRICE_TYPE == 2? 'block' : 'none'}">
+                              {{'product_detail.ladder_price' | translate}}</div>
+                          </td>
+                          <td class="text-center">
+                            <div [ngStyle]="{'display':item.PRICE_TYPE == 1? 'block' : 'none'}">{{item.PRICE}}</div>
+                            <div [ngStyle]="{'display':(item.PRICE_TYPE == 2 && item.ID != null)? 'block' : 'none'}">
+                              <button type="button" class="btn btn-primary btn-sm"
+                                (click)="viewDetailPriceProduct(item.ID)">Detail</button>
+                            </div>
+                          </td>
+                          <td style="text-align: center">
+                            <button type="button" class="btn btn-danger btn-sm"
+                              (click)="deleteProductDetail(i, item.ID)">{{ 'global.delete' | translate }}</button>
+                            <button type="button" class="btn btn-danger btn-sm"
+                              (click)="confirmXoaPrice(item.ID)">{{'product.delete_price' | translate}}</button>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="closefromEditProduct()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa product -->
+<div class="modal fade" bsModal #confirmDeleteModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>{{'global.ask_delete' | translate}}</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmDeleteModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="deleteProduct(ID_PRODUCT)">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa nhiều product-->
+<div class="modal fade" bsModal #confirmDeleteMultiModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteMultiModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>Bạn có chắc chắn muốn xóa?</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmDeleteMultiModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="deleteMultiProduct()">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa product detail price -->
+<div class="modal fade" bsModal #confirmDeletePriceModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeletePriceModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>Bạn có chắc chắn muốn xóa?</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmDeletePriceModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="deleteProductDetailPrice(deleteProductPriceID)">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal view chi tiet gia-->
+<div class="modal fade" bsModal #viewPriceModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">Product price</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="closeFormEditPrice()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #formEditProductDetailPrice="ngForm">
+        <div class="modal-body">
+          <div class="row" style="margin-left: 0px;">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'product_detail.vol_from' | translate}}</label>
+              <input type="number" class="form-control" name="qualityFrom" min="0" [(ngModel)]="quatity_from">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'product_detail.vol_to' | translate}}</label>
+              <input type="number" class="form-control" name="qualityTo" min="0" [(ngModel)]="quatity_to">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'product_detail.amount' | translate}}</label>
+              <input type="number" class="form-control" name="giaBacThang" min="0" [(ngModel)]="price_bt">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <button type="button" class="btn btn-primary btn-sm" style="margin-top: 25px"
+                (click)="addNewPrice(formEditProductDetailPrice.value)">{{ 'global.add_new' | translate }}</button>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 10px; margin-left: 10px; width: 98%;">
+            <div class="table-responsive">
+              <table class="table table-bordered clear-bottom">
+                <thead>
+                  <tr>
+                    <th class="text-center" style="width: 60px">{{'global.order' | translate}}</th>
+                    <th class="text-center">{{'product_detail.vol' | translate}}</th>
+                    <th class="text-center">{{'product_detail.amount' | translate}}</th>
+                    <th class="text-center" style="width: 80px">{{'global.delete' | translate}}</th>
+                  </tr>
+                </thead>
+                <tbody class="table-content">
+                  <tr *ngFor="let item of arrPriceProduct; let i = index" [attr.data-index]="i">
+                    <td class="text-center">{{i+1}}</td>
+                    <td>{{item.VOL_FROM + " - " + item.VOL_TO}}</td>
+                    <td>{{item.PRICE}}</td>
+                    <td style="text-align: center">
+                      <button type="button" class="btn btn-danger btn-sm"
+                        (click)="deletePriceEdit(i)">{{ 'global.delete' | translate }}</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </form>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="closeFormEditPrice()">{{'global.cancel' | translate}}</button>
+        <button type="button" class="btn btn-success btn-sm"
+          (click)="editProductDetailPrice()">{{ 'global.confirm' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>

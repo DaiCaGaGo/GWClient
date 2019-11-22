@@ -1,0 +1,323 @@
+<article>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <div class="row">
+              <div class="col-sm-3 col-xs-6 form-group has-feedback">
+                <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountFilter"
+                  [settings]="settingsFilterAccount" (onSelect)="onItemSelect()" (onDeSelect)="OnItemDeSelect()"
+                  name="accountID">
+                </angular2-multiselect>
+              </div>
+              <div class="col-sm-3 col-xs-6 form-group has-feedback">
+                <angular2-multiselect [data]="dataSender" [(ngModel)]="selectedSenderFilter"
+                  [settings]="settingsFilterSender" name="senderID" (onSelect)="changeSelectSender()"
+                  (onDeSelect)="changeDeSelectSender()">
+                </angular2-multiselect>
+              </div>
+              <div class="col-sm-6 col-xs-6 form-group has-feedback">
+                <button type="button" class="btn btn-primary btn-sm" *ngIf="role.IS_ADD" (click)="createAddModal()"
+                  style="float: right">{{ 'global.add_new' | translate }}</button>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width: 100px">{{'account-sender.account_name' | translate}}</th>
+                        <th class="text-center" style="width: 100px">{{'account-sender.sendername' | translate}}</th>
+                        <th class="text-center" style="width: 100px">{{'account-sender.service_name' | translate}}</th>
+                        <th class="text-center">{{'account-sender.sendername_vtl' | translate}}</th>
+                        <th class="text-center">{{'account-sender.sendername_gpc' | translate}}</th>
+                        <th class="text-center">{{'account-sender.sendername_vms' | translate}}</th>
+                        <th class="text-center">{{'account-sender.sendername_vnm' | translate}}</th>
+                        <th class="text-center">{{'account-sender.sendername_gtel' | translate}}</th>
+                        <th class="text-center" style="width: 110px">{{'global.operate' | translate}}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container *ngFor="let item of dataAccountSender">
+                        <tr>
+                          <td [attr.rowspan]="item.LIST_SENDER.length" style="vertical-align: inherit">
+                            {{item.USER_NAME}}</td>
+                          <td>{{item.LIST_SENDER[0].NAME}}</td>
+                          <td>{{item.LIST_SENDER[0].SERVICE_NAME}}</td>
+                          <td>{{item.LIST_SENDER[0].PARTNER_CODE_VTL}}</td>
+                          <td>{{item.LIST_SENDER[0].PARTNER_CODE_GPC}}</td>
+                          <td>{{item.LIST_SENDER[0].PARTNER_CODE_VMS}}</td>
+                          <td>{{item.LIST_SENDER[0].PARTNER_CODE_VNM}}</td>
+                          <td>{{item.LIST_SENDER[0].PARTNER_CODE_GTEL}}</td>
+                          <td class="text-center">
+                            <div class="tool">
+                              <button type="submit" class="btn btn-success btn-sm" *ngIf="role.IS_EDIT"
+                                (click)="showFormEdit(item.ACCOUNT_ID, item.LIST_SENDER[0].ID, item.LIST_SENDER[0].SERVICE_NAME)">{{ 'global.edit' | translate }}</button>
+                              <button type="button" class="btn btn-danger btn-sm" *ngIf="role.IS_DELETE"
+                                (click)="showConfirmDelete(item.ACCOUNT_ID, item.LIST_SENDER[0].ID, item.LIST_SENDER[0].SERVICE_NAME)">{{ 'global.delete' | translate }}</button>
+                            </div>
+                          </td>
+                        </tr>
+                        <ng-container *ngFor="let number of item.LIST_SENDER; let i= index;">
+                          <tr *ngIf="i!=0">
+                            <td>{{number.NAME}}</td>
+                            <td>{{number.SERVICE_NAME}}</td>
+                            <td>{{number.PARTNER_CODE_VTL}}</td>
+                            <td>{{number.PARTNER_CODE_GPC}}</td>
+                            <td>{{number.PARTNER_CODE_VMS}}</td>
+                            <td>{{number.PARTNER_CODE_VNM}}</td>
+                            <td>{{number.PARTNER_CODE_GTEL}}</td>
+                            <td class="text-center">
+                              <div class="tool">
+                                <button type="submit" class="btn btn-success btn-sm" *ngIf="role.IS_EDIT"
+                                  (click)="showFormEdit(number.ACCOUNT_ID, number.ID, number.SERVICE_NAME)">{{ 'global.edit' | translate }}</button>
+                                <button type="button" class="btn btn-danger btn-sm" *ngIf="role.IS_DELETE"
+                                  (click)="showConfirmDelete(number.ACCOUNT_ID, number.ID, number.SERVICE_NAME)">{{ 'global.delete' | translate }}</button>
+                              </div>
+                            </td>
+                          </tr>
+                        </ng-container>
+                      </ng-container>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)" [value]="pagination.pageSize">
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999999">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [maxSize]="100" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex"
+                      class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;"
+                      lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- modal thêm thương hiệu-->
+<div class="modal fade" bsModal #createModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'account-sender.add_sender' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="closeFormCreate()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #sender="ngForm" (ngSubmit)="createSender(sender.value)">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account-sender.account_name' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID"
+                [settings]="settingsFilterAccount" name="accountID" (onSelect)="changeSelectAccount()"
+                (onDeSelect)="changeSelectAccount()">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account-sender.cp_vtl' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedPartnerVTL"
+                [settings]="settingsFilterPartner" name="partner_vtl">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account-sender.cp_vnm' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedPartnerVNM"
+                [settings]="settingsFilterPartner" name="partner_vnm">
+              </angular2-multiselect>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account-sender.service_name' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataServiceType" [(ngModel)]="selectedServiceType"
+                [settings]="settingsFilterServiceType" name="serviceType" (onSelect)="changeSelectServiceType()"
+                (onDeSelect)="changeSelectServiceType()">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account-sender.cp_gpc' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedPartnerGPC"
+                [settings]="settingsFilterPartner" name="partner_gpc">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account-sender.cp_gtel' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedPartnerGtel"
+                [settings]="settingsFilterPartner" name="partner_gtel">
+              </angular2-multiselect>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account-sender.sendername' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataSender" [(ngModel)]="selectedSenderID"
+                [settings]="settingsFilterSender" name="senderID" (onSelect)="changeSelectSenderCreate()"
+                (onDeSelect)="changeSelectSenderCreate()">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account-sender.cp_vms' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedPartnerVMS"
+                [settings]="settingsFilterPartner" name="partner_vms">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12" style="display: none">
+              <label>{{'account-sender.cp_sfone' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedPartnerSfone"
+                [settings]="settingsFilterPartner" name="partner_sfone">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12" style="display: none">
+              <label>{{'account-sender.cp_ddmbile' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedPartnerDDMB"
+                [settings]="settingsFilterPartner" name="partner_ddmobile">
+              </angular2-multiselect>
+            </div>
+
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default"
+            (click)="closeFormCreate()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal sửa -->
+<div class="modal fade" bsModal #editModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'account-sender.edit_sender' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="editModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="formEdit" (ngSubmit)="editData()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account-sender.account_name' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataAccount" [settings]="settingsFilterAccountEdit"
+                formControlName="accountID" [attr.disabled]="true">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account-sender.cp_vtl' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [settings]="settingsFilterPartner"
+                formControlName="partner_vtl">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account-sender.cp_vnm' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [settings]="settingsFilterPartner"
+                formControlName="partner_vnm">
+              </angular2-multiselect>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account-sender.service_name' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataServiceType" [settings]="settingsFilterServiceTypeEdit"
+                formControlName="serviceType" (onSelect)="changeSelectSender()" (onDeSelect)="changeDeSelectSender()">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account-sender.cp_gpc' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [settings]="settingsFilterPartner"
+                formControlName="partner_gpc">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account-sender.cp_gtel' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [settings]="settingsFilterPartner"
+                formControlName="partner_gtel">
+              </angular2-multiselect>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account-sender.sendername' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataSender" [settings]="settingsFilterSenderEdit"
+                formControlName="senderID">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account-sender.cp_vms' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [settings]="settingsFilterPartner"
+                formControlName="partner_vms">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12" style="display: none">
+              <label>{{'account-sender.cp_sfone' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [settings]="settingsFilterPartner"
+                formControlName="partner_sfone">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12" style="display: none">
+              <label>{{'account-sender.cp_ddmbile' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [settings]="settingsFilterPartner"
+                formControlName="partner_ddmobile">
+              </angular2-multiselect>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="editModal.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa -->
+<div class="modal fade" bsModal #confirmDeleteModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>{{'global.ask_delete' | translate}}</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmDeleteModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="deleteAccountSender(account_id, sender_id, service_type)">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>

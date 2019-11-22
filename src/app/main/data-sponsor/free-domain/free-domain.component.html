@@ -1,0 +1,379 @@
+<article>
+    <section>
+        <div class="page-title clearfix">
+            <div class="title_left">
+                <h3>{{'free_domain.title' | translate}}</h3>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel portlet">
+                    <div class="x_content">
+                        <div class="col-md-2 col-sm-6 col-xs-12 form-group has-feedback" *ngIf="isAdmin">
+                            <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID"
+                                [settings]="settingsFilterAccount" (onSelect)="onItemSelect()"
+                                (onDeSelect)="OnItemDeSelect()" name="accountID">
+                            </angular2-multiselect>
+                        </div>
+                        <div class="col-md-2 col-sm-6 col-xs-12 form-group has-feedback">
+                            <angular2-multiselect [data]="dataPackageDomain" [(ngModel)]="selectedPackageDomain"
+                                [settings]="settingsFilterPackageDomain" (onSelect)="onItemSelect()"
+                                (onDeSelect)="OnItemDeSelect()" name="packageDomain">
+                            </angular2-multiselect>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                            <input type="text" class="form-control" placeholder="{{'free_domain.inDomain' | translate}}"
+                                name="domain" [(ngModel)]="domain">
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                            <input type="text" class="form-control" placeholder="{{'free_domain.inIp' | translate}}"
+                                name="ip" [(ngModel)]="ip">
+                        </div>
+                        <div class="col-md-2 col-sm-6 col-xs-12 form-group text-right">
+                            <button type="button" style="float: right; margin-right: 0;" (click)="getData()"
+                                class="btn btn-primary btn-sm">{{ 'global.search' | translate }}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel portlet">
+                    <div class="x_content">
+                        <form class="form-horizontal form-label-left input_mask">
+                            <div class="form-group">
+                                <div class="form-group has-feedback content-end">
+                                    <button type="button" class="btn btn-primary btn-sm" *ngIf="role.IS_ADD"
+                                        (click)="confirmShowModalCreate()">{{ 'global.add_new' | translate }}</button>
+                                    <button type="submit" class="btn btn-success btn-sm"
+                                        (click)="exportExcel()">{{ 'global.export_excel' | translate }}</button>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="row">
+                            <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered clear-bottom">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center" style="width: 60px">
+                                                    STT</th>
+                                                <th class="text-center">{{'free_domain.package_domain' | translate}}
+                                                </th>
+                                                <th class="text-center">{{'free_domain.domain_name' | translate}}
+                                                </th>
+                                                <th class="text-center">{{'free_domain.ip' | translate}}
+                                                </th>
+                                                <th class="text-center">{{'free_domain.begin_date' | translate}}</th>
+                                                <th class="text-center">{{'free_domain.end_date' | translate}}</th>
+                                                <th class="text-center">{{'free_domain.status' | translate}}</th>
+                                                <th class="text-center" style="width: 80px">
+                                                    {{'global.detail' | translate}}</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="table-content">
+                                            <tr *ngFor="let item of dataDomain; let i = index" [attr.data-index]="i">
+                                                <td class="text-center">{{i + 1}}</td>
+                                                <td>{{item.PACKAGE_NAME}}</td>
+                                                <td>{{item.DOMAIN}}</td>
+                                                <td class="text-center">{{item.IP}}</td>
+                                                <td class="text-center">{{item.BEGIN_DATE}}</td>
+                                                <td class="text-center">{{item.END_DATE}}</td>
+                                                <td class="text-center">{{item.STATUS == 1 ? "Active" : "No active"}}
+                                                </td>
+                                                <td class="text-center">
+                                                    <div class="tool">
+                                                        <button type="submit" class="btn btn-success btn-sm"
+                                                            *ngIf="role.IS_EDIT"
+                                                            (click)="confirmUpdateModal(item.ID)">{{'global.edit' | translate}}</button>
+                                                        <button type="button" class="btn btn-danger btn-sm"
+                                                            *ngIf="role.IS_DELETE"
+                                                            (click)="confirmDeleteModal(item.ID)">{{ 'global.delete' | translate }}</button>
+                                                        <button type="button" class="btn btn-success btn-sm"
+                                                            (click)="showConfirmViewDetail(item.ID)">{{'global.detail' | translate}}</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                                        Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }}
+                                        trang. Hiển thị
+                                        <select (change)="changePageSize($event.target.value)">
+                                            <option value="5" selected="">5</option>
+                                            <option value="10">10</option>
+                                            <option value="20">20</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                            <option value="99999999">Tất cả</option>
+                                        </select>
+                                        bản ghi.
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6 minibox" style="margin-bottom:10px">
+                                        <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                                            [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                                            (numPages)="pagination.totalPage = $event"
+                                            [(ngModel)]="pagination.pageIndex" [rotate]="true" [maxSize]="5"
+                                            class="pagination-sm content-end" previousText="&lsaquo;"
+                                            nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+                                        </pagination>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</article>
+
+<!-- Thêm domain -->
+<div class="modal fade" bsModal #showModalCreate="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-static-name">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-static-name" class="modal-title pull-left">{{'free_domain.create_domain' | translate}}
+                </h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="showModalCreate.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form #formAdd="ngForm" (ngSubmit)="createDomain(formAdd.value)">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group" *ngIf="isAdmin">
+                            <label>{{'free_domain.account' | translate}} <span style="color:red;">(*)</span></label>
+                            <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountIDCreate"
+                                (onSelect)="onItemSelectCr()" (onDeSelect)="OnItemDeSelect()"
+                                [settings]="settingsFilterAccount" name="accountID">
+                            </angular2-multiselect>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                            <label>{{'free_domain.package_domain' | translate}} <span
+                                    style="color:red;">(*)</span></label>
+                            <angular2-multiselect [data]="dataPackageDomain" [(ngModel)]="selectedPackageDomainCreate"
+                                [settings]="settingsFilterPackageDomain" name="packageDomainCreate">
+                            </angular2-multiselect>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                            <label>{{'free_domain.domain_name' | translate}} <span style="color:red;">(*)</span></label>
+                            <input type="text" class="form-control" placeholder="{{'free_domain.inDomain' | translate}}"
+                                name="domain" [(ngModel)]="domain">
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                            <label>{{'free_domain.ip' | translate}}</label>
+                            <input type="text" class="form-control" placeholder="{{'free_domain.inIp' | translate}}"
+                                name="ip" [(ngModel)]="ip">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                            <label>{{'free_domain.begin_date' | translate}} <span style="color:red;">(*)</span></label>
+                            <input type="text" class="form-control" name="beginDate" bsDatepicker
+                                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" [(ngModel)]="beginDate"
+                                placeholder="{{ 'free_domain.begin_date' | translate }}">
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                            <label>{{'free_domain.end_date' | translate}} <span style="color:red;">(*)</span></label>
+                            <input type="text" class="form-control" name="endDate" bsDatepicker
+                                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" [(ngModel)]="endDate"
+                                placeholder="{{ 'free_domain.end_date' | translate }}">
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                            <label>{{'free_domain.status' | translate}}</label>
+                            <select class="form-control" name="status" [(ngModel)]="status">
+                                <option value="1">Active</option>
+                                <option value="0">No Active</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-6 col-sm-12 col-xs-12 form-group">
+                            <label>{{'free_domain.phone_list' | translate}}</label>
+                            <div class="input-group">
+                                <input type="file" #uploadFile name="uploadFile" class="form-control">
+                                <div class="input-group-btn">
+                                    <button type="button" title="Loại bỏ các tệp đã chọn" (click)="clearData()"
+                                        class="btn btn-default fileinput-remove fileinput-remove-button"
+                                        style="background-color:rgba(128, 128, 128, 0.10);">
+                                        <i class="glyphicon glyphicon-trash"></i>
+                                    </button>
+                                    <button type="button" class="btn btn-primary btn-sm"
+                                        (click)="excelTemplate()">{{'sms_customize.export_template' | translate}}</button>
+                                    <img *ngIf="loading" class="pl-2" style="margin-right: 10px"
+                                        src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default"
+                            (click)="showModalCreate.hide()">{{ 'global.cancel' | translate }}</button>
+                        <button type="submit" class="btn btn-success">{{ 'global.confirm' | translate }}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Sửa domain -->
+<div class="modal fade" bsModal #showModalUpdate="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-static-name">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-static-name" class="modal-title pull-left">{{'free_domain.create_domain' | translate}}
+                </h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="showModalUpdate.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form [formGroup]="formEditDomain" (ngSubmit)="editDomain()">
+                <div class="modal-body">
+                    <div class="row">
+                        <input type="hidden" formControlName="id">
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback" *ngIf="isAdmin">
+                            <label>{{'free_domain.account' | translate}} <span style="color:red;">(*)</span></label>
+                            <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountIDEdit"
+                                (onSelect)="onItemSelect()" (onDeSelect)="OnItemDeSelect()"
+                                [settings]="settingsFilterAccount" formControlName="accountId">
+                            </angular2-multiselect>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                            <label>{{'free_domain.package_domain' | translate}} <span
+                                    style="color:red;">(*)</span></label>
+                            <angular2-multiselect [data]="dataPackageDomain" [(ngModel)]="selectedPackageDomainEdit"
+                                [settings]="settingsFilterPackageDomain" formControlName="packageDomain">
+                            </angular2-multiselect>
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                            <label>{{'free_domain.domain_name' | translate}} <span style="color:red;">(*)</span></label>
+                            <input type="text" class="form-control" placeholder="{{'free_domain.inDomain' | translate}}"
+                                formControlName="domain">
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                            <label>{{'free_domain.ip' | translate}}</label>
+                            <input type="text" class="form-control" placeholder="{{'free_domain.inIp' | translate}}"
+                                formControlName="ip">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                            <label>{{'free_domain.begin_date' | translate}} <span style="color:red;">(*)</span></label>
+                            <input type="text" class="form-control" formControlName="beginDate" bsDatepicker
+                                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}"
+                                placeholder="{{ 'free_domain.begin_date' | translate }}">
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                            <label>{{'free_domain.end_date' | translate}} <span style="color:red;">(*)</span></label>
+                            <input type="text" class="form-control" formControlName="endDate" bsDatepicker
+                                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}"
+                                placeholder="{{ 'free_domain.end_date' | translate }}">
+                        </div>
+                        <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                            <label>{{'free_domain.status' | translate}}</label>
+                            <select class="form-control" formControlName="status">
+                                <option value="1">Active</option>
+                                <option value="0">No Active</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default"
+                            (click)="showModalUpdate.hide()">{{ 'global.cancel' | translate }}</button>
+                        <button type="submit" class="btn btn-success">{{ 'global.confirm' | translate }}</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- modal xác nhận xóa domain-->
+<div class="modal fade" bsModal #showModalDelete="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-static-name">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-static-name" class="modal-title pull-left">Xác nhận</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="showModalDelete.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>Bạn có chắc chắn muốn xóa thông tin domain này không?</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" (click)="showModalDelete.hide()">Hủy</button>
+                <button type="submit" class="btn btn-success" (click)="confirmDelete(id)">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal Xem chi tiết domain-->
+<div class="modal fade" bsModal #viewDomainDetailModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+    role="dialog" aria-labelledby="dialog-static-name">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-static-name" class="modal-title pull-left">
+                    {{'free_domain.domain_detail' | translate}}
+                </h4>
+                <button type="button" class="close pull-right" aria-label="Close"
+                    (click)="viewDomainDetailModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="x_panel portlet" *ngIf="!checkShowDetail">
+                <p style="text-align: center; font-size: 20px;">{{notification}}</p>
+            </div>
+            <div class="x_panel portlet" *ngIf="checkShowDetail">
+                <div class="x_content">
+                    <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                        <input type="text" class="form-control" placeholder="{{'free_domain.inIp' | translate}}"
+                            name="packageName_detail" [(ngModel)]="packageName_detail">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body" *ngIf="checkShowDetail">
+                <div class="row">
+                    <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                        <div class="table-responsive">
+                            <table class="table table-bordered clear-bottom">
+                                <thead>
+                                    <tr>
+                                        <th class="text-center" style="width: 60px">STT</th>
+                                        <th class="text-center">{{'free_domain.phone' | translate}}</th>
+                                        <th class="text-center">{{'free_domain.telco' | translate}}</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="table-content">
+                                    <tr *ngFor="let item of dataDomainDetail; let i = index" [attr.data-index]="i">
+                                        <td class="text-center">{{i + 1}}</td>
+                                        <td>{{item.PHONE}}</td>
+                                        <td>{{item.TELCO}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default"
+                            (click)="viewDomainDetailModal.hide()">{{ 'global.back' | translate }}</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

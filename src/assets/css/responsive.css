@@ -1,0 +1,34 @@
+@media (max-width: 991px) {
+    .alertify-notifier.ajs-right {
+        right: -20px;
+    }
+}
+
+@media (max-width: 767px) {
+    .hidden-desktop {
+        display: block !important;
+    }
+    .hidden-mobile {
+        display: none !important;
+    }
+    .language-box {
+        padding-left: 25px;
+    }
+    .language-box a {
+        padding: 3px !important;
+    }
+    .language-box a:nth-child(1) {
+        padding-left: 0px !important;
+    }
+    .content-end button.btn {
+        width: auto;
+        margin-bottom: 5px;
+    }
+}
+
+@media (max-width: 640px) {
+    .box-pagination .minibox {
+        width: 100%;
+        text-align: right;
+    }
+}

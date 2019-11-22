@@ -1,0 +1,240 @@
+<article>
+  <section>
+    <div class="page-title clearfix">
+      <div class="title_left">
+        <h3>{{ 'account_fee.account_fee' | translate }}</h3>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask">
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <angular2-multiselect [data]="dataCombobox" [(ngModel)]="selectedItemCombobox"
+                  [settings]="settingsFilter" (onSelect)="onItemSelect()" (onDeSelect)="OnItemDeSelect()"
+                  name="comboboxAccountSearch">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <input type="text" class="form-control" name="fee_code" [(ngModel)]="fee_code"
+                  placeholder="{{ 'account_fee.fee_code' | translate }}">
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <input type="text" class="form-control" name="fee_name" [(ngModel)]="fee_name"
+                  placeholder="{{ 'account_fee.fee_name' | translate }}">
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback content-end">
+                <button type="submit" style="float: right; margin-right: 0;" (click)="getDataAccountFee()"
+                  class="btn btn-primary btn-sm">{{ 'global.search' | translate }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="form-group">
+                <div class="form-group has-feedback content-end">
+                  <button type="button" class="btn btn-primary btn-sm" *ngIf="role.IS_ADD"
+                    (click)="createNewModal.show()">{{ 'global.add_new' | translate }}</button>
+                  <button type="submit" class="btn btn-success btn-sm"
+                    (click)="exportExcelaccountfee()">{{ 'global.export_excel' | translate }}</button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width: 60px">{{'global.order' | translate}}</th>
+                        <th class="text-center">{{ 'customers.accountid' | translate }}</th>
+                        <th class="text-center">{{ 'account_fee.fee_code' | translate }}</th>
+                        <th class="text-center">{{ 'account_fee.fee_name' | translate }}</th>
+                        <th class="text-center">{{ 'account_fee.fee' | translate }}</th>
+                        <th class="text-center" style="width: 70px">{{ 'global.tool' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-content">
+                      <tr *ngFor="let accountfee of dataAccountFee; let i = index" [attr.data-index]="i">
+                        <td class="text-center">{{ pagination.pageSize * (pagination.pageIndex -1) + (i+1) }}</td>
+                        <td>{{accountfee.USER_NAME}}</td>
+                        <td>{{accountfee.FEE_CODE}}</td>
+                        <td>{{accountfee.FEE_NAME}}</td>
+                        <td>{{accountfee.FEE}} {{accountfee.DON_VI_TINH}}</td>
+                        <td class="text-center">
+                          <div class="tool">
+                            <button type="submit" class="btn btn-success btn-sm" *ngIf="role.IS_EDIT"
+                              (click)="showConfirmEditAccountfee(accountfee.FEE_ID)">{{ 'global.edit' | translate }}</button>
+                            <button type="button" class="btn btn-danger btn-sm" *ngIf="role.IS_DELETE"
+                              (click)="showConfirmDeleteAccountFee(accountfee.FEE_ID, accountfee.FEE_CODE)">{{ 'global.delete' | translate }}</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+<!-- modal thêm mới-->
+<div class="modal fade" bsModal #createNewModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'account_fee.add_new' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="createNewModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #accountCimasttran="ngForm" (ngSubmit)="createaccountFee(accountCimasttran.value)">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account_fee.account_id' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataCombobox" [(ngModel)]="selectedItemCombobox" [settings]="settingsFilter"
+                name="comboboxAccount">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account_fee.fee_code' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" id="FEE_CODE" class="form-control" name="FEE_CODE" required="" ngModel>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account_fee.fee_name' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" id="FEE_NAME" class="form-control" name="FEE_NAME" required="" ngModel>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account_fee.fee' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="number" min=0 id="FEE" class="form-control" name="FEE" required="" ngModel>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account_fee.donvitinh' | translate}} </label>
+              <input type="text" id="DON_VI_TINH" class="form-control" name="DON_VI_TINH" required="" ngModel>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="createNewModal.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal sửa -->
+<div class="modal fade" bsModal #editAccountModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'account_fee.update' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="editAccountModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="formEditAccountFee" (ngSubmit)="editAccountFee()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account_fee.account_id' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataCombobox" [settings]="settingsFilter"
+                formControlName="comboboxAccountedit">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account_fee.fee_code' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" id="fee_code" class="form-control" formControlName="fee_code" required="">
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account_fee.fee_name' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" id="fee_name" class="form-control" formControlName="fee_name" required="">
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px;">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account_fee.fee' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="number" min=0 id="fee" class="form-control" formControlName="fee" required="">
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'account_fee.donvitinh' | translate}} </label>
+              <input type="text" id="don_vi_tinh" class="form-control" formControlName="don_vi_tinh" required="">
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="editAccountModal.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- modal xác nhận xóa -->
+<div class="modal fade" bsModal #confirmDeleteModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>{{'global.ask_delete_data' | translate}} "<span class="text-success">{{Fee_Code}}</span>" ?</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmDeleteModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="deleteAccountFee(accountFeeId)">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>

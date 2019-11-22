@@ -1,0 +1,258 @@
+<article>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask" #formSearch="ngForm"
+              (ngSubmit)="searchData(formSearch.value)">
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID"
+                  [settings]="settingsFilterAccount" (onSelect)="onItemSelect()" (onDeSelect)="OnItemDeSelect()"
+                  name="accountID">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataSender" [(ngModel)]="selectedSenderName"
+                  [settings]="settingsFilterSender" (onSelect)="onItemSelectSender()"
+                  (onDeSelect)="onItemSelectSender()" name="senderName">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="groupName" ngModel
+                  placeholder="Tên nhóm">
+                <span class="fa fa-cog form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback" style="float: right">
+                <button type="submit" style="float: right; margin-right: 10;"
+                  class="btn btn-primary btn-sm">{{ 'global.search' | translate }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="form-group">
+                <div class="form-group has-feedback content-end">
+                  <button type="button" class="btn btn-primary btn-sm"
+                    (click)="showFormCreate()">{{ 'global.add_new' | translate }}</button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width: 60px">{{'global.order' | translate}}</th>
+                        <th class="text-center">{{'sms_birthday.group_name' | translate}}</th>
+                        <th class="text-center" style="width: 150px">{{'sms_birthday.sendername' | translate}}</th>
+                        <th class="text-center">{{'sms_birthday.content' | translate}}</th>
+                        <th class="text-center">{{'sms_birthday.time_send' | translate}}</th>
+                        <th class="text-center" style="width: 150px">
+                          {{ 'global.tool' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-content">
+                      <tr *ngFor="let group of dataGroup; let i = index" [attr.data-index]="i">
+                        <td class="text-center">{{group.STT}}</td>
+                        <td>{{group.GROUP_NAME}}</td>
+                        <td>{{group.SENDER_NAME}}</td>
+                        <td>{{group.CONTENT_SAMPLE}}</td>
+                        <td>{{group.HOUR_SEND}}</td>
+                        <td class="text-center">
+                          <div class="tool">
+                            <button type="submit" class="btn btn-success btn-sm"
+                              (click)="showConfirmEdit(group.ID)">{{ 'global.edit' | translate }}</button>
+                            <button type="button" class="btn btn-danger btn-sm"
+                              (click)="showConfirmDelete(group.ID)">{{ 'global.delete' | translate }}</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }}
+                    trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999999">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- modal thêm mới-->
+<div class="modal fade" bsModal #createNewModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'sms_birthday.create_group' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="closeFormCreate()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #createForm="ngForm" (ngSubmit)="createDetail(createForm)">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'sms_birthday.group_name' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" id="groupName" class="form-control" name="groupName" required=""
+                [(ngModel)]="groupName">
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'customers.accountid' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedDetailAccountID"
+                [settings]="settingsFilterAccount" (onSelect)="onItemSelectDetailAccount()"
+                (onDeSelect)="onItemSelectDetailAccount()" name="accountID">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'sms_birthday.sendername' | translate}}</label>
+              <angular2-multiselect [data]="dataSender" [(ngModel)]="selectedSenderName"
+                [settings]="settingsFilterSender" name="senderName">
+              </angular2-multiselect>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'sms_birthday.timer' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="time" id="input" class="form-control" value="08:00" name="timer" #timer
+                placeholder="{{'sms_birthday.timer' | translate}}">
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'sms_birthday.day_before' | translate}}</label>
+              <input type="number" id="dayBefore" class="form-control" name="dayBefore" required=""
+                [(ngModel)]="dayBefore">
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px;">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'sms_birthday.insert_content' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataChooseColumn" [(ngModel)]="selectedColumn"
+                [settings]="settingsFilterColumn" (onSelect)="onItemSelectColumn()" name="columnID">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-8 col-sm-12 col-xs-12">
+              <label>{{'sms_birthday.contentSms' | translate}} <span style="color:red;">(*)</span></label>
+              <textarea type="text" class="form-control" #contentSMS name="contentSMS" rows="3"
+                [(ngModel)]="contentSample"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="closeFormCreate()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal sửa -->
+<div class="modal fade" bsModal #editThisModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'sms_birthday.edit_group' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="editThisModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="formEdit" (ngSubmit)="editData()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'sms_birthday.group_name' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" id="groupName" class="form-control" formControlName="groupName" required="">
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'sms_birthday.day_before' | translate}}</label>
+              <input type="number" id="dayBefore" class="form-control" formControlName="dayBefore" required="">
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'sms_birthday.timer' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="time" id="input" class="form-control" value="08:00" formControlName="timer" #timerEdit
+                placeholder="{{'sms_birthday.timer' | translate}}">
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'sms_birthday.insert_content' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataChooseColumn" [settings]="settingsFilterColumn"
+                (onSelect)="onItemSelectColumnEdit()" formControlName="columnID">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-8 col-sm-6 col-xs-12">
+              <label>{{'sms_birthday.contentSms' | translate}} <span style="color:red;">(*)</span></label>
+              <textarea type="text" class="form-control" formControlName="contentSample" rows="3"
+                [(ngModel)]="contentSample" #contentSMS></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="editThisModal.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa -->
+<div class="modal fade" bsModal #confirmDeleteModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>{{'global.ask_delete' | translate}}</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmDeleteModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="delete(groupID)">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>

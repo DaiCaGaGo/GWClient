@@ -1,0 +1,43 @@
+<div class="modal fade" bsModal #modalChangePass="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">Đổi mật khẩu tài khoản</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="modalChangePass.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form (ngSubmit)="changePass(changePassForm)" #changePassForm="ngForm">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <div class="x_content">
+                <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+                  <input type="password" class="form-control has-feedback-left" name="oldPassword" autocomplete="off"
+                    ngModel placeholder="Nhập mật khẩu cũ">
+                  <span class="glyphicon glyphicon-lock form-control-feedback left" aria-hidden="true"></span>
+                </div>
+                <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+                  <input type="password" class="form-control has-feedback-left" name="newPassword" autocomplete="off"
+                    ngModel placeholder="Nhập mật khẩu mới">
+                  <span class="glyphicon glyphicon-lock form-control-feedback left" aria-hidden="true"></span>
+                </div>
+                <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+                  <input type="password" class="form-control has-feedback-left" name="rePassword" autocomplete="off"
+                    ngModel placeholder="Nhập lại mật khẩu mới">
+                  <span class="glyphicon glyphicon-lock form-control-feedback left" aria-hidden="true"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="modalChangePass.hide()">{{ 'global.cancel' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

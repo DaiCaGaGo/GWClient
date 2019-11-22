@@ -1,0 +1,309 @@
+<article>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>{{'sms_customer.title' | translate}}</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask">
+              <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="row">
+                  <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                    <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID"
+                      [settings]="settingsFilterAccount" (onSelect)="onItemSelect()" (onDeSelect)="OnItemDeSelect()"
+                      name="accountID">
+                    </angular2-multiselect>
+                  </div>
+                  <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                    <angular2-multiselect [data]="dataSmsType" [(ngModel)]="selectedSmsType"
+                      [settings]="settingsFilterSmsType" (onSelect)="onItemSelectSmsType()"
+                      (onDeSelect)="onItemSelectSmsType()" name="smsType">
+                    </angular2-multiselect>
+                  </div>
+                  <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                    <angular2-multiselect [data]="dataSender" [(ngModel)]="selectedSenderName"
+                      [settings]="settingsFilterSender" name="senderName">
+                    </angular2-multiselect>
+                  </div>
+                  <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                      <div class="checkbox" style="margin: 0;">
+                        <label><input type="checkbox" value="" class="checkbox" name="henGio"
+                            (change)="checkTimeSchedule($event.currentTarget.checked)" [(ngModel)]="isHenGio">
+                          <span>{{'sms_birthday.timer' | translate}}</span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-md-8 col-sm-6 col-xs-12 form-group"
+                      [ngStyle]="{'visibility':isShowDateTime ? 'visible' : 'hidden'}">
+                      <input type="text" class="form-control has-feedback-left modal-popup" #henGio name="timeSchedule"
+                        bsDatepicker [bsConfig]="{adaptivePosition: true, dateInputFormat: 'DD/MM/YYYY HH:mm'}"
+                        [minDate]="minDate" placeholder="{{ 'campaign.date_time' | translate }}"
+                        style="padding-left: 40px; padding-right: 0px">
+                      <span class="fa fa-clock-o form-control-feedback left" aria-hidden="true"></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-9 col-sm-12 col-xs-12 form-group">
+                    <textarea type="text" class="form-control" placeholder="{{ 'campaign.iSms_content' | translate }}"
+                      #contentSMS name="contentSMS" rows="3" [(ngModel)]="nhapNoiDung"
+                      (change)="countSMS($event.target.value)" (keyup)="countSMS($event.target.value)"
+                      (keydow)="countSMS($event.target.value)"></textarea>
+                    <label><span style="display:inline-block !important">{{numberChar}}</span>
+                      {{'campaign.text_countmes2' | translate}} (<span
+                        style="display:inline-block !important">{{numberSMS}}</span>{{'campaign.text_countmes3' | translate}})</label>
+                  </div>
+                  <div class="col-md-3 col-sm-12 col-xs-12">
+                    <textarea type="text" class="form-control"
+                      placeholder="{{'sms_customize.campaign_name' | translate}}" #campaignName name="campaign" rows="3"
+                      style="border-color: red;"></textarea>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col-md-9 col-sm-12 col-xs-12 form-group">
+                    <div class="row">
+                      <div class="col-md-3 col-sm-6 col-xs-6 form-group has-feedback">
+                        <div class="checkbox" style="padding-top:0">
+                          <label><input type="checkbox" class="checkbox" name="isVirtual"
+                              (change)="onCheckSendVirtual($event.currentTarget.checked)">
+                            <span>{{'sms_customize.send_virtual' | translate}}</span> </label>
+                        </div>
+                      </div>
+                      <div class="col-md-3 col-sm-6 col-xs-6 form-group has-feedback">
+                        <div class="checkbox" style="padding-top:0">
+                          <label><input type="checkbox" class="checkbox" name="isReportEmail"
+                              (change)="onCheckReportEmail($event.currentTarget.checked)">
+                            <span>{{'sms_customize.report_email' | translate}}</span> </label>
+                        </div>
+                      </div>
+                      <div class="col-md-6 col-sm-12 col-sm-12" style="padding-top: 8px;">
+                        <label style="color: red;" name="lbQuyTinCSKH">{{'global.quota_cskh' | translate}}:
+                          {{ viewQuyTinCSKH }}</label>&nbsp;&nbsp;&nbsp;
+                        <label style="color: red;" name="lbQuyTinQC">{{'global.quota_qc' | translate}}: {{ viewQuyTinQC }}</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-sm-12 col-xs-12 form-group">
+                    <button type="button" class="btn btn-primary btn-sm"
+                      (click)="createContent(nhapNoiDung)">{{'sms_customize.create_sms' | translate}}</button>
+                    <button type="button" (click)="showConfirmSendSmsTuyChon()" *ngIf="role.IS_ADD"
+                      class="btn btn-primary btn-sm">{{'sms_customer.send_option' | translate}}</button>
+                    <button type="button" (click)="showConfirmSendSms()" *ngIf="role.IS_ADD"
+                      class="btn btn-primary btn-sm">{{'sms_customer.send_all' | translate}}</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          
+          <form class="form-horizontal form-label-left input_mask">
+            <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback" style="padding:0">
+              <div style="display: inline-block; padding-right:25px">
+                <label>
+                  <span style="display:inline-block !important">{{ 'send_sms.total_num' | translate }}</span>
+                  (<span
+                    style="display:inline-block !important">{{countTotal}}</span>{{ 'campaign.text_num' | translate }})
+                </label>
+              </div>
+              <div style="display: inline-block; padding-right:15px">
+                <div class="checkbox" style="padding-top:0">
+                  <label><input type="checkbox" class="checkbox" name="countVTL" checked="isCheckSendVTL"
+                      (change)="onCheckSendVTL($event.currentTarget.checked)">
+                    <span style="display:inline-block !important">{{ 'send_sms.viettel' | translate }}</span>
+                    (<span
+                      style="display:inline-block !important">{{countVTL}}</span>{{ 'campaign.text_num' | translate }})
+                  </label>
+                </div>
+              </div>
+              <div style="display: inline-block; padding-right:15px">
+                <div class="checkbox" style="padding-top:0">
+                  <label><input type="checkbox" class="checkbox" name="countGPC" checked="isCheckSendGPC"
+                      (change)="onCheckSendGPC($event.currentTarget.checked)">
+                    <span style="display:inline-block !important">{{ 'send_sms.gpc' | translate }}</span>
+                    (<span
+                      style="display:inline-block !important">{{countGPC}}</span>{{ 'campaign.text_num' | translate }})
+                  </label>
+                </div>
+              </div>
+              <div style="display: inline-block; padding-right:15px">
+                <div class="checkbox" style="padding-top:0">
+                  <label><input type="checkbox" class="checkbox" name="countVMS" checked="isCheckSendVMS"
+                      (change)="onCheckSendVMS($event.currentTarget.checked)">
+                    <span style="display:inline-block !important">{{ 'send_sms.vms' | translate }}</span>
+                    (<span
+                      style="display:inline-block !important">{{countVMS}}</span>{{ 'campaign.text_num' | translate }})
+                  </label>
+                </div>
+              </div>
+              <div style="display: inline-block; padding-right:15px">
+                <div class="checkbox" style="padding-top:0">
+                  <label><input type="checkbox" class="checkbox" name="countVNM" checked="isCheckSendVNM"
+                      (change)="onCheckSendVNM($event.currentTarget.checked)">
+                    <span style="display:inline-block !important">VN mobile</span>
+                    (<span
+                      style="display:inline-block !important">{{countVNM}}</span>{{ 'campaign.text_num' | translate }})
+                  </label>
+                </div>
+              </div>
+              <div style="display: inline-block; padding-right:15px">
+                <div class="checkbox" style="padding-top:0">
+                  <label><input type="checkbox" class="checkbox" name="countGtel" checked="isCheckSendGTEL"
+                      (change)="onCheckSendGTEL($event.currentTarget.checked)">
+                    <span style="display:inline-block !important">{{ 'send_sms.gtel' | translate }}</span>
+                    (<span
+                      style="display:inline-block !important">{{countGTEL}}</span>{{ 'campaign.text_num' | translate }})
+                  </label>
+                </div>
+              </div>
+              <div style="display: none">
+                <div class="checkbox" style="padding-top:0">
+                  <label><input type="checkbox" class="checkbox" name="countSFone" checked="isCheckSendSFONE"
+                      (change)="onCheckSendSFONE($event.currentTarget.checked)">
+                    <span style="display:inline-block !important">{{ 'send_sms.sfone' | translate }}</span>
+                    (<span
+                      style="display:inline-block !important">{{countSFONE}}</span>{{ 'campaign.text_num' | translate }})
+                  </label>
+                </div>
+              </div>
+            </div>
+          </form>
+
+          <div class="x_content">
+            <table class="table table-bordered clear-bottom">
+              <thead>
+                <tr>
+                  <th class="box-checkbox-table col-min-width" style="width: 40px; vertical-align: middle;">
+                    <div class="tool tool-check">
+                      <input type="checkbox" [checked]="isCheckedSend"
+                        (change)="checkAllSend($event.currentTarget.checked)" class="checkbox" />
+                    </div>
+                  </th>
+                  <th class="text-center" style="width: 60px; vertical-align: middle;">{{'global.order' | translate}}
+                  </th>
+                  <th class="text-center" style="width: 150px; vertical-align: middle;">
+                    {{'sms_birthday.fullname' | translate}}</th>
+                  <th class="text-center" style="width: 100px; vertical-align: middle;">
+                    {{'sms_birthday.phone' | translate}}</th>
+                  <th class="text-center" style="width: 100px; vertical-align: middle;">
+                    {{'sms_birthday.telco' | translate}}</th>
+                  <th class="text-center" style="vertical-align: middle;">{{ 'sms_birthday.contentSms' | translate }}
+                  </th>
+                  <th class="text-center" style="width: 90px; vertical-align: middle;">
+                    {{ 'sms_birthday.countLength' | translate }}
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="table-content">
+                <tr [ngClass]="{'row-hidden-delete': idDelete.indexOf(customers.ACCOUNT_ID) >= 0 }"
+                  *ngFor="let customers of dataImportPaging; let i = index" [attr.data-index]="i">
+                  <td class="box-checkbox-table">
+                    <input type="checkbox" [checked]="isCheckedSend"
+                      (change)="checkRowSend($event.currentTarget.checked, customers.PHONE)"
+                      value="{{customers.ACCOUNT_ID}}" id="isAdmin" class="checkbox" />
+                  </td>
+                  <td class="text-center">{{ pagination.pageSize * (pagination.pageIndex -1) + (i+1) }}</td>
+                  <td>{{customers.FULL_NAME}}</td>
+                  <td>{{customers.PHONE}}</td>
+                  <td>{{customers.TELCO}}</td>
+                  <td><textarea type="text" class="form-control" name="fillNoiDung_{{i}}" rows="2" style="width: 100%"
+                      [(ngModel)]="fillNoiDung[pagination.pageSize * (pagination.pageIndex -1) + i].NOI_DUNG"></textarea>
+                  </td>
+                  <td class="text-center">
+                    {{ fillNoiDung[i].NOI_DUNG.length }}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div class="row box-pagination">
+              <div class="col-md-6 col-sm-6 col-xs-6 minibox" style="margin: 25px 0 0 0">
+                Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển
+                thị
+                <select (change)="changePageSize($event.target.value)" [value]="pagination.pageSize">
+                  <option value="5">5</option>
+                  <option value="10">10</option>
+                  <option value="20">20</option>
+                  <option value="50">50</option>
+                  <option value="100">100</option>
+                  <option value="99999999">Tất cả</option>
+                </select>
+                bản ghi.
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-6 minibox" style="margin-bottom:10px">
+                <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                  [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                  (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                  [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                  firstText="&laquo;" lastText="&raquo;">
+                </pagination>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- modal xác nhận gửi tin nhắn -->
+<div class="modal fade" bsModal #confirmSendSmsModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmSendSmsModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>{{'global.ask_send_sms' | translate}}</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmSendSmsModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="sendMessage()">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận gửi tin nhắn -->
+<div class="modal fade" bsModal #confirmSendSmsTuyChonModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmSendSmsTuyChonModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>Bạn có chắc chắn muốn gửi tin nhắn?</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmSendSmsTuyChonModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="sendMessageTuyChon()">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>

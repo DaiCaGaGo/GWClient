@@ -1,0 +1,74 @@
+<div style="text-align: center; margin-top: 10px">
+  <a (click)="changeLanguage('vi')" style="cursor: pointer;">
+    <img src="../../assets/img/vn.png"></a> |
+  <a (click)="changeLanguage('en')" style="cursor: pointer;">
+    <img src="../../assets/img/en.png"></a>
+</div>
+<div class="login">
+  <div class="login_wrapper">
+    <div class="animate form login_form" style="padding: 0 5% 0 5%;">
+      <section class="login_content">
+        <form [formGroup]="loginForm" (ngSubmit)="loginSystem()">
+          <h1>SMS Gateway</h1>
+          <img src="../../assets/img/logo-login.png" style="width: 100%; margin-bottom: 20px" />
+          <p *ngIf="messageLogin" style="color: red" class="text-center error">{{ messageLogin }}</p>
+          <div>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+              <input type="text" class="form-control" formControlName="username"
+                placeholder="{{ 'login.username' | translate }}">
+            </div>
+            <div *ngIf="submitted && form.username.errors" class="invalid-feedback">
+              <div *ngIf="form.username.errors.required">Username is required</div>
+              <div *ngIf="form.username.errors.minlength">Username must be at least 3 characters</div>
+              <div *ngIf="form.username.errors.maxlength">Username must be max 20 characters</div>
+            </div>
+          </div>
+          <div>
+            <div class="input-group">
+              <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+              <input type="password" class="form-control" formControlName="password"
+                placeholder="{{ 'login.password' | translate }}">
+            </div>
+            <div *ngIf="submitted && form.password.errors" class="help-block">
+              <div *ngIf="form.password.errors.required">Password is required</div>
+              <div *ngIf="form.password.errors">must be at least 6 characters</div>
+            </div>
+          </div>
+          <div>
+            <button type="submit" class="btn btn-default submit" [disabled]="loading">{{ 'login.submit_login' | translate }}</button>
+            <img *ngIf="loading" class="pl-2" style="margin-left: 5px"
+              src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+            <a class="reset_pass" routerLink="/reset-pass">{{ 'login.submit_forgetpass' | translate }}</a>
+          </div>
+          <div class="separator" style="margin-top: 10px">
+            <div class="text-center">- {{ 'login.or' | translate }} -</div>
+          </div>
+          <div>
+            <a style="text-decoration: none; line-height: 24px; cursor: pointer;"
+              class="btn btn-block btn-social btn-google" (click)="loginWithGoogle()">
+              <span style="text-shadow: none" class="fa fa-google"></span>
+              <div style="text-shadow: none; font-size: 1.2em;">{{ 'login.login_with_google' | translate }}</div>
+            </a>
+          </div>
+          <div>
+            <a style="text-decoration: none; line-height: 24px; cursor: pointer;"
+              class="btn btn-block btn-social btn-facebook" (click)="loginWithFacebook()">
+              <span style="text-shadow: none" class="fa fa-facebook"></span>
+              <div style="text-shadow: none; font-size: 1.2em;">{{ 'login.login_with_facebook' | translate }}</div>
+            </a>
+          </div>
+          <div class="clearfix"></div>
+          <div class="separator">
+            <div class="clearfix"></div>
+            <br>
+            <div>
+              <h1>Conek</h1>
+              <p>©2019 Conek, focus on solution and technologies related SMS services.</p>
+            </div>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+</div>

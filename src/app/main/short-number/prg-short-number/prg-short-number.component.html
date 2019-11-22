@@ -1,0 +1,654 @@
+<article>
+  <section>
+    <div class="page-title clearfix">
+      <div class="title_left">
+        <h3>{{ 'prg_short_number.list_prg_short_number' | translate }}</h3>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask">
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataCombobox" [(ngModel)]="selectedItemComboboxAccount"
+                  [settings]="settingsFilterAccount" name="cbAccountSearch" (onSelect)="onItemSelect()"
+                  (onDeSelect)="onItemSelect()">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="shortNumber" [(ngModel)]="selectedItemComboboxShortNumber"
+                  [settings]="settingsFilterShortNumber" name="cbShortNumber" (onSelect)="onItemSelectShortNumber()"
+                  (onDeSelect)="onItemSelectShortNumber()">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="program_code_fillter"
+                  [(ngModel)]="program_code_fillter" placeholder="{{ 'prg_short_number.program_code' | translate }}">
+                <span class="fa fa-cog form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="name_fillter" [(ngModel)]="name_fillter"
+                  placeholder="{{ 'prg_short_number.name' | translate }}">
+                <span class="fa fa-list-ul form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="program_format_fillter"
+                  [(ngModel)]="program_format_fillter" placeholder="{{ 'prg_short_number.program_fomat' | translate }}">
+                <span class="fa fa-cog form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="begin_date_fillter" bsDatepicker
+                  [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" [(ngModel)]="begin_date_fillter"
+                  placeholder="{{ 'prg_short_number.begin_date' | translate }}"
+                  (ngModelChange)="onChangeBeginDate($event)">
+                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="end_date_fillter" bsDatepicker
+                  [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" [(ngModel)]="end_date_fillter"
+                  placeholder="{{ 'prg_short_number.end_date' | translate }}" (ngModelChange)="onChangeEndDate($event)">
+                <span class="fa fa-calendar form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback content-end">
+                <button type="submit" style="float: right; margin-right: 10;" (click)="getDataPrgShortNumber()"
+                  class="btn btn-primary btn-sm">{{ 'global.search' | translate }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="form-group">
+                <div class="form-group has-feedback content-end">
+                  <button type="button" class="btn btn-primary btn-sm" *ngIf="role.IS_ADD"
+                    (click)="createNewPRG()">{{ 'global.add_new' | translate }}</button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center">STT</th>
+                        <th class="text-center">{{ 'customers.accountid' | translate }}</th>
+                        <th class="text-center">{{ 'prg_short_number.short_number' | translate }}</th>
+                        <th class="text-center">{{ 'prg_short_number.program_code' | translate }}</th>
+                        <th class="text-center">{{ 'prg_short_number.name' | translate }}</th>
+                        <th class="text-center">{{ 'prg_short_number.program_fomat' | translate }}</th>
+                        <th class="text-center">{{ 'prg_short_number.begin_date' | translate }}</th>
+                        <th class="text-center">{{ 'prg_short_number.end_date' | translate }}</th>
+                        <th class="text-center" style="width: 60px">{{ 'global.tool' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-content">
+                      <tr *ngFor="let prgShort of dataPrgShortNumber; let i = index" [attr.data-index]="i">
+                        <td class="text-center">{{prgShort.STT}}</td>
+                        <td class="text-center">{{prgShort.USER_NAME}}</td>
+                        <td class="text-center">{{prgShort.SHORT_NUMBER}}</td>
+                        <td>{{prgShort.PROGRAM_CODE}}</td>
+                        <td>{{prgShort.NAME}}</td>
+                        <td>{{prgShort.PROGRAM_FORMAT}}</td>
+                        <td class="text-center">{{prgShort.BEGIN_DATE}} {{prgShort.BEGIN_TIME}}</td>
+                        <td class="text-center">{{prgShort.END_DATE}} {{prgShort.END_TIME}}</td>
+                        <td class="text-center">
+                          <div class="tool">
+                            <button type="submit" class="btn btn-success btn-sm" *ngIf="role.IS_EDIT"
+                              (click)="showConfirmEditPrgShortNumber(prgShort.ID)">{{ 'global.edit' | translate }}</button>
+                            <button type="button" class="btn btn-danger btn-sm" *ngIf="role.IS_DELETE"
+                              (click)="showConfirmDeletePrgShortNumber(prgShort.ID, prgShort.NAME)">{{ 'global.delete' | translate }}</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999999">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+<!-- modal thêm mới-->
+<div class="modal fade" bsModal #createNewModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg" style="width:90%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'prg_short_number.add_short_number' | translate}}
+        </h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="createNewModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #addForm="ngForm" (ngSubmit)="createPrgShortNumber(addForm)">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'customers.accountid' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataCombobox" [(ngModel)]="selectedItemComboboxAccountAdd"
+                [settings]="settingsFilterAccount" name="comboboxAccount">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.short_number' | translate}} <span style="color:red;">(*)</span> </label>
+              <angular2-multiselect [data]="shortNumber" [(ngModel)]="selectedItemComboboxShortNumberAdd"
+                [settings]="settingsFilterShortNumber" name="cbShortNumber">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.name' | translate}} <span style="color:red;">(*)</span> </label>
+              <input type="text" id="programName" class="form-control" name="programName" [(ngModel)]="programName">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.program_type' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="listProgramType" [(ngModel)]="selectedProgramType"
+                [settings]="settingsFilterProgramType" (onSelect)="onChangeProgramType()"
+                (onDeSelect)="onChangeProgramType()" name="programType">
+              </angular2-multiselect>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px" *ngIf="isChooseTran">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.url_tran' | translate}}</label>
+              <input type="text" class="form-control" name="tranUrl" [(ngModel)]="tranUrl">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.user_tran' | translate}}</label>
+              <input type="text" class="form-control" name="tranUser" [(ngModel)]="tranUser">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.pass_tran' | translate}}</label>
+              <input type="text" class="form-control" name="tranPass" [(ngModel)]="tranPass">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.time_out_tran' | translate}}</label>
+              <input type="number" class="form-control" name="tranTimeout" [(ngModel)]="tranTimeout">
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px" *ngIf="isChooseVote">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>Loại vote <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="listVoteType" [(ngModel)]="selectedVoteType"
+                [settings]="settingsFilterVoteType" (onSelect)="onChangeVoteType()" (onDeSelect)="onChangeVoteType()"
+                name="voteType">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.program_fomat' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" id="prFormat" class="form-control" name="prFormat" placeholder="{{placeHolderFomat}}"
+                [(ngModel)]="prFormat">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.mt_error' | translate}}</label>
+              <input type="text" id="prMT_Error" class="form-control" name="prMT_Error" [(ngModel)]="prMT_Error">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.limit_mo_phone' | translate}}</label>
+              <input type="number" id="limitMO_Phone" class="form-control" name="limitMO_Phone"
+                [(ngModel)]="limitMO_Phone">
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px" *ngIf="isChooseVote">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="checkbox">
+                <label style="margin-top: 10px"><input type="checkbox" class="checkbox" name="checkCreateCode"
+                    (change)="checkDisable($event.currentTarget.checked)" required="" ngModel> <span>Sinh mã dự
+                    thưởng</span> </label>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.code_header_mt' | translate}}</label>
+              <input [disabled]="isDisableHeader" type="text" class="form-control" name="headerCodeMT"
+                [(ngModel)]="headerCodeMT">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.code_length_mt' | translate}}</label>
+              <input [disabled]="isDisableHeader" type="number" class="form-control" name="lengthCodeMT"
+                [(ngModel)]="lengthCodeMT">
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px" *ngIf="isChooseVote">
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group" style="margin-top: 10px;">
+              <label>{{'prg_short_number.begin_date' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="beginDate" bsDatepicker
+                [bsConfig]="{adaptivePosition: true, dateInputFormat: 'DD/MM/YYYY HH:mm'}" [(ngModel)]="timeBegin">
+            </div>
+            <div class="col-md-9 col-sm-12 col-xs-12">
+              <label>{{'prg_short_number.before_start_mt' | translate}}</label>
+              <textarea class="form-control" name="contentBefore" rows="2"
+                placeholder="{{'prg_short_number.not_start_content' | translate}}" [(ngModel)]="smsBefore"></textarea>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px" *ngIf="isChooseVote">
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group" style="margin-top: 10px;">
+              <label>{{'prg_short_number.end_date' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="endDate" bsDatepicker
+                [bsConfig]="{adaptivePosition: true, dateInputFormat: 'DD/MM/YYYY HH:mm'}" [(ngModel)]="timeEnd">
+            </div>
+            <div class="col-md-9 col-sm-12 col-xs-12">
+              <label>{{'prg_short_number.out_of_time_mt' | translate}}</label>
+              <textarea class="form-control" name="contentAfter" rows="2"
+                placeholder="{{'prg_short_number.end_content' | translate}}" [(ngModel)]="smsAfter"></textarea>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px" *ngIf="isChooseVote">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <label>{{'prg_short_number.auto_mt' | translate}}</label>
+              <textarea class="form-control" name="contentMT" rows="2"
+                placeholder="{{'prg_short_number.confirm_content' | translate}}" [(ngModel)]="smsMT"></textarea>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="x_panel portlet">
+              <div class="x_title clearfix">
+                <h2>{{'prg_short_number.sms_auto_answer' | translate}}</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+              </div>
+              <div class="x_content">
+                <div class="row">
+                  <div class="col-md-12 col-sm-12 col-xs-12 content-end">
+                    <button type="button" class="btn btn-primary btn-sm" style="margin-top: 0px"
+                      (click)="addNewPRG_MO_MT(addForm.value)">{{ 'global.add_new' | translate }}</button>
+                  </div>
+                </div>
+                <div class="row" style="margin-top: 5px">
+                  <div class="col-xs-12">
+                    <div class="table-responsive">
+                      <table class="table table-bordered clear-bottom">
+                        <thead>
+                          <tr>
+                            <th class="text-center" style="width: 60px">STT</th>
+                            <th class="text-center"> <input type="text" class="form-control" placeholder="Tin nhắn MO"
+                                name="MO" [(ngModel)]="autoMO"></th>
+                            <th class="text-center"> <input type="text" class="form-control" placeholder="Tin nhắn MT"
+                                name="MT" [(ngModel)]="autoMT">
+                            </th>
+                            <th class="text-center" style="width:60px">Xóa</th>
+                          </tr>
+                        </thead>
+                        <tbody class="table-content">
+                          <tr *ngFor="let item of arrPRG_MO_MT; let i = index" [attr.data-index]="i">
+                            <td class="text-center">{{i+1}}</td>
+                            <td>{{item.MO}}</td>
+                            <td>{{item.MT}}</td>
+                            <td style="text-align: center">
+                              <button type="button" class="btn btn-danger btn-sm"
+                                (click)="deletePRG_MO_MT(i)">{{ 'global.delete' | translate }}</button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px" *ngIf="isChooseVote">
+            <div class="x_panel portlet">
+              <div class="x_title clearfix">
+                <h2>{{ 'prg_short_number.vote_code' | translate }}</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+              </div>
+              <div class="x_content">
+                <div class="row">
+                  <div class="col-md-12 col-sm-12 col-xs-12 content-end">
+                    <button type="button" class="btn btn-primary btn-sm" style="margin-top: 0px"
+                      (click)="addNewPRG_OPTION(addForm.value)">{{ 'global.add_new' | translate }}</button>
+                  </div>
+                </div>
+                <div class="row" style="margin-top: 5px">
+                  <div class="col-xs-12">
+                    <div class="table-responsive">
+                      <table class="table table-bordered clear-bottom">
+                        <thead>
+                          <tr>
+                            <th class="text-center" style="width: 60px">{{'global.order' | translate}}</th>
+                            <th class="text-center"> <input type="text" class="form-control"
+                                placeholder="{{ 'prg_short_number.list_auto_answer' | translate }}" name="ANSER"
+                                [(ngModel)]="optionAnser"></th>
+                            <th class="text-center"> <input type="text" class="form-control"
+                                placeholder="{{ 'prg_short_number.content' | translate }}" name="ANSER_TITLE"
+                                [(ngModel)]="optionAnserTitle">
+                            </th>
+                            <th class="text-center" style="width:60px">{{'global.cancel'}}</th>
+                          </tr>
+                        </thead>
+                        <tbody class="table-content">
+                          <tr *ngFor="let item of arrPRG_OPTION; let i = index" [attr.data-index]="i">
+                            <td class="text-center">{{i+1}}</td>
+                            <td>{{item.ANSER}}</td>
+                            <td>{{item.ANSER_TITLE}}</td>
+                            <td style="text-align: center">
+                              <button type="button" class="btn btn-danger btn-sm"
+                                (click)="deletePRG_OPTION(i)">{{ 'global.delete' | translate }}</button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="createNewModal.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+<!-- ------------------modal sửa ---------------------------------->
+<div class="modal fade" bsModal #editThisModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg" style="width:90%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'prg_short_number.edit_short_number' | translate}}
+        </h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="editThisModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="formEditPrgShortNumber" (ngSubmit)="editPrgShortNumber()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'customers.accountid' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataCombobox" [settings]="settingsFilterShortNumber"
+                formControlName="cbAccountEdit">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.name' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" class="form-control" formControlName="programName">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.short_number' | translate}} <span style="color:red;">(*)</span> </label>
+              <angular2-multiselect [data]="shortNumber" [settings]="settingsFilterShortNumber"
+                formControlName="cbShortNumber">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.program_type' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="listProgramType" [settings]="settingsFilterProgramTypeEdit"
+                formControlName="programType">
+              </angular2-multiselect>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px" *ngIf="isChooseTran">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.url_tran' | translate}}</label>
+              <input type="text" class="form-control" formControlName="tranUrl">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.user_tran' | translate}}</label>
+              <input type="text" class="form-control" formControlName="tranUser">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.pass_tran' | translate}}</label>
+              <input type="text" class="form-control" formControlName="tranPass">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.time_out_tran' | translate}}</label>
+              <input type="number" class="form-control" formControlName="tranTimeout">
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px" *ngIf="isChooseVote">
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+              <label>Loại vote <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="listVoteType" [settings]="settingsFilterVoteType"
+                (onSelect)="onChangeVoteType()" (onDeSelect)="onChangeVoteType()" formControlName="voteType">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.program_fomat' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" id="prFormat" class="form-control" formControlName="prFormat"
+                placeholder="{{placeHolderFomat}}">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.mt_error' | translate}}</label>
+              <input type="text" id="prMT_Error" class="form-control" formControlName="prMT_Error">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.limit_mo_phone' | translate}}</label>
+              <input type="number" id="limitMO_Phone" class="form-control" formControlName="limitMO_Phone">
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px" *ngIf="isChooseVote">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="checkbox">
+                <label style="margin-top: 10px"><input type="checkbox" class="checkbox"
+                    formControlName="checkCreateCode" (change)="checkDisable($event.currentTarget.checked)">
+                  <span>Sinh mã dự
+                    thưởng</span> </label>
+              </div>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.code_header_mt' | translate}}</label>
+              <input [readonly]="isDisableHeader" type="text" class="form-control" formControlName="headerCodeMT">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.code_length_mt' | translate}}</label>
+              <input type="number" class="form-control" formControlName="lengthCodeMT"
+                [readonly]="this.isDisableHeader">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'prg_short_number.program_code' | translate}}</label>
+              <input type="text" class="form-control" formControlName="programCode" [attr.disabled]="true">
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px" *ngIf="isChooseVote">
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group" style="margin-top: 10px;">
+              <label>{{'prg_short_number.begin_date' | translate}}</label>
+              <input type="text" class="form-control" formControlName="beginDate" bsDatepicker
+                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY HH:mm'}">
+            </div>
+            <div class="col-md-9 col-sm-12 col-xs-12">
+              <label>{{'prg_short_number.before_start_mt' | translate}}</label>
+              <textarea class="form-control" formControlName="contentBefore" rows="2"
+                placeholder="{{'prg_short_number.not_start_content' | translate}}"></textarea>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px" *ngIf="isChooseVote">
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group" style="margin-top: 10px;">
+              <label>{{'prg_short_number.end_date' | translate}}</label>
+              <input type="text" class="form-control" formControlName="endDate" bsDatepicker
+                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY HH:mm'}">
+            </div>
+            <div class="col-md-9 col-sm-12 col-xs-12">
+              <label>{{'prg_short_number.out_of_time_mt' | translate}}</label>
+              <textarea class="form-control" formControlName="contentAfter" rows="2"
+                placeholder="{{'prg_short_number.end_content' | translate}}"></textarea>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px" *ngIf="isChooseVote">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <label>{{'prg_short_number.auto_mt' | translate}}</label>
+              <textarea class="form-control" formControlName="contentMT" rows="2"
+                placeholder="{{'prg_short_number.confirm_content' | translate}}"></textarea>
+            </div>
+          </div>
+
+          <!--  -->
+          <div class="row" style="margin-top: 15px" [ngStyle]="">
+            <div class="x_panel portlet">
+              <div class="x_title clearfix">
+                <h2>{{'prg_short_number.sms_auto_answer' | translate}}</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+              </div>
+              <div class="x_content">
+                <div class="row">
+                  <div class="col-xs-12">
+                    <div class="table-responsive">
+                      <table class="table table-bordered clear-bottom">
+                        <thead>
+                          <tr>
+                            <th class="text-center" style="width: 60px">{{'global.order' | translate}}</th>
+                            <th class="text-center"> <input type="text" class="form-control"
+                                placeholder="{{'prg_short_number.sms_mo' | translate}}" formControlName="autoMO"></th>
+                            <th class="text-center"> <input type="text" class="form-control"
+                                placeholder="{{'prg_short_number.sms_mt' | translate}}" formControlName="autoMT"></th>
+                            <th class="text-center" style="width:60px">
+                              <button type="button" class="btn btn-primary btn-sm" style="margin-top: 0px"
+                                (click)="addNewPRG_MO_MTedit(formEditPrgShortNumber.value)">{{ 'global.add_new' | translate }}</button>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody class="table-content">
+                          <tr *ngFor="let item of arrPRG_MO_MTedit; let i = index" [attr.data-index]="i">
+                            <td class="text-center">{{i+1}}</td>
+                            <td>{{item.MO}}</td>
+                            <td>{{item.MT}}</td>
+                            <td style="text-align: center">
+                              <button type="button" class="btn btn-danger btn-sm"
+                                (click)="deletePRG_MO_MTedit(i)">{{ 'global.delete' | translate }}</button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!--  -->
+          <div class="row" style="margin-top: 15px" *ngIf="isChooseVote">
+            <div class="x_panel portlet">
+              <div class="x_title clearfix">
+                <h2>{{'prg_short_number.vote_code' | translate}}</h2>
+                <ul class="nav navbar-right panel_toolbox">
+                  <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+                  </li>
+                </ul>
+              </div>
+              <div class="x_content">
+                <div class="row">
+                  <div class="col-xs-12">
+                    <div class="table-responsive">
+                      <table class="table table-bordered clear-bottom">
+                        <thead>
+                          <tr>
+                            <th class="text-center" style="width: 60px">{{'global.order' | translate}}</th>
+                            <th class="text-center"> <input type="text" class="form-control"
+                                placeholder="Mã số bình chọn" formControlName="optionAnser"></th>
+                            <th class="text-center"> <input type="text" class="form-control"
+                                placeholder="Nội dung bình chọn" formControlName="optionAnserTitle"></th>
+                            <th class="text-center" style="width:60px">
+                              <button type="button" class="btn btn-primary btn-sm" style="margin-top: 0px"
+                                (click)="addNewPRG_OPTIONedit(formEditPrgShortNumber.value)">{{ 'global.add_new' | translate }}</button>
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody class="table-content">
+                          <tr *ngFor="let item of arrPRG_OPTIONedit; let i = index" [attr.data-index]="i">
+                            <td class="text-center">{{i+1}}</td>
+                            <td>{{item.ANSER}}</td>
+                            <td>{{item.ANSER_TITLE}}</td>
+                            <td style="text-align: center">
+                              <button type="button" class="btn btn-danger btn-sm"
+                                (click)="deletePRG_OPTIONedit(i)">{{ 'global.delete' | translate }}</button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="editThisModal.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- modal xác nhận xóa -->
+<div class="modal fade" bsModal #confirmDeleteModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">Xác nhận</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>{{'global.ask_delete_data' | translate}} "<span class="text-success">{{Full_Name}}</span>"?</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm" (click)="confirmDeleteModal.hide()">Hủy</button>
+        <button type="submit" class="btn btn-success btn-sm" (click)="deletePrgShortNumber(PrgShortNumberId)">Xác
+          nhận</button>
+      </div>
+    </div>
+  </div>
+</div>

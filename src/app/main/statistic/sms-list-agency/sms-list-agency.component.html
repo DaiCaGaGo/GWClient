@@ -1,0 +1,201 @@
+<article>
+  <section>
+    <div class="page-title clearfix">
+      <div class="title_left">
+        <h3>{{'sms_list.sms_list_title' | translate}}</h3>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>{{ 'global.search' | translate }}</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask" #formSearch="ngForm"
+              (ngSubmit)="searchSms(formSearch.value)">
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID"
+                  [settings]="settingsFilterAccount" (onSelect)="onItemSelect()" (onDeSelect)="OnItemDeSelect()"
+                  name="accountID">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <angular2-multiselect [data]="dataSender" [(ngModel)]="selectedSenderID"
+                  [settings]="settingsFilterSender" (onSelect)="onItemSelectSender()"
+                  (onDeSelect)="OnItemDeSelectSender()" name="senderID">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <input type="text" class="form-control" name="fromDate" bsDatepicker
+                  [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" (ngModelChange)="onChangeFromDate($event)"
+                  placeholder="{{ 'partner_product.from_date' | translate }}" [(ngModel)]="timeFrom">
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <input type="text" class="form-control" name="toDate" bsDatepicker
+                  [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" placeholder="{{ 'partner_product.to_date' | translate }}"
+                  [(ngModel)]="timeTo" (ngModelChange)="onChangeToDate($event)">
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <angular2-multiselect [data]="dataSmsStatus" [(ngModel)]="selectedSmsStatus"
+                  [settings]="settingsFilterSmsStatus" name="smsStatus" (onSelect)="onItemSelectSmsStatus()"
+                  (onDeSelect)="OnItemDeSelectSmsStatus()">
+                </angular2-multiselect>
+              </div>              
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataSmsType" [(ngModel)]="selectedSmsType"
+                  [settings]="settingsFilterSmsType" name="smsType" (onSelect)="onItemSelectSmsType()"
+                  (onDeSelect)="OnItemDeSelectSmsType()">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <input type="text" class="form-control" placeholder="{{'sms_list.content' | translate}}"
+                  name="smsContent" ngModel>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+                <input type="text" class="form-control" placeholder="{{'global.phone' | translate}}" name="phone"
+                  ngModel>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group" *ngIf="isShowPartner">
+                <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedPartnerID"
+                  [settings]="settingsFilterPartner" (onSelect)="onItemSelectPartner()"
+                  (onDeSelect)="OnItemDeSelectPartner()" name="partnerCode">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-6 col-sm-6 col-xs-12 form-group">
+                <div class="checkbox" style="display: inline-block">
+                  <label> <input type="checkbox" value="" class="checkbox" name="viettel" required=""
+                      checked="isCheckVTL" (change)="onChangeVTL($event.currentTarget.checked)">
+                    <span>Viettel</span> </label>
+                </div>
+                <div class="checkbox" style="display: inline-block; margin-left: 20px;">
+                  <label><input type="checkbox" value="" class="checkbox" name="mobiphone" required=""
+                      checked="isCheckVMS" (change)="onChangeVMS($event.currentTarget.checked)">
+                    <span>Mobiphone</span> </label>
+                </div>
+                <div class="checkbox" style="display: inline-block; margin-left: 20px;">
+                  <label><input type="checkbox" value="" class="checkbox" name="vinaphone" required=""
+                      checked="isCheckGPC" (change)="onChangeGPC($event.currentTarget.checked)">
+                    <span>Vinaphone</span> </label>
+                </div>
+                <div class="checkbox" style="display: inline-block; margin-left: 20px;">
+                  <label><input type="checkbox" value="" class="checkbox" name="vietnameMobile" required=""
+                      checked="isCheckVNM" (change)="onChangeVNM($event.currentTarget.checked)">
+                    <span>VietnamMobile</span> </label>
+                </div>
+                <div class="checkbox" style="display: inline-block; margin-left: 20px;">
+                  <label><input type="checkbox" value="" class="checkbox" name="gtel" required="" checked="isCheckGTEL"
+                      (change)="onChangeGTEL($event.currentTarget.checked)">
+                    <span>Gtel</span> </label>
+                </div>
+                <div class="checkbox" style="display: inline-block; margin-left: 20px;">
+                  <label><input type="checkbox" value="" class="checkbox" name="sfone" required=""
+                      checked="isCheckSFONE" (change)="onChangeSFONE($event.currentTarget.checked)">
+                    <span>Sfone</span> </label>
+                </div>
+                <div class="checkbox" style="display: inline-block; margin-left: 20px; display: none">
+                  <label><input type="checkbox" value="" class="checkbox" name="ddMobile" required=""
+                      checked="isCheckDD" (change)="onChangeDD($event.currentTarget.checked)"> <span>ĐD
+                      mobile</span> </label>
+                </div>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group" style="float: right;">
+                <button type="button" style="float: right; margin-right: 0;" class="btn btn-success btn-sm"
+                  (click)="exportExcel()"> {{ 'global.export_excel' | translate }}</button>
+                <button type="submit" style="float: right; margin-right: 0;" class="btn btn-primary btn-sm">
+                  {{ 'global.search' | translate }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <!-- <h2>{{ 'sms_list.sms_list_title' | translate }}</h2> -->
+            <label style="color: red;" name="lbQuyTinCon">{{ viewSumSms }}</label>
+          </div>
+          <div class="x_content">
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width: 60px; vertical-align: middle;">
+                          {{'global.order' | translate}}</th>
+                        <th class="text-center" style="width: 120px; vertical-align: middle;">
+                          {{'sms_list.choose_sender' | translate}}</th>
+                        <th class="text-center" style="width: 120px; vertical-align: middle;">Phone</th>
+                        <th class="text-center" style="width: 80px; vertical-align: middle;">
+                          {{'sms_list.telco' | translate}}</th>
+                        <th class="text-center" style="width: 80px; vertical-align: middle;">
+                          {{'sms_list.choose_type' | translate}}</th>
+                        <th class="text-center" style="width: 80px; vertical-align: middle;">
+                          {{'sms_list.port' | translate}}</th>
+                        <th class="text-center" style="vertical-align: middle">{{'sms_list.content' | translate}}</th>
+                        <th class="text-center" style="width: 80px; vertical-align: middle;">
+                          {{'sms_list.count_sms' | translate}}</th>
+                        <th class="text-center" style="width: 150px; vertical-align: middle;">
+                          {{'sms_list.sent_time' | translate}}</th>
+                        <th class="text-center" style="width: 100px; vertical-align: middle;">
+                          {{'sms_list.user_sent' | translate}}</th>
+                        <th class="text-center" style="width: 100px; vertical-align: middle;" *ngIf="is_root">
+                          {{'sms_list.choose_status' | translate}}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of dataSms; let i = index" [attr.data-index]="i">
+                        <td class="text-center">{{pagination.pageSize * (pagination.pageIndex -1) + (i+1)}}</td>
+                        <td>{{item.SENDER_NAME}}</td>
+                        <td>{{item.PHONE}}</td>
+                        <td>{{item.TELCO}}</td>
+                        <td>{{item.SMS_TYPE}}</td>
+                        <td>{{item.PARTNER_NAME}}</td>
+                        <td>{{item.SMS_CONTENT}}</td>
+                        <td class="text-center">{{item.SMS_COUNT}}</td>
+                        <td>{{convertStringDate(item.SCHEDULE_TIME)}}</td>
+                        <td>{{item.USER_NAME}}</td>
+                        <td *ngIf="is_root">{{item.RECEIVE_RESULT}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)" [value]="pagination.pageSize">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999999">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>

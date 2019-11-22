@@ -1,0 +1,229 @@
+<article>
+  <section>
+    <div class="page-title clearfix">
+      <div class="title_left">
+        <h3>{{ 'phone_blacklist.list_phone_blacklist' | translate }}</h3>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask">
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataCombobox" [(ngModel)]="selectedItemCombobox"
+                  [settings]="settingsFilter" (onSelect)="onItemSelect()" (onDeSelect)="onItemSelect()"
+                  name="comboboxAccountSearch">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataSmsType" [(ngModel)]="selectedSmsType"
+                  [settings]="settingsFilterSmsType" (onSelect)="onItemSelectSmsType()"
+                  (onDeSelect)="onItemSelectSmsType()" name="iServicename">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="number" class="form-control has-feedback-left" name="iPhonenumber"
+                  placeholder="{{ 'phone_blacklist.phonenumber' | translate }}" [(ngModel)]="iPhonenumber">
+                <span class="fa fa-list-ul form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback content-end">
+                <button type="button" style="float: right; margin-right: 0;" class="btn btn-primary btn-sm"
+                  (click)="getDataPhoneBlacklist()">{{ 'global.search' | translate }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="form-group">
+                <div class="form-group has-feedback content-end">
+                  <button type="button" class="btn btn-primary btn-sm" *ngIf="role.IS_ADD"
+                    (click)="createNewModal.show()">{{ 'global.add_new' | translate }}</button>
+                  <button type="submit" class="btn btn-success btn-sm"
+                    (click)="exportExcel()">{{ 'global.export_excel' | translate }}</button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width: 60px">{{'global.order' | translate}}</th>
+                        <th class="text-center">{{'phone_blacklist.accountid' | translate}}</th>
+                        <th class="text-center">{{'phone_blacklist.servicename' | translate}}</th>
+                        <th class="text-center">{{'phone_blacklist.phonenumber' | translate}}</th>
+                        <th class="text-center" style="width: 80px">{{'global.tool' | translate}}</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-content">
+                      <tr *ngFor="let blacklist of dataPhoneBlacklist; let i = index" [attr.data-index]="i">
+                        <!-- <td scope="row">{{i+1}}</td> -->
+                        <td class="text-center">{{blacklist.STT}}</td>
+                        <td>{{blacklist.USER_NAME}}</td>
+                        <td>{{blacklist.SERVICENAME}}</td>
+                        <td>{{blacklist.PHONENUMBER}}</td>
+                        <td class="text-center">
+                          <div class="tool">
+                            <button type="submit" class="btn btn-success btn-sm" *ngIf="role.IS_EDIT"
+                              (click)="showConfirmEditPhoneBlacklist(blacklist.ID)">{{ 'global.edit' | translate }}</button>
+                            <button type="button" class="btn btn-danger btn-sm" *ngIf="role.IS_DELETE"
+                              (click)="showConfirmDeletePhoneBlacklist(blacklist.ID, blacklist.PHONENUMBER)">{{ 'global.delete' | translate }}</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="ALL">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- modal thêm mới-->
+<div class="modal fade" bsModal #createNewModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'phone_blacklist.add_black_list' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="createNewModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #phoneBlacklist="ngForm" (ngSubmit)="createPhoneBlacklist(phoneBlacklist)">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4 col-sm-6 col-xs-12 form-group has-feedback">
+              <label>{{'customers.accountid' | translate}} <label style="color: red;">(*)</label></label>
+              <angular2-multiselect [data]="dataCombobox" [(ngModel)]="selectedItemCombobox" [settings]="settingsFilter"
+                name="account">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'phone_blacklist.servicename' | translate}} <label style="color: red;">(*)</label></label>
+              <angular2-multiselect [data]="dataSmsType" [(ngModel)]="selectedSmsType"
+                [settings]="settingsFilterSmsType" name="serviceType">
+              </angular2-multiselect>
+            </div>
+
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'phone_blacklist.phonenumber' | translate}} <label style="color: red;">(*)</label></label>
+              <input type="text" class="form-control" name="phone" required="" [(ngModel)]="iPhonenumber">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="createNewModal.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal sửa -->
+<div class="modal fade" bsModal #editThisModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'phone_blacklist.edit_black_list' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="editThisModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="formEditPhoneBlacklist" (ngSubmit)="editPhoneBlacklist()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4 col-sm-6 col-xs-12 form-group has-feedback">
+              <label for="account_id">{{'customers.accountid' | translate}}</label>
+              <angular2-multiselect [data]="dataCombobox" [settings]="settingsFilter"
+                formControlName="comboboxAccountedit">
+              </angular2-multiselect>
+            </div>
+
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'phone_blacklist.servicename' | translate}}</label>
+              <angular2-multiselect [data]="dataSmsType" [(ngModel)]="selectedSmsType"
+                [settings]="settingsFilterSmsType" formControlName="servicename">
+              </angular2-multiselect>
+            </div>
+
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'phone_blacklist.phonenumber' | translate}}</label>
+              <input type="text" id="phonenumber" class="form-control" formControlName="phonenumber" required="">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="editThisModal.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa -->
+<div class="modal fade" bsModal #confirmDeleteModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{ 'global.confirm' | translate }}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>{{'global.ask_delete_data' | translate}} "<span class="text-success">{{phoneDelete}}</span>"?</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmDeleteModal.hide()">{{ 'global.cancel' | translate }}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="deletePhoneBlacklist(PhoneBlacklistId)">{{ 'global.confirm' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>

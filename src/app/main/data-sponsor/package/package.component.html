@@ -1,0 +1,274 @@
+<article>
+    <section>
+        <div class="page-title clearfix">
+            <div class="title_left">
+                <h3>{{ 'package.title' | translate }}</h3>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel portlet">
+                    <div class="x_title clearfix">
+                        <h2>{{ 'global.search' | translate }}</h2>
+                        <ul class="nav navbar-right panel_toolbox">
+                            <li><a class="collapse-link" onclick="collapseBox(this)"><i
+                                        class="fa fa-chevron-up"></i></a>
+                            </li>
+                            <li><a class="close-link" onclick="closeBox(this)"><i class="fa fa-close"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="x_content">
+                        <form class="row form-horizontal form-label-left input_mask">
+                            <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                                <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccount"
+                                    [settings]="settingsFilterAccount" (onSelect)="onItemSelect()"
+                                    (onDeSelect)="OnItemDeSelect()" name="slAccount">
+                                </angular2-multiselect>
+                            </div>
+                            <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                                <input type="text" class="form-control" name="inPackageName" [(ngModel)]="inPackageName"
+                                    placeholder="{{ 'package.inPackage_name' | translate }}">
+                            </div>
+                            <div class=" col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
+                                <button type="button" style="float: right; margin-right: 0;"
+                                    class="btn btn-primary btn-sm">{{ 'global.search' | translate }}</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section>
+        <div class="row">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+                <div class="x_panel portlet">
+                    <div class="x_content">
+                        <form class="form-horizontal form-label-left input_mask">
+                            <div class="form-group">
+                                <div class="form-group has-feedback content-end">
+                                    <button type="button" class="btn btn-primary btn-sm" *ngIf="role.IS_ADD"
+                                        (click)="showModalCreate.show()">{{ 'global.add_new' | translate }}</button>
+                                </div>
+                            </div>
+                        </form>
+                        <div class="row">
+                            <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered clear-bottom">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-center">STT</th>
+                                                <th class="text-center">
+                                                    {{ 'package.account' | translate }}</th>
+                                                <th class="text-center">
+                                                    {{ 'package.package_name' | translate }}</th>
+                                                <th class="text-center">{{ 'package.package_data' | translate }} (MB)
+                                                </th>
+                                                <th class="text-center">
+                                                    {{ 'package.amt' | translate }} (VNĐ)</th>
+                                                <th class="text-center">
+                                                    {{ 'package.create_date' | translate }}
+                                                </th>
+                                                <th class="text-center">
+                                                    {{ 'package.create_user' | translate }}
+                                                <th class="text-center" style="width:8%">{{ 'global.tool' | translate }}
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let item of dataPackage; let i = index" [attr.data-index]="i">
+                                                <td class="text-center" scope="row">{{i+1}}</td>
+                                                <td>{{item.USER_NAME}}</td>
+                                                <td>{{item.PACKAGE_NAME}}</td>
+                                                <td class="text-center">{{item.DATA_FROM}} ~ {{item.DATA_TO}}</td>
+                                                <td>{{item.TOTAL_AMT}}</td>
+                                                <td class="text-center">{{item.CREATE_DATE}}</td>
+                                                <td class="text-center">{{item.CREATE_USER}}</td>
+                                                <td class="text-center">
+                                                    <div class="tool">
+                                                        <button type="submit" (click)="confirmUpdateModal(item.ID)" *ngIf="role.IS_EDIT"
+                                                            class="btn btn-success btn-sm">{{ 'global.edit' | translate }}</button>
+                                                        <button type="button" class="btn btn-danger btn-sm" *ngIf="role.IS_DELETE"
+                                                            (click)="showConfirmDelete(item.ID, item.PACKAGE_NAME)">{{ 'global.delete' | translate }}</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                                        Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }}
+                                        trang. Hiển thị
+                                        <select (change)="changePageSize($event.target.value)">
+                                            <option value="5" selected="">5</option>
+                                            <option value="10">10</option>
+                                            <option value="20">20</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                            <option value="99999999">Tất cả</option>
+                                        </select>
+                                        bản ghi.
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-6 minibox" style="margin-bottom:10px">
+                                        <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                                            [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                                            (numPages)="pagination.totalPage = $event"
+                                            [(ngModel)]="pagination.pageIndex" [rotate]="true" [maxSize]="5"
+                                            class="pagination-sm content-end" previousText="&lsaquo;"
+                                            nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+                                        </pagination>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</article>
+
+<!-- Thêm gói cước -->
+<div class="modal fade" bsModal #showModalCreate="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-static-name">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-static-name" class="modal-title pull-left">{{'package.create_domain' | translate}}
+                </h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="showModalCreate.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form #formAdd="ngForm" (ngSubmit)="createPackage(formAdd)">
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-3 col-sm-4 col-xs-12 form-group">
+                            <label>{{'package.account' | translate}} <span style="color:red;">(*)</span></label>
+                            <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountCreate"
+                                [settings]="settingsFilterAccount" (onSelect)="onItemSelect()"
+                                (onDeSelect)="OnItemDeSelect()" name="account" disabled="disabled">
+                            </angular2-multiselect>
+                        </div>
+                        <div class="col-md-3 col-sm-4 col-xs-12 form-group">
+                            <label>{{'package.package_name' | translate}} <span style="color:red;">(*)</span></label>
+                            <input type="text" class="form-control" name="packageName" [(ngModel)]="packageName"
+                                placeholder="{{ 'package.inPackage_name' | translate }}">
+                        </div>
+                        <div class="col-md-3 col-sm-4 col-xs-12 form-group">
+                            <label>{{'package.package_data' | translate}} <span style="color:red;">(*)</span></label>
+                            <input type="text" class="form-control" name="dataFrom" [(ngModel)]="dataFrom"
+                                placeholder="{{ 'package.data_from' | translate }}">
+                        </div>
+                        <div class="col-md-3 col-sm-4 col-xs-12 form-group">
+                            <label>{{'package.package_data' | translate}} <span style="color:red;">(*)</span></label>
+                            <input type="text" class="form-control" name="dataTo" [(ngModel)]="dataTo"
+                                placeholder="{{ 'package.data_to' | translate }}">
+                        </div>
+                        <div class="col-md-3 col-sm-4 col-xs-12 form-group">
+                                <label>{{'package.date_use' | translate}} <span style="color:red;">(*)</span></label>
+                                <input type="number" class="form-control" name="dateUse" [(ngModel)]="dateUse"
+                                    placeholder="{{ 'package.date_use' | translate }}">
+                            </div>
+                        <div class="col-md-3 col-sm-4 col-xs-12 form-group">
+                            <label>{{'package.amt' | translate}} <span style="color:red;">(*)</span></label>
+                            <input type="number" class="form-control" name="amt" [(ngModel)]="amt"
+                                placeholder="{{ 'package.amt' | translate }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                        (click)="showModalCreate.hide()">{{ 'global.cancel' | translate }}</button>
+                    <button type="submit" class="btn btn-success">{{ 'global.confirm' | translate }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- modal sửa gói cước-->
+<div class="modal fade" bsModal #showModalUpdate="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+    aria-labelledby="dialog-static-name">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-static-name" class="modal-title pull-left">{{'partner.edit_partner' | translate}}</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="showModalUpdate.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form [formGroup]="formEditPackage" (ngSubmit)="editPackage()">
+                <div class="modal-body">
+                    <div class="row">
+                        <input type="hidden" formControlName="id">
+                        <div class="col-md-3 col-sm-4 col-xs-12 form-group">
+                            <label>{{'package.account' | translate}} <span style="color:red;">(*)</span></label>
+                            <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountCreate"
+                                [settings]="settingsFilterAccountEdit" (onSelect)="onItemSelect()"
+                                (onDeSelect)="OnItemDeSelect()" formControlName="account">
+                            </angular2-multiselect>
+                        </div>
+                        <div class="col-md-3 col-sm-4 col-xs-12 form-group">
+                            <label>{{'package.package_name' | translate}} <span style="color:red;">(*)</span></label>
+                            <input type="text" class="form-control" formControlName="packageName"
+                                [(ngModel)]="packageName" placeholder="{{ 'package.inPackage_name' | translate }}">
+                        </div>
+                        <div class="col-md-3 col-sm-4 col-xs-12 form-group">
+                            <label>{{'package.package_data' | translate}} <span style="color:red;">(*)</span></label>
+                            <input type="text" class="form-control" formControlName="dataFrom" [(ngModel)]="dataFrom"
+                                placeholder="{{ 'package.data_from' | translate }}">
+                        </div>
+                        <div class="col-md-3 col-sm-4 col-xs-12 form-group">
+                            <label>{{'package.package_data' | translate}} <span style="color:red;">(*)</span></label>
+                            <input type="text" class="form-control" formControlName="dataTo" [(ngModel)]="dataTo"
+                                placeholder="{{ 'package.data_to' | translate }}">
+                        </div>
+                        <div class="col-md-3 col-sm-4 col-xs-12 form-group">
+                                <label>{{'package.date_use' | translate}} <span style="color:red;">(*)</span></label>
+                                <input type="number" class="form-control" formControlName="dateUse" [(ngModel)]="dateUse"
+                                    placeholder="{{ 'package.date_use' | translate }}">
+                            </div>
+                        <div class="col-md-3 col-sm-4 col-xs-12 form-group">
+                            <label>{{'package.amt' | translate}} <span style="color:red;">(*)</span></label>
+                            <input type="number" class="form-control" formControlName="amt" [(ngModel)]="amt"
+                                placeholder="{{ 'package.amt' | translate }}">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default"
+                        (click)="showModalUpdate.hide()">{{ 'global.cancel' | translate }}</button>
+                    <button type="submit" class="btn btn-success">{{ 'global.confirm' | translate }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- modal xác nhận xóa gói cước-->
+<div class="modal fade" bsModal #confirmDeleteModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+    role="dialog" aria-labelledby="dialog-static-name">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-static-name" class="modal-title pull-left">Xác nhận</h4>
+                <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div>Bạn có chắc chắn muốn xóa tin mẫu "<b class="text-success">{{packageName}}</b>" không?</div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" (click)="confirmDeleteModal.hide()">Hủy</button>
+                <button type="submit" class="btn btn-success" (click)="confirmDelete(id)">Xác nhận</button>
+            </div>
+        </div>
+    </div>
+</div>

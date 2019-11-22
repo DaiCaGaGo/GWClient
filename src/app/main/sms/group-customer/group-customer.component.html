@@ -1,0 +1,311 @@
+<article>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask" #formSearch="ngForm"
+              (ngSubmit)="searchData(formSearch.value)">
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID"
+                  [settings]="settingsFilterAccount" (onSelect)="onItemSelect()" (onDeSelect)="onItemSelect()"
+                  name="accountID">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataGroup" [(ngModel)]="selectedGroupID"
+                  [settings]="settingsFilterGroupID" (onSelect)="onItemSelectGroup()" (onDeSelect)="onItemSelectGroup()"
+                  name="groupID">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-4 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="phone_filter" ngModel
+                  placeholder="Nhập SĐT hoặc họ tên cần tìm kiếm">
+                <span class="fa fa-cog form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-2 col-sm-6 col-xs-12 form-group has-feedback" style="float: right">
+                <button type="submit" style="float: right; margin-right: 10;"
+                  class="btn btn-primary btn-sm">{{ 'global.search' | translate }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="form-group">
+                <div class="form-group has-feedback content-end">
+                  <button type="button" class="btn btn-primary btn-sm"
+                    (click)="showFormCreate()">{{ 'global.add_new' | translate }}</button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center" style="width: 60px">{{ 'global.order' | translate }}</th>
+                        <th class="text-center">{{ 'global.phone' | translate }}</th>
+                        <th class="text-center">{{ 'global.name' | translate }}</th>
+                        <th class="text-center" style="width: 150px">{{ 'customers.birthday' | translate }}</th>
+                        <th class="text-center">{{ 'customers.danh_xung' | translate }}</th>
+                        <th class="text-center" style="width: 150px">
+                          {{ 'global.tool' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody class="table-content">
+                      <tr *ngFor="let item of dataCustomer; let i = index" [attr.data-index]="i">
+                        <td class="text-center">{{item.STT}}</td>
+                        <td>{{item.PHONE}}</td>
+                        <td>{{item.FULL_NAME}}</td>
+                        <td>{{item.BIRTHDAY}}</td>
+                        <td>{{item.DANH_XUNG}}</td>
+                        <td class="text-center">
+                          <div class="tool">
+                            <button type="submit" class="btn btn-success btn-sm"
+                              (click)="showConfirmEdit(item.ID)">{{ 'global.edit' | translate }}</button>
+                            <button type="button" class="btn btn-danger btn-sm"
+                              (click)="showConfirmDelete(item.ID)">{{ 'global.delete' | translate }}</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }}
+                    trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999999">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- modal import excel -->
+<div class="modal fade" bsModal #importExcelModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg" style="width: 90%">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'customers.add_customer_group' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="importExcelModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form>
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12">
+              <section>
+                <div class="x_panel portlet">
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <label style="font-weight: bold">{{'customers.import_customer' | translate}}</label>
+                  </div>
+                  <div class="x_content">
+                    <form #importExcelform="ngForm" (ngSubmit)="importExcelCustomer(importExcelform)">
+                      <div class="col-md-6 col-sm-6 col-xs-12 form-group">
+                        <label>{{'customers.accountid' | translate}} <span style="color:red;">(*)</span></label>
+                        <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID"
+                          (onSelect)="onChangeAccount()" (onDeSelect)="onChangeAccount()"
+                          [settings]="settingsFilterAccount" name="accountID">
+                        </angular2-multiselect>
+                      </div>
+                      <div class="col-md-6 col-sm-6 col-xs-12 form-group">
+                        <label>{{'customers.select_group' | translate}} <span style="color:red;">(*)</span></label>
+                        <angular2-multiselect [data]="dataGroup" [(ngModel)]="selectedGroupID"
+                          [settings]="settingsFilterGroupID" name="groupID">
+                        </angular2-multiselect>
+                      </div>
+                      <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback">
+                        <label>File import</label>
+                        <input type="file" #importExcel name="importExcel" class="form-control">
+                      </div>
+                      <div class="col-md-12 col-sm-12 col-xs-12" style="margin-top: 15px;">
+                        <button type="button" class="btn btn-primary btn-sm" style="float: right"
+                          (click)="exportExcelTemplate()">{{'sms_customize.export_template' | translate}}</button>
+                        <button type="submit" class="btn btn-success btn-sm"
+                          style="float: right">{{ 'global.confirm' | translate }}</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </section>
+            </div>
+            <div class="col-md-6 col-sm-12 col-xs-12">
+              <section>
+                <div class="x_panel portlet">
+                  <div class="col-md-12 col-sm-12 col-xs-12">
+                    <label style="font-weight: bold">{{'customers.create' | translate}}</label>
+                  </div>
+                  <div class="x_content">
+                    <form #formCreateCustomer="ngForm" (ngSubmit)="createCustomer(formCreateCustomer)">
+                      <div class="col-md-4 col-sm-6 col-xs-12 form-group">
+                        <label>{{'customers.accountid' | translate}} <span style="color:red;">(*)</span></label>
+                        <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID"
+                          (onSelect)="onChangeAccount()" (onDeSelect)="onChangeAccount()"
+                          [settings]="settingsFilterAccount" name="accountID">
+                        </angular2-multiselect>
+                      </div>
+                      <div class="col-md-4 col-sm-6 col-xs-12 form-group">
+                        <label>{{'customers.select_group' | translate}} <span style="color:red;">(*)</span></label>
+                        <angular2-multiselect [data]="dataGroup" [(ngModel)]="selectedGroupID"
+                          [settings]="settingsFilterGroupID" name="groupID">
+                        </angular2-multiselect>
+                      </div>
+                      <div class="col-md-4 col-sm-6 col-xs-12 form-group">
+                        <label>{{'customers.phone' | translate}} <span style="color:red;">(*)</span></label>
+                        <input type="text" id="phone" class="form-control" name="phone" required="" [(ngModel)]="phone">
+                      </div>
+                      <div class="col-md-4 col-sm-6 col-xs-12 form-group">
+                        <label>{{'customers.birthday' | translate}} <span style="color:red;">(*)</span></label>
+                        <input type="text" class="form-control" name="birthday" bsDatepicker
+                          [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" [(ngModel)]="birthday">
+                      </div>
+                      <div class="col-md-4 col-sm-6 col-xs-12 form-group">
+                        <label>{{'customers.full_name' | translate}}</label>
+                        <input type="text" id="fullName" class="form-control" name="fullName" required=""
+                          [(ngModel)]="fullName">
+                      </div>
+                      <div class="col-md-4 col-sm-6 col-xs-12 form-group">
+                        <label>{{'customers.danh_xung' | translate}}</label>
+                        <input type="text" id="preName" class="form-control" name="preName" required=""
+                          [(ngModel)]="preName">
+                      </div>
+                      <div class="col-md-12 col-sm-12 col-xs-12" style="margin-top: 15px;">
+                        <button type="submit" class="btn btn-success btn-sm"
+                          style="float: right">{{ 'global.confirm' | translate }}</button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="importExcelModal.hide()">{{'global.cancel' | translate}}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal sửa customer -->
+<div class="modal fade" bsModal #editThisModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'customers.edit' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="editThisModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="formEditCustomers" (ngSubmit)="editCustomers()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'customers.full_name' | translate}}</label>
+              <input type="text" class="form-control" formControlName="fullName" required="">
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'customers.phone' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" class="form-control" formControlName="phone" required="">
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'customers.danh_xung' | translate}}</label>
+              <input type="text" class="form-control" formControlName="preName" required="">
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-4 col-sm-6 col-xs-12 checkbox">
+              <label><input type="checkbox" class="checkbox" formControlName="isBirthday" ngModel>
+                <span>{{'customers.birthday_product' | translate}}</span> </label>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12 form-group has-feedback">
+              <label>{{'customers.birthday' | translate}}</label>
+              <input type="text" class="form-control has-feedback-left" formControlName="birthday" bsDatepicker
+                [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" placeholder="{{ 'customers.birthday' | translate }}">
+              <span class="fa fa-indent form-control-feedback left" aria-hidden="true"></span>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'customers.address' | translate}}</label>
+              <input type="text" class="form-control" formControlName="address" required="">
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+              <label>{{'customers.email' | translate}}</label>
+              <input type="text" class="form-control" formControlName="email" required="">
+            </div>
+            <div class="col-md-8 col-sm-6 col-xs-12">
+              <label>{{'customers.description' | translate}}</label>
+              <input type="text" class="form-control" formControlName="description" required="">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default btn-sm"
+            (click)="editThisModal.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success btn-sm">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa -->
+<div class="modal fade" bsModal #confirmDeleteModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>{{'global.ask_delete' | translate}}</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmDeleteModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="deleteCustomer(customerID)">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>

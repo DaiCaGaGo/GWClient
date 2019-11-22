@@ -1,0 +1,152 @@
+<article>
+  <section>
+    <div class="clearfix"></div>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link" onclick="closeBox(this)"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask">
+              <div class="col-md-2 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedItemComboboxAccount"
+                  [settings]="settingsFilterAccount" name="slAccount" (onSelect)="changeAccount($event)"
+                  (onDeSelect)="deSelectAccount()">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataSender" [(ngModel)]="selectedItemComboboxSender"
+                  [settings]="settingsFilterSender" name="slSender">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="inFromDate" bsDatepicker
+                  [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" [(ngModel)]="inFromDate" (keyup.enter)="getData()"
+                  placeholder="{{ 'partner_QuotaRemain.from_date' | translate }}">
+                <span class="fa fa-indent form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="inToDate" bsDatepicker
+                  [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" [(ngModel)]="inToDate" (keyup.enter)="getData()"
+                  placeholder="{{ 'partner_QuotaRemain.to_date' | translate }}">
+                <span class="fa fa-indent form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-12 col-sm-6 col-xs-12 form-group has-feedback">
+                <button type="button" style="float: right; margin-right: 0;" (click)="getData()"
+                  class="btn btn-primary btn-sm">{{ 'global.search' | translate }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>{{ 'quota_Remain.quota_sender' | translate }}</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link" onclick="closeBox(this)"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="form-group">
+                <div class="form-group has-feedback content-end">
+                  <button type="submit" class="btn btn-success btn-sm"
+                    (click)="exportExcel()">{{ 'global.export_excel' | translate }}</button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center">STT</th>
+                        <th class="text-center">{{ 'quota_Remain.account' | translate }}
+                        </th>
+                        <th class="text-center">{{ 'quota_Remain.sender' | translate }}
+                        </th>
+                        <th class="text-center">{{ 'quota_Remain.quota_total' | translate }}
+                        </th>
+                        <th class="text-center">
+                          {{ 'quota_Remain.quota_use' | translate }}</th>
+                        <th class="text-center">
+                          {{ 'quota_Remain.quota_remain' | translate }}</th>
+                        <th class="text-center">
+                          {{ 'quota_Remain.quota_limit_month_CSKH' | translate }}
+                        </th>
+                        <th class="text-center">
+                          {{ 'quota_Remain.quota_limit_month_QC' | translate }}</th>
+                        <th class="text-center">
+                          {{ 'quota_Remain.quota_limit_day_CSKH' | translate }}</th>
+                        <th class="text-center">
+                          {{ 'quota_Remain.quota_limit_day_QC' | translate }}</th>
+                        <th class="text-center">
+                          {{ 'quota_Remain.create_date' | translate }}</th>
+                        <th class="text-center">
+                          {{ 'quota_Remain.create_user' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let item of quota; let i = index" [attr.data-index]="i">
+                        <td>{{item.STT}}</td>
+                        <td>{{item.ACCOUNT_NAME}}</td>
+                        <td>{{item.SENDER_NAME}}</td>
+                        <td>{{item.QUOTA_TOTAL}}</td>
+                        <td>{{item.QUOTA_USE}}</td>
+                        <td>{{item.QUOTA_REMAIN}}</td>
+                        <td>{{item.QUOTA_LIMIT_MONTH_CSKH}}</td>
+                        <td>{{item.QUOTA_LIMIT_MONTH_QC}}</td>
+                        <td>{{item.QUOTA_LIMIT_DAY_CSKH}}</td>
+                        <td>{{item.QUOTA_LIMIT_DAY_QC}}</td>
+                        <td>{{item.CREATE_DATE}}</td>
+                        <td>{{item.CREATE_USER}}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }}
+                    trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999999">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6 col-xs-6 minibox" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>

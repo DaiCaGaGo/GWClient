@@ -1,0 +1,234 @@
+<article>
+  <section>
+    <div class="x_title clearfix">
+      <div class="title_left">
+        <h3>{{ 'telco.list_telco' | translate }}</h3>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="clearfix"></div>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask">
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="inTelCode" [(ngModel)]="inTelCode"
+                  placeholder="{{ 'telco.iTel_code' | translate }}" (keyup.enter)="getData()">
+                <span class="fa fa-indent form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="inTelName" [(ngModel)]="inTelName"
+                  placeholder="{{ 'telco.iTel_name' | translate }}" (keyup.enter)="getData()">
+                <span class="fa fa-indent form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback"></div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <button type="button" style="float: right; margin-right: 0;" (click)="getData()"
+                  class="btn btn-primary btn-sm">{{ 'global.search' | translate }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="form-group">
+                <div class="form-group has-feedback content-end">
+                  <button type="button" class="btn btn-primary btn-sm"
+                    (click)="showModalCreate.show()">{{ 'global.add_new' | translate }}</button>
+                  <button type="button" class="btn btn-danger btn-sm"
+                    (click)="confirmDeleteMulti()">{{ 'global.multi_delete' | translate }}</button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center">{{'global.order' | translate}}</th>
+                        <th class="box-checkbox-table">
+                          <div class="tool tool-check">
+                            <input type="checkbox" [checked]="isCheckedDelete"
+                              (change)="checkAllDelete($event.currentTarget.checked)" class="checkbox" />
+                          </div>
+                        </th>
+                        <th class="text-center">{{ 'telco.tel_code' | translate }}</th>
+                        <th class="text-center">{{ 'telco.tel_name' | translate }}</th>
+                        <th class="text-center">{{ 'telco.phone_header' | translate }}</th>
+                        <th class="text-center">{{ 'global.tool' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr [ngClass]="{'row-hidden-delete': arrIdDelete.indexOf(item.ID) >= 0 }"
+                        *ngFor="let item of dataTelco; let i = index" [attr.data-index]="i">
+                        <td class="text-center">{{item.STT}}</td>
+                        <td class="box-checkbox-table">
+                          <input type="checkbox" [checked]="isCheckedDelete"
+                            (change)="checkRowDelete($event.currentTarget.checked, item.ID, item.TEL_CODE)"
+                            value="{{item.ID}}" id="isAdmin" class="checkbox" />
+                        </td>
+                        <td>{{item.TEL_CODE}}</td>
+                        <td>{{item.TEL_NAME}}</td>
+                        <td>{{item.PHONE_HEADER}}</td>
+                        <td class="text-center">
+                          <div class="tool">
+                            <button type="submit" (click)="confirmUpdateModal(item.ID)"
+                              class="btn btn-success btn-sm">{{ 'global.edit' | translate }}</button>
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999999">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- Thêm nhà mạng -->
+<div class="modal fade" bsModal #showModalCreate="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'telco.create' | translate}}
+        </h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="showModalCreate.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #formAdd="ngForm" (ngSubmit)="createTelco(formAdd)">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 col-sm-6 col-xs-12 form-group">
+              <label>{{'telco.tel_code' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" class="form-control" name="telCode" maxlength="25"
+                placeholder="{{ 'telco.iTel_code' | translate }}" ngModel>
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12 form-group">
+              <label>{{'telco.tel_name' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" class="form-control" name="telName" placeholder="{{ 'telco.iTel_name' | translate }}"
+                ngModel>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px;">
+            <div class="col-md-12 col-sm-12 col-xs-12 form-group">
+              <label>{{'telco.phone_header' | translate}} <span style="color:red;">(*)</span></label>
+              <textarea type="text" class="form-control" placeholder="{{ 'telco.iPhone_header' | translate }}"
+                name="phoneHeader" rows="3" ngModel></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default"
+            (click)="showModalCreate.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal sửa nhà mạng-->
+<div class="modal fade" bsModal #showModalUpdate="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'telco.edit' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="showModalUpdate.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="formEditTelco" (ngSubmit)="editTelco()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <label>{{'telco.tel_code' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" class="form-control" formControlName="telCode" readonly
+                placeholder="{{ 'telco.iTel_code' | translate }}">
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+              <label>{{'telco.tel_name' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" class="form-control" formControlName="telName"
+                placeholder="{{ 'telco.iTel_name' | translate }}">
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px;">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <label>{{'telco.phone_header' | translate}} <span style="color:red;">(*)</span></label>
+              <textarea type="text" class="form-control" placeholder="{{ 'telco.iPhone_header' | translate }}"
+                formControlName="phoneHeader" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default"
+            (click)="showModalUpdate.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa nhiều nhà mạng-->
+<div class="modal fade" bsModal #confirmDeleteMultiModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'telco.delete' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteMultiModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- <div>Bạn có chắc chắn muốn xóa nhà mạng "<b class="text-success">{{telCode}}</b>" không?</div> -->
+        <div>{{'global.ask_delete' | translate}}</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmDeleteMultiModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="deleteMulti()">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>

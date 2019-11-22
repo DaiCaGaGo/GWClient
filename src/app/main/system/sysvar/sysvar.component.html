@@ -1,0 +1,272 @@
+<article>
+  <section>
+    <div class="clearfix"></div>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>{{ 'sys_var.list_sys_var' | translate }}</h2>
+            <!-- <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link" onclick="closeBox(this)"><i class="fa fa-close"></i></a>
+              </li>
+            </ul> -->
+          </div>
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask">
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="inVarGroup" [(ngModel)]="inVarGroup"
+                  placeholder="{{ 'sys_var.iVar_group' | translate }}" (keyup.enter)="getData()">
+                <span class="fa fa-indent form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="inVarName" [(ngModel)]="inVarName"
+                  placeholder="{{ 'sys_var.iVar_name' | translate }}" (keyup.enter)="getData()">
+                <span class="fa fa-indent form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <input type="text" class="form-control has-feedback-left" name="inVarValue" [(ngModel)]="inVarValue"
+                  placeholder="{{ 'sys_var.iVar_value' | translate }}" (keyup.enter)="getData()">
+                <span class="fa fa-indent form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback"></div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <button type="button" style="float: right; margin-right: 0;" (click)="getData()"
+                  class="btn btn-primary btn-sm">{{ 'global.search' | translate }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="form-group">
+                <div class="form-group has-feedback content-end">
+                  <button type="button" class="btn btn-primary btn-sm"
+                    (click)="showModalCreate.show()">{{ 'global.add_new' | translate }}</button>
+                  <button type="submit" class="btn btn-success btn-sm"
+                    (click)="exportExcel()">{{ 'global.export_excel' | translate }}</button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center">{{ 'sys_var.var_group' | translate }}</th>
+                        <th class="text-center">{{ 'sys_var.var_name' | translate }}</th>
+                        <th class="text-center">{{ 'sys_var.var_value' | translate }}</th>
+                        <th class="text-center" style="width:20%">{{ 'sys_var.description' | translate }}</th>
+                        <th class="text-center" style="width: 5%">{{'global.order' | translate}}</th>
+                        <th class="text-center" style="width:7%">{{ 'global.tool' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container *ngFor="let data of dataSysVar">
+                        <tr>
+                          <td [attr.rowspan]="data.LIST_SYSVAR.length" style="vertical-align: inherit">
+                            {{data.VAR_GROUP}}</td>
+                          <td>{{ data.LIST_SYSVAR[0].VAR_NAME }}</td>
+                          <td>{{ data.LIST_SYSVAR[0].VAR_VALUE }}</td>
+                          <td>{{ data.LIST_SYSVAR[0].DESCRIPTION }}</td>
+                          <td class="text-center">{{ data.LIST_SYSVAR[0].ORDER_NUM }}</td>
+                          <td>
+                            <div class="tool">
+                              <button type="submit" (click)="confirmUpdateModal(data.LIST_SYSVAR[0].ID)"
+                                class="btn btn-success btn-sm">{{ 'global.edit' | translate }}</button>
+                              <button type="submit"
+                                (click)="showConfirmDelete(data.LIST_SYSVAR[0].ID,data.LIST_SYSVAR[0].VAR_NAME)"
+                                class="btn btn-danger btn-sm">{{ 'global.delete' | translate }}</button>
+                            </div>
+                          </td>
+                        </tr>
+                        <ng-container *ngFor="let number of data.LIST_SYSVAR; let i= index;">
+                          <tr *ngIf="i!=0">
+                            <td>{{number.VAR_NAME}}</td>
+                            <td>{{number.VAR_VALUE}}</td>
+                            <td>{{number.DESCRIPTION}}</td>
+                            <td class="text-center">{{number.ORDER_NUM}}</td>
+                            <td>
+                              <div class="tool">
+                                <button type="submit" (click)="confirmUpdateModal(data.LIST_SYSVAR[i].ID)"
+                                  class="btn btn-success btn-sm">{{ 'global.edit' | translate }}</button>
+                                <button type="submit" (click)="showConfirmDelete(data.LIST_SYSVAR[i].ID, data.LIST_SYSVAR[i].VAR_NAME)"
+                                  class="btn btn-danger btn-sm">{{ 'global.delete' | translate }}</button>
+                              </div>
+                            </td>
+                          </tr>
+                        </ng-container>
+                      </ng-container>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)" [value]="pagination.pageSize">
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999999">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [maxSize]="5" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex"
+                      class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;" firstText="&laquo;"
+                      lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- Thêm khai báo hệ thống -->
+<div class="modal fade" bsModal #showModalCreate="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class=" modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'sys_var.add_sysvar' | translate}}
+        </h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="showModalCreate.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #formAdd="ngForm" (ngSubmit)="createSysVar(formAdd)">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12 form-group">
+              <label>{{'sys_var.var_group' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" class="form-control" name="varGroup" maxlength="25"
+                placeholder="{{ 'sys_var.iVar_group' | translate }}" ngModel>
+            </div>
+            <div class="col-md-6 col-sm-12 col-xs-12 form-group">
+              <label>{{'sys_var.var_name' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" class="form-control" name="varName" placeholder="{{ 'sys_var.iVar_name' | translate }}"
+                ngModel>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-12 col-sm-12 col-xs-12 form-group">
+              <label>{{'sys_var.var_value' | translate}} <span style="color:red;">(*)</span></label>
+              <textarea type="text" class="form-control" placeholder="{{ 'sys_var.iVar_value' | translate }}"
+                name="varValue" rows="4" ngModel></textarea>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-6 col-sm-12 col-xs-12 form-group">
+              <label>{{'sys_var.description' | translate}}</label>
+              <input type="text" class="form-control" name="description"
+                placeholder="{{ 'sys_var.iDescription' | translate }}" ngModel>
+            </div>
+            <div class="col-md-6 col-sm-12 col-xs-12 form-group">
+              <label>{{'global.order' | translate}}</label>
+              <input type="text" class="form-control" name="orderNum" placeholder="{{'global.order' | translate}}" ngModel>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default"
+            (click)="showModalCreate.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal sửa khai báo hệ thống -->
+<div class="modal fade" bsModal #showModalUpdate="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'sys_var.edit_sysvar' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="showModalUpdate.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="formEditSysVar" (ngSubmit)="editSysVar()">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 col-sm-12 col-xs-12">
+              <label>{{'sys_var.var_group' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" class="form-control" formControlName="varGroup"
+                placeholder="{{ 'sys_var.iVar_group' | translate }}">
+            </div>
+            <div class="col-md-6 col-sm-12 col-xs-12">
+              <label>{{'sys_var.var_name' | translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" class="form-control" formControlName="varName"
+                placeholder="{{ 'sys_var.iVar_name' | translate }}">
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-12 col-sm-12 col-xs-12">
+              <label>{{'sys_var.var_value' | translate}} <span style="color:red;">(*)</span></label>
+              <textarea type="text" class="form-control" placeholder="{{ 'sys_var.iVar_value' | translate }}"
+                formControlName="varValue" rows="4"></textarea>
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-6 col-sm-12 col-xs-12">
+              <label>{{'sys_var.description' | translate}}</label>
+              <input type="text" class="form-control" formControlName="description"
+                placeholder="{{ 'sys_var.iDescription' | translate }}">
+            </div>
+            <div class="col-md-6 col-sm-12 col-xs-12 form-group">
+              <label>{{'global.order' | translate}}</label>
+              <input type="text" class="form-control" formControlName="orderNum" placeholder="{{'global.order' | translate}}">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default"
+            (click)="showModalUpdate.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa nhiều khai báo hệ thống -->
+<div class="modal fade" bsModal #showModalDelete="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{ 'global.confirm' | translate }}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="showModalDelete.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>{{ 'global.ask_delete' | translate }}</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm" (click)="showModalDelete.hide()">{{ 'global.cancel' | translate }}</button>
+        <button type="submit" class="btn btn-success btn-sm" (click)="confirmDelete(id)">{{ 'global.confirm' | translate }}</button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,504 @@
+<article>
+  <section>
+    <div class="page-title clearfix">
+      <div class="title_left">
+        <h3>{{ 'mapping.mapping' | translate }}</h3>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="row form-horizontal form-label-left input_mask">
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountFilter"
+                  [settings]="settingsFilterAccountFilter" (onSelect)="onItemSelectAccount()"
+                  (onDeSelect)="onItemSelectAccount()" name="accountID">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataSender" [(ngModel)]="selectedSenderFilter"
+                  [settings]="settingsFilterSender" (onSelect)="onItemSelectSender()"
+                  (onDeSelect)="onItemSelectSender()" name="slSender">
+                </angular2-multiselect>
+              </div>
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataType" [(ngModel)]="selectedServiceTypeFilter"
+                  [settings]="settingsFilterType" (onSelect)="onItemSelectServiceType()"
+                  (onDeSelect)="onItemSelectServiceType()" name="slType">
+                </angular2-multiselect>
+              </div>
+              <!-- <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedItemComboboxPartner"
+                  [settings]="settingsFilterPartner" name="slPartner">
+                </angular2-multiselect>
+              </div> -->
+              <!-- <div class="col-md-9 col-sm-6 col-xs-12 form-group has-feedback"></div> -->
+              <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+                <button type="button" style="float: right; margin-right: 0;" (click)="getData()"
+                  class="btn btn-primary btn-sm">{{ 'global.search' | translate }}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <form class="form-horizontal form-label-left input_mask">
+              <div class="form-group">
+                <div class="form-group has-feedback content-end">
+                  <button type="button" class="btn btn-primary btn-sm" *ngIf="role.IS_ADD"
+                    (click)="confimShowModalCreate()">{{ 'global.add_new' | translate }}</button>
+                  <button type="submit" class="btn btn-success btn-sm"
+                    (click)="exportExcel()">{{ 'global.export_excel' | translate }}</button>
+                </div>
+              </div>
+            </form>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center">Tài khoản</th>
+                        <th class="text-center">Tên thương hiệu</th>
+                        <th class="text-center">Loại</th>
+                        <th class="text-center">Mạng</th>
+                        <th class="text-center">Đối tác</th>
+                        <th class="text-center">Phí duy trì</th>
+                        <th class="text-center">Thứ tự</th>
+                        <th class="text-center">Thứ tự tạm thời</th>
+                        <th class="text-center">Thời gian reset</th>
+                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center">{{ 'global.tool' | translate }}</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <ng-container *ngFor="let item of dataSenderMapping">
+                        <tr>
+                          <td [attr.rowspan]="item.LIST_PARTNER_SENDER.length" style="vertical-align: inherit">
+                            {{item.ACCOUNT_NAME}}</td>
+                          <td [attr.rowspan]="item.LIST_PARTNER_SENDER.length" style="vertical-align: inherit">
+                            {{item.SENDER_NAME}}</td>
+                          <td [attr.rowspan]="item.LIST_PARTNER_SENDER.length" style="vertical-align: inherit">
+                            {{item.SMS_TYPE}}</td>
+                          <td>{{item.LIST_PARTNER_SENDER[0].TEL_CODE}}</td>
+                          <td>{{item.LIST_PARTNER_SENDER[0].PARTNER_NAME}}</td>
+                          <td>{{item.LIST_PARTNER_SENDER[0].FEE_IN_MONTH}}</td>
+                          <td>{{item.LIST_PARTNER_SENDER[0].ORDER_REAL}}</td>
+                          <td>{{item.LIST_PARTNER_SENDER[0].ORDER_TMP}}</td>
+                          <td>
+                            {{item.LIST_PARTNER_SENDER[0].TIME_RESET != '' ? convertStringDate(item.LIST_PARTNER_SENDER[0].TIME_RESET) : item.LIST_PARTNER_SENDER[0].TIME_RESET}}
+                          </td>
+                          <td class="box-checkbox-table">
+                            <input type="checkbox" [checked]="item.LIST_PARTNER_SENDER[0].ACTIVE == 1? true:false"
+                              class="checkbox" disabled>
+                          </td>
+                          <td class="text-center">
+                            <div class="tool">
+                              <button type="submit"
+                                (click)="confirmUpdateModal(item.LIST_PARTNER_SENDER[0].ID, item.LIST_PARTNER_SENDER[0].SENDER_ID, item.SMS_TYPE)"
+                                *ngIf="role.IS_EDIT"
+                                class="btn btn-success btn-sm">{{ 'global.edit' | translate }}</button>
+                              <button type="button" class="btn btn-danger btn-sm" *ngIf="role.IS_DELETE"
+                                (click)="showConfirmDelete(item.LIST_PARTNER_SENDER[0].ID, item.LIST_PARTNER_SENDER[0].SENDER_NAME)">{{ 'global.delete' | translate }}</button>
+                            </div>
+                          </td>
+                        </tr>
+                        <ng-container *ngFor="let number of item.LIST_PARTNER_SENDER; let i= index;">
+                          <tr *ngIf="i!=0">
+                            <td>{{number.TEL_CODE}}</td>
+                            <td>{{number.PARTNER_NAME}}</td>
+                            <td>{{number.FEE_IN_MONTH}}</td>
+                            <td>{{number.ORDER_REAL}}</td>
+                            <td>{{number.ORDER_TMP}}</td>
+                            <td>{{number.TIME_RESET != '' ? convertStringDate(number.TIME_RESET) : number.TIME_RESET}}
+                            </td>
+                            <td class="box-checkbox-table">
+                              <input type="checkbox" [checked]="number.ACTIVE == 1? true:false" class="checkbox"
+                                disabled>
+                            </td>
+                            <td class="text-center">
+                              <div class="tool">
+                                <button type="submit"
+                                  (click)="confirmUpdateModal(number.ID, number.SENDER_ID, number.SMS_TYPE)"
+                                  *ngIf="role.IS_EDIT"
+                                  class="btn btn-success btn-sm">{{ 'global.edit' | translate }}</button>
+                                <button type="button" class="btn btn-danger btn-sm" *ngIf="role.IS_DELETE"
+                                  (click)="showConfirmDelete(number.ID, number.SENDER_NAME)">{{ 'global.delete' | translate }}</button>
+                              </div>
+                            </td>
+                          </tr>
+                        </ng-container>
+                      </ng-container>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }}
+                    trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      (numPages)="pagination.totalPage = $event" [(ngModel)]="pagination.pageIndex" [rotate]="true"
+                      [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;" nextText="&rsaquo;"
+                      firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- Thêm luồng -->
+<div class="modal fade" bsModal #showModalCreate="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg" style="width: 90%">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'mapping.add_mapping' | translate}}
+        </h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="showModalCreate.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form #formAdd="ngForm" (ngSubmit)="createMapping(formAdd)">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-2 col-sm-6 col-xs-12">
+              <label>{{'account-sender.account_name' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID"
+                [settings]="settingsFilterAccount" name="accountID">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12">
+              <label style="margin-top: 30px;">VIETTEL</label>
+            </div>
+            <div class="col-md-2 col-sm-6 col-xs-12">
+              <label>{{'mapping.port' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedItemComboboxPartnerViettel"
+                [settings]="settingsFilterPartner" name="partnerViettel">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-2 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.maintaining_fee' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="maintainingFeeViettel" ngModel>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.order' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="orderViettel" ngModel>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.order_tamp' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="orderTampViettel" ngModel>
+            </div>
+            <div class="col-md-2 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.time_reset' | translate}}</label>
+              <input type="number" class="form-control modal-popup" name="timeResetViettel" ngModel>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12">
+              <label></label>
+              <div class="checkbox">
+                <label><input type="checkbox" value="" class="checkbox" name="activeViettel"
+                    [(ngModel)]="checkActiveViettel">
+                  <span>{{'mapping.status' | translate}}</span> </label>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-2 col-sm-6 col-xs-12">
+              <label>{{'mapping.sender_name' | translate}}</label>
+              <angular2-multiselect [data]="dataSender" [(ngModel)]="selectedItemComboboxSender"
+                [settings]="settingsFilterSender" name="sender">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12">
+              <label style="margin-top: 30px;">GPC</label>
+            </div>
+            <div class="col-md-2 col-sm-6 col-xs-12">
+              <label>{{'mapping.port' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedItemComboboxPartnerGPC"
+                [settings]="settingsFilterPartner" name="partnerGPC">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-2 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.maintaining_fee' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="maintainingFeeGPC" ngModel>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.order' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="orderGPC" ngModel>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.order_tamp' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="orderTampGPC" ngModel>
+            </div>
+            <div class="col-md-2 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.time_reset' | translate}}</label>
+              <input type="number" class="form-control modal-popup" name="timeResetGPC" ngModel>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12">
+              <label></label>
+              <div class="checkbox">
+                <label><input type="checkbox" value="" class="checkbox" name="activeGPC" [(ngModel)]="checkActiveGPC">
+                  <span>{{'mapping.status' | translate}}</span> </label>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-2 col-sm-6 col-xs-12">
+              <label>{{'mapping.type' | translate}}</label>
+              <angular2-multiselect [data]="dataType" [(ngModel)]="selectedItemComboboxType"
+                [settings]="settingsFilterType" name="type">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12">
+                <label style="margin-top: 30px;">VMS</label>
+            </div>
+            <div class="col-md-2 col-sm-6 col-xs-12">
+              <label>{{'mapping.port' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedItemComboboxPartnerVMS"
+                [settings]="settingsFilterPartner" name="partnerVMS">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-2 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.maintaining_fee' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="maintainingFeeVMS" ngModel>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.order' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="orderVMS" ngModel>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.order_tamp' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="orderTampVMS" ngModel>
+            </div>
+            <div class="col-md-2 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.time_reset' | translate}}</label>
+              <input type="number" class="form-control modal-popup" name="timeResetVMS" ngModel>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12">
+              <label></label>
+              <div class="checkbox">
+                <label><input type="checkbox" value="" class="checkbox" name="activeVMS" [(ngModel)]="checkActiveVMS">
+                  <span>{{'mapping.status' | translate}}</span> </label>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-2 col-sm-6 col-xs-12"></div>
+            <div class="col-md-1 col-sm-6 col-xs-12">
+                <label style="margin-top: 30px;">VNM</label>
+            </div>
+            <div class="col-md-2 col-sm-6 col-xs-12">
+              <label>{{'mapping.port' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedItemComboboxPartnerVNM"
+                [settings]="settingsFilterPartner" name="partnerVNM">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-2 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.maintaining_fee' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="maintainingFeeVNM" ngModel>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.order' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="orderVNM" ngModel>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.order_tamp' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="orderTampVNM" ngModel>
+            </div>
+            <div class="col-md-2 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.time_reset' | translate}}</label>
+              <input type="number" class="form-control modal-popup" name="timeResetVNM" ngModel>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12">
+              <label></label>
+              <div class="checkbox">
+                <label><input type="checkbox" value="" class="checkbox" name="activeVNM" [(ngModel)]="checkActiveVNM">
+                  <span>{{'mapping.status' | translate}}</span> </label>
+              </div>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-2 col-sm-6 col-xs-12"></div>
+            <div class="col-md-1 col-sm-6 col-xs-12">
+                <label style="margin-top: 30px;">GTEL</label>
+            </div>
+            <div class="col-md-2 col-sm-6 col-xs-12">
+              <label>{{'mapping.port' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedItemComboboxPartnerGtel"
+                [settings]="settingsFilterPartner" name="partnerGtel">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-2 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.maintaining_fee' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="maintainingFeeGtel" ngModel>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.order' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="orderGtel" ngModel>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.order_tamp' | translate}}</label>
+              <input type="text" class="form-control modal-popup" name="orderTampGtel" ngModel>
+            </div>
+            <div class="col-md-2 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.time_reset' | translate}}</label>
+              <input type="number" class="form-control modal-popup" name="timeResetGtel" ngModel>
+            </div>
+            <div class="col-md-1 col-sm-6 col-xs-12">
+              <label></label>
+              <div class="checkbox">
+                <label><input type="checkbox" value="" class="checkbox" name="activeGtel" [(ngModel)]="checkActiveGtel">
+                  <span>{{'mapping.status' | translate}}</span> </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default"
+            (click)="showModalCreate.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="submit" class="btn btn-success">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal sửa phân luồng -->
+<div class="modal fade" bsModal #showModalUpdate="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1" role="dialog"
+  aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-lg" style="width: 90%">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'partner.edit_partner' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="showModalUpdate.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="formEditMapping">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account-sender.account_name' | translate}} <span style="color:red;">(*)</span></label>
+              <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID"
+                [settings]="settingsFilterAccount" formControlName="accountID">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'mapping.sender_name' | translate}}</label>
+              <angular2-multiselect [data]="dataSender" [(ngModel)]="selectedItemComboboxSender"
+                [settings]="settingsFilterSenderEdit" formControlName="sender">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'mapping.type' | translate}}</label>
+              <angular2-multiselect [data]="dataType" [(ngModel)]="selectedItemComboboxType"
+                [settings]="settingsFilterTypeEdit" formControlName="type">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'mapping.telco' | translate}}</label>
+              <angular2-multiselect [data]="dataTelco" [(ngModel)]="selectedItemComboboxTelco"
+                [settings]="settingsFilterTelcoEdit" formControlName="telco">
+              </angular2-multiselect>
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'mapping.port' | translate}}</label>
+              <angular2-multiselect [data]="dataPartner" [(ngModel)]="selectedItemComboboxPartner"
+                [settings]="settingsFilterPartner" formControlName="partner">
+              </angular2-multiselect>
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.maintaining_fee' | translate}}</label>
+              <input type="text" class="form-control modal-popup" formControlName="maintainingFee"
+                placeholder="{{ 'mapping.iMaintaining_fee' | translate }}">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.order' | translate}}</label>
+              <input type="text" class="form-control modal-popup" formControlName="order"
+                placeholder="{{ 'mapping.iOrder' | translate }}">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.order_tamp' | translate}}</label>
+              <input type="text" class="form-control modal-popup" formControlName="orderTamp"
+                placeholder="{{ 'mapping.iOrder_tamp' | translate }}">
+            </div>
+          </div>
+          <div class="row" style="padding-top:10px">
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group">
+              <label>{{'mapping.time_reset' | translate}}</label>
+              <input type="number" class="form-control modal-popup" formControlName="timeReset"
+                placeholder="{{ 'mapping.iTime_reset' | translate }}">
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label></label>
+              <div class="checkbox">
+                <label><input type="checkbox" value="" class="checkbox" formControlName="active" ngModel>
+                  <span>{{'mapping.status' | translate}}</span> </label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default"
+            (click)="showModalUpdate.hide()">{{ 'global.cancel' | translate }}</button>
+          <button type="button" (click)="editMapping()"
+            class="btn btn-success">{{ 'global.confirm' | translate }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa luồng-->
+<div class="modal fade" bsModal #confirmDeleteModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'mapping.delete_mapping' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <!-- <div>Bạn có chắc chắn muốn xóa phân luồng của thương hiệu "<b class="text-success">{{senderName}}</b>"
+          không?</div> -->
+        <div>{{'global.ask_delete' | translate}}</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default"
+          (click)="confirmDeleteModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success"
+          (click)="confirmDelete(partnerSenderId)">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>

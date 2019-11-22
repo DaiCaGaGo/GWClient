@@ -1,0 +1,143 @@
+<article>
+  <!-- <section>
+    <div class="page-title clearfix">
+      <div class="title_left">
+        <h3>{{'role_menu.form_title' | translate}}</h3>
+      </div>
+    </div>
+  </section> -->
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_content">
+            <div class="row">
+              <div class="col-sm-4 col-xs-6 form-group has-feedback">
+                <select class="form-control has-feedback-left" (change)="onChangeRole($event.target.value)" 
+                [(ngModel)]="role_id" [attr.disabled]="true">
+                  <option *ngFor="let item of listRole" value="{{item.ID}}">{{item.ROLE_NAME}}</option>
+                </select>
+                <span class="fa fa-tasks form-control-feedback left" aria-hidden="true"></span>
+              </div>
+              <div class="col-sm-8 col-xs-6 form-group has-feedback">
+                <form class="form-horizontal form-label-left input_mask">
+                  <div class="form-group">
+                    <div class="form-group has-feedback content-end">
+                      <button type="button" class="btn btn-primary btn-sm"
+                        (click)="confirmEditPermission()">{{ 'global.edit' | translate }}</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                <div class="table-responsive">
+                  <table class="table table-bordered clear-bottom">
+                    <thead>
+                      <tr>
+                        <th class="text-center">STT</th>
+                        <th class="text-center">Menu</th>
+                        <th class="box-checkbox-table">
+                          <div class="tool tool-check">
+                            {{'global.view' | translate}} &nbsp; <input type="checkbox" (change)="checkAllViewRole($event.currentTarget.checked)"
+                              class="checkbox" style="margin-top:4px;" />
+                          </div>
+                        </th>
+                        <th class="box-checkbox-table">
+                          <div class="tool tool-check">
+                            {{'global.add' | translate}} &nbsp; <input type="checkbox" (change)="checkAllAddRole($event.currentTarget.checked)"
+                              class="checkbox" style="margin-top:4px;" />
+                          </div>
+                        </th>
+                        <th class="box-checkbox-table">
+                          <div class="tool tool-check">
+                            {{'global.edit' | translate}} &nbsp; <input type="checkbox"
+                              (change)="checkAllEditRole($event.currentTarget.checked)" class="checkbox"
+                              style="margin-top:4px;" />
+                          </div>
+                        </th>
+                        <th class="box-checkbox-table">
+                          <div class="tool tool-check">
+                            {{'global.delete' | translate}} &nbsp; <input type="checkbox"
+                              (change)="checkAllDelRole($event.currentTarget.checked)" class="checkbox"
+                              style="margin-top:4px;" />
+                          </div>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let role of dataMenuRole; let i = index" [attr.data-index]="i">
+                        <td class="text-center">{{i+1}}</td>
+                        <td>{{role.MENU_NAME}}</td>
+                        <td class="box-checkbox-table">
+                          <input type="checkbox" [checked]="role.IS_VIEW == 1? true:false" class="checkbox"
+                            (change)="checkRowViewRole($event.currentTarget.checked, i)" />
+                        </td>
+                        <td class="box-checkbox-table">
+                          <input type="checkbox" [checked]="role.IS_ADD == 1? true:false" class="checkbox"
+                            (change)="checkRowAddRole($event.currentTarget.checked, i)" />
+                        </td>
+                        <td class="box-checkbox-table">
+                          <input type="checkbox" [checked]="role.IS_EDIT == 1? true:false" class="checkbox"
+                            (change)="checkRowEditRole($event.currentTarget.checked, i)" />
+                        </td>
+                        <td class="box-checkbox-table">
+                          <input type="checkbox" [checked]="role.IS_DEL == 1? true:false" class="checkbox"
+                            (change)="checkRowDelRole($event.currentTarget.checked, i)" />
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <!-- <div class="row">
+                  <div class="col-md-6 col-sm-6" style="margin: 25px 0 0 0">
+                    Tổng số {{ pagination.totalRow }} bản ghi trong {{ pagination.totalPage }} trang. Hiển thị
+                    <select (change)="changePageSize($event.target.value)">
+                      <option value="5" selected="">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="ALL">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [maxSize]="100" [itemsPerPage]="pagination.pageSize"
+                      [totalItems]="pagination.totalRow" (pageChanged)="pageChanged($event)"
+                      [(ngModel)]="pagination.pageIndex" class="pagination-sm content-end" previousText="&lsaquo;"
+                      nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div> -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>
+
+<!-- modal xác nhận sửa -->
+<div class="modal fade" bsModal #confirmEditPermissionModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmEditPermissionModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>{{ 'global.ask_save' | translate }}</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm" (click)="confirmEditPermissionModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm" (click)="editPermissionMenuRole()">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>

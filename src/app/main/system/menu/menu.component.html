@@ -1,0 +1,78 @@
+<article>
+  <section>
+    <div class="row">
+      <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel portlet">
+          <div class="x_title clearfix">
+            <h2>Quản lý menu</h2>
+            <ul class="nav navbar-right panel_toolbox">
+              <li><a class="collapse-link" onclick="collapseBox(this)"><i class="fa fa-chevron-up"></i></a>
+              </li>
+              <li><a class="close-link" onclick="closeBox(this)"><i class="fa fa-close"></i></a>
+              </li>
+            </ul>
+          </div>
+          <div class="x_content">
+            <div id="tree-list-demo" style="margin-bottom: 30px">
+              <dx-tree-list #treeGridMenu [dataSource]="dataMenu" keyExpr="ID" parentIdExpr="PARENT_ID"
+                [showRowLines]="true" [showBorders]="true" [columnAutoWidth]="true" [expandedRowKeys]="keysExpand"
+                (onEditorPreparing)="editorPreparing($event)" (onInitNewRow)="initNewRow($event)"
+                (onCellPrepared)="cellPrepared($event)" (onRowInserting)="rowInserting($event)"
+                (onRowInserted)="rowInserted($event)" (onRowUpdated)="rowUpdated($event)"
+                (onRowRemoving)="rowRemoving($event)" (onRowRemoved)="rowRemoved($event)"
+                (onToolbarPreparing)="onToolbarPreparing($event)">
+
+                <dxo-scrolling mode="standard"></dxo-scrolling>
+                <dxo-paging [enabled]="true" [pageSize]="100">
+                </dxo-paging>
+                <dxo-pager [showPageSizeSelector]="true" [allowedPageSizes]="[5, 10, 20, 100]" [showInfo]="true"
+                  [showNavigationButtons]="true" infoText="Tổng số {2} bản ghi trong {1} trang">
+                </dxo-pager>
+
+                <dxo-column-chooser #columnChooser [enabled]="true" [allowSearch]="true"
+                  [mode]="columnChooserModes[0].key">
+                </dxo-column-chooser>
+
+                <dxo-editing mode="form" [allowUpdating]="true" [allowDeleting]="true">
+                </dxo-editing>
+                <dxo-filter-row [visible]="true"></dxo-filter-row>
+
+                <!--  <dxo-selection mode="multiple" [recursive]="true">
+                </dxo-selection> -->
+
+                <dxi-column dataField="MENU_NAME" caption="Tên tiếng việt">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-column>
+                <dxi-column dataField="MENU_NAME_EN" caption="Tên tiếng anh">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-column>
+                <dxi-column dataField="MENU_CODE" caption="Menu Code">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-column>
+                <dxi-column dataField="PARENT_ID" caption="Parent ID" [visible]="false">
+                  <dxo-lookup [dataSource]="lookupDataMenu" valueExpr="ID" displayExpr="MENU_NAME" allowClearing="true">
+                  </dxo-lookup>
+                </dxi-column>
+                <dxi-column dataField="MENU_PATH" caption="Đường dẫn">
+                </dxi-column>
+                <dxi-column dataField="ORD_NUMBER" dataType="number" alignment="center" [width]="100" sortOrder="asc"
+                  caption="Thứ tự">
+                  <dxi-validation-rule type="required"></dxi-validation-rule>
+                </dxi-column>
+                <dxi-column dataField="MENU_ICON" alignment="center" caption="ICON">
+                </dxi-column>
+                <dxi-column [allowFiltering]="false" dataField="IS_ACTIVE" alignment="center" dataType="boolean"
+                  [width]="120" caption="Hiển thị">
+                </dxi-column>
+                <dxi-column type="buttons" [width]="110">
+                  <dxi-button name="edit" text="Sửa"></dxi-button>
+                  <dxi-button name="delete" text="Xóa"></dxi-button>
+                </dxi-column>
+              </dx-tree-list>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</article>

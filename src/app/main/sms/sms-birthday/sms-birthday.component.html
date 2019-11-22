@@ -1,0 +1,261 @@
+<article>
+  <tabset>
+    <tab heading="{{'sms_birthday.birthday_group' | translate}}">
+        <app-birthday-group #birthdayGroup></app-birthday-group>
+    </tab>
+    <tab heading="{{'sms_birthday.customer' | translate}}">
+        <app-group-customer #customerGroup></app-group-customer>
+    </tab>
+    <tab heading="{{'sms_birthday.birthday_in_day' | translate}}">
+      <!-- <section>
+        <div class="clearfix"></div>
+        <div class="row">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel portlet">
+              <div class="x_content">
+                <form class="row form-horizontal form-label-left input_mask">
+                  <div class="col-md-9 col-sm-12 col-xs-12">
+                    <div class="row">
+                      <div class="col-md-4 col-sm-12 col-xs-12">
+                        <angular2-multiselect [data]="dataAccount" [(ngModel)]="selectedAccountID"
+                          [settings]="settingsFilterAccount" (onSelect)="onItemSelect()" (onDeSelect)="OnItemDeSelect()"
+                          name="accountID">
+                        </angular2-multiselect>
+                      </div>
+                      <div class="col-md-4 col-sm-12 col-xs-12 form-group has-feedback">
+                        <angular2-multiselect [data]="dataSender" [(ngModel)]="selectedSenderName"
+                          [settings]="settingsFilterSender" name="senderName">
+                        </angular2-multiselect>
+                      </div>
+                      <div class="col-md-4 col-sm-12 col-xs-12 form-group">
+                        <angular2-multiselect [data]="dataSendType" [(ngModel)]="selectedSendType"
+                          [settings]="settingsFilterSendType" (onSelect)="onItemSelectSendType()"
+                          (onDeSelect)="OnItemDeSelectSendType()" name="sendType">
+                        </angular2-multiselect>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-8 col-sm-12 col-xs-12">
+                        <textarea type="text" class="form-control"
+                          placeholder="{{ 'campaign.iSms_content' | translate }}" #contentSMS name="contentSMS" rows="3"
+                          [(ngModel)]="nhapNoiDung" (change)="countSMS($event.target.value)"
+                          (keyup)="countSMS($event.target.value)" (keydow)="countSMS($event.target.value)"></textarea>
+                        <label><span style="display:inline-block !important">{{numberChar}}</span>
+                          {{'campaign.text_countmes2' | translate}} (<span
+                            style="display:inline-block !important">{{numberSMS}}</span>{{'campaign.text_countmes3' | translate}})</label>
+                      </div>
+                      <div class="col-md-4 col-sm-12 col-xs-12">
+                        <div class="row">
+                          <div class="col-md-4 col-sm-6 col-xs-12" style="margin-top: 10px"><label>Hẹn giờ gửi
+                              tin</label>
+                          </div>
+                          <div class="col-md-8 col-sm-6 col-xs-12">
+                            <input type="time" id="input" class="form-control" value="08:00" name="timer" #timer
+                              placeholder="Hẹn giờ gửi tin">
+                          </div>
+                        </div>
+                        <div class="row" style="margin-left:0px; margin-top: 10px">
+                          <label style="color: red;" name="lbQuyTinCSKH">Quỹ tin CSKH:
+                            {{ viewQuyTinCSKH }}</label>&nbsp;&nbsp;&nbsp;
+                          <label style="color: red;" name="lbQuyTinQC">Quỹ tin QC: {{ viewQuyTinQC }}</label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-3 col-sm-6 col-xs-12">
+                    <form class="form-horizontal form-label-left input_mask">
+                      <div class="row">
+                        <div class="col-sm-12 col-xs-12 form-group has-feedback">
+                          <input type="file" #importExcel name="importExcel" class="form-control" (change)="Upload()">
+                        </div>
+                      </div>
+                      <div class="row" style="margin-left:0px; margin-top: 10px;">
+                        <button type="button" class="btn btn-primary btn-sm"
+                          (click)="createContent(nhapNoiDung)">{{'sms_customize.create_sms' | translate}}</button>
+                        <button type="button" (click)="showConfirmSendSms()" *ngIf="role.IS_ADD"
+                          class="btn btn-primary btn-sm">{{ 'send_sms.send' | translate }}</button>
+                        <button type="button" class="btn btn-primary btn-sm"
+                          (click)="exportExcelTemplate()">{{'sms_customize.export_template' | translate}}</button>
+                      </div>
+                    </form>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <div class="row">
+          <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel portlet">
+              <form class="form-horizontal form-label-left input_mask">
+                <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback" style="padding:0">
+                  <div style="display: inline-block; padding-right:25px">
+                    <label>
+                      <span style="display:inline-block !important">{{ 'send_sms.total_num' | translate }}</span>
+                      (<span
+                        style="display:inline-block !important">{{countTotal}}</span>{{ 'campaign.text_num' | translate }})
+                    </label>
+                  </div>
+                  <div style="display: inline-block; padding-right:15px">
+                    <div class="checkbox" style="padding-top:0">
+                      <label><input type="checkbox" class="checkbox" name="countVTL" checked="isCheckSendVTL"
+                          (change)="onCheckSendVTL($event.currentTarget.checked)">
+                        <span style="display:inline-block !important">{{ 'send_sms.viettel' | translate }}</span>
+                        (<span
+                          style="display:inline-block !important">{{countVTL}}</span>{{ 'campaign.text_num' | translate }})
+                      </label>
+                    </div>
+                  </div>
+                  <div style="display: inline-block; padding-right:15px">
+                    <div class="checkbox" style="padding-top:0">
+                      <label><input type="checkbox" class="checkbox" name="countGPC" checked="isCheckSendGPC"
+                          (change)="onCheckSendGPC($event.currentTarget.checked)">
+                        <span style="display:inline-block !important">{{ 'send_sms.gpc' | translate }}</span>
+                        (<span
+                          style="display:inline-block !important">{{countGPC}}</span>{{ 'campaign.text_num' | translate }})
+                      </label>
+                    </div>
+                  </div>
+                  <div style="display: inline-block; padding-right:15px">
+                    <div class="checkbox" style="padding-top:0">
+                      <label><input type="checkbox" class="checkbox" name="countVMS" checked="isCheckSendVMS"
+                          (change)="onCheckSendVMS($event.currentTarget.checked)">
+                        <span style="display:inline-block !important">{{ 'send_sms.vms' | translate }}</span>
+                        (<span
+                          style="display:inline-block !important">{{countVMS}}</span>{{ 'campaign.text_num' | translate }})
+                      </label>
+                    </div>
+                  </div>
+                  <div style="display: inline-block; padding-right:15px">
+                    <div class="checkbox" style="padding-top:0">
+                      <label><input type="checkbox" class="checkbox" name="countVNM" checked="isCheckSendVNM"
+                          (change)="onCheckSendVNM($event.currentTarget.checked)">
+                        <span style="display:inline-block !important">VN mobile</span>
+                        (<span
+                          style="display:inline-block !important">{{countVNM}}</span>{{ 'campaign.text_num' | translate }})
+                      </label>
+                    </div>
+                  </div>
+                  <div style="display: inline-block; padding-right:15px">
+                    <div class="checkbox" style="padding-top:0">
+                      <label><input type="checkbox" class="checkbox" name="countGtel" checked="isCheckSendGTEL"
+                          (change)="onCheckSendGTEL($event.currentTarget.checked)">
+                        <span style="display:inline-block !important">{{ 'send_sms.gtel' | translate }}</span>
+                        (<span
+                          style="display:inline-block !important">{{countGTEL}}</span>{{ 'campaign.text_num' | translate }})
+                      </label>
+                    </div>
+                  </div>
+                  <div style="display: none">
+                    <div class="checkbox" style="padding-top:0">
+                      <label><input type="checkbox" class="checkbox" name="countSFone" checked="isCheckSendSFONE"
+                          (change)="onCheckSendSFONE($event.currentTarget.checked)">
+                        <span style="display:inline-block !important">{{ 'send_sms.sfone' | translate }}</span>
+                        (<span
+                          style="display:inline-block !important">{{countSFONE}}</span>{{ 'campaign.text_num' | translate }})
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </form>
+
+              <div class="x_content">
+                <table class="table table-bordered clear-bottom">
+                  <thead>
+                    <tr>
+                      <th class="text-center" style="width: 60px; vertical-align: middle;">
+                        {{'global.order' | translate}}<br />(1)</th>
+                      <th class="text-center" style="width: 150px; vertical-align: middle;" (click)="getCot(2)">
+                        {{'sms_birthday.fullname' | translate}}
+                        <br />(2)</th>
+                      <th class="text-center" style="width: 100px; vertical-align: middle;" (click)="getCot(3)">
+                        {{ 'sms_birthday.phone' | translate }}<br />(3)
+                      </th>
+                      <th class="text-center" style="width: 100px; vertical-align: middle;">
+                        {{ 'sms_birthday.birthday' | translate }}<br />(4)
+                      </th>
+                      <th class="text-center" style="width: 100px; vertical-align: middle;">Telco <br />(5)</th>
+                      <th class="text-center" style="vertical-align: middle;">
+                        {{ 'sms_birthday.contentSms' | translate }}<br />(6)</th>
+                      <th class="text-center" style="width: 90px; vertical-align: middle;">
+                        {{ 'sms_birthday.countLength' | translate }}<br />(7)</th>
+                    </tr>
+                  </thead>
+                  <tbody class="table-content">
+                    <tr *ngFor="let customers of dataImportExcelPaging; let i = index" [attr.data-index]="i">
+                      <td class="text-center">{{ paginationImport.pageSize * (paginationImport.pageIndex -1) + (i+1) }}
+                      </td>
+                      <td>{{customers.FULL_NAME}}</td>
+                      <td>{{customers.PHONE}}</td>
+                      <td>{{customers.BIRTHDAY}}</td>
+                      <td>{{customers.TELCO}}</td>
+                      <td><textarea type="text" class="form-control" name="fillNoiDung_{{i}}" rows="2"
+                          style="width: 100%"
+                          [(ngModel)]="fillNoiDung[paginationImport.pageSize * (paginationImport.pageIndex -1) + i].NOI_DUNG"></textarea>
+                      </td>
+                      <td class="text-center">
+                        {{ fillNoiDung[i].NOI_DUNG.length }}
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+
+                <div class="row box-pagination">
+                  <div class="col-md-6 col-sm-6 col-xs-6 minibox" style="margin: 25px 0 0 0">
+                    Tổng số {{ paginationImport.totalRow }} bản ghi trong {{ paginationImport.totalPage }} trang. Hiển
+                    thị
+                    <select (change)="changePageSizeImport($event.target.value)" [value]="paginationImport.pageSize">
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="20">20</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                      <option value="99999999">Tất cả</option>
+                    </select>
+                    bản ghi.
+                  </div>
+                  <div class="col-md-6 col-sm-6 col-xs-6 minibox" style="margin-bottom:10px">
+                    <pagination [boundaryLinks]="true" [itemsPerPage]="paginationImport.pageSize"
+                      [totalItems]="paginationImport.totalRow" (pageChanged)="pageChangedImport($event)"
+                      (numPages)="paginationImport.totalPage = $event" [(ngModel)]="paginationImport.pageIndex"
+                      [rotate]="true" [maxSize]="5" class="pagination-sm content-end" previousText="&lsaquo;"
+                      nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;">
+                    </pagination>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section> -->
+      <app-sms-birthday-inday #smsBirthday></app-sms-birthday-inday>
+    </tab>
+  </tabset>
+</article>
+
+<!-- modal xác nhận gửi tin nhắn -->
+<div class="modal fade" bsModal #confirmSendSmsModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmSendSmsModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>{{'global.ask_send_sms' | translate}}</div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmSendSmsModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="sendMessage()">{{'global.confirm' | translate}}</button>
+      </div>
+    </div>
+  </div>
+</div>
