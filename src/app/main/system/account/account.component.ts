@@ -39,6 +39,7 @@ export class AccountComponent implements OnInit {
   public fillterCompanyName: string = '';
   public fillterPhone: string = '';
   public fillterPaymentType: string = '';
+  public checkSendSmsLoop = false;
   public is_random_pass = false;
   public isDisablePass = false;
   public isCheckedDelete: boolean = false;
@@ -117,6 +118,7 @@ export class AccountComponent implements OnInit {
       enableDauSoNgan: new FormControl(),
       enableOTT: new FormControl(),
       enableOTP: new FormControl(),
+      checkSendSmsLoop: new FormControl(),
 
       dlvr: new FormControl(),
       dlvrURL: new FormControl(),
@@ -277,53 +279,52 @@ export class AccountComponent implements OnInit {
     this.createAccountModal.show();
   }
 
-  public async createAccount(account) {
-    let USER_NAME = account.userName;
-    let PASSWORD = account.password;
-    if (this.is_random_pass == true) PASSWORD = this.passRandom;
-    let FULL_NAME = account.fullName;
-    let PHONE = account.phone;
-    let EMAIL = account.email;
-    let SKYPE = account.skype;
-    let COMPANY_NAME = account.companyName
-    let BANK_NAME = account.bankName;
-    let BANK_ACCOUNT = account.bankAccount;
-    let BANK_ACCOUNT_NAME = account.bankAccountName;
+  model: any = {};
+  // mobNumberPattern = "^((\\+91-?)|0)?[0-9]{10}$";  
+  mobNumberPattern = "^(84|0)?[0-9]{9}$"
 
-    let CREDIT_LINE_IN_MONTH_CSKH = account.hanMucThangCSKH;
-    let CREDIT_LINE_IN_DAY_CSKH = account.hanMucNgayCSKH;
-    let QUOTA_CSKH = account.quotaCSKH;
-    let QUOTA_REMAIN_CSKH = account.quotaConCSKH;
+  async createAccount(){
+    // let users = JSON.stringify(this.model);
+
+    let USER_NAME = this.model.userName;
+    // let PASSWORD = this.model.password;
+    // if (this.is_random_pass == true) PASSWORD = this.passRandom;
+    let PASSWORD = this.passRandom
+    let FULL_NAME = this.model.fullName;
+    let PHONE = this.model.phone;
+    let EMAIL = this.model.email;
+    let SKYPE = this.model.skype;
+    let COMPANY_NAME = this.model.companyName
+    let BANK_NAME = this.model.bankName;
+    let BANK_ACCOUNT = this.model.bankAccount;
+    let BANK_ACCOUNT_NAME = this.model.bankAccountName;
+
+    let CREDIT_LINE_IN_MONTH_CSKH = this.model.hanMucThangCSKH;
+    let CREDIT_LINE_IN_DAY_CSKH = this.model.hanMucNgayCSKH;
+    let QUOTA_CSKH = this.model.quotaCSKH;
+    let QUOTA_REMAIN_CSKH = this.model.quotaConCSKH;
     if (QUOTA_CSKH > 0) QUOTA_REMAIN_CSKH = QUOTA_CSKH;
-    let CREDIT_LINE_IN_MONTH_QC = account.hanMucThangQC;
-    let CREDIT_LINE_IN_DAY_QC = account.hanMucNgayQC;
-    let QUOTA_QC = account.quotaQC;
-    let QUOTA_REMAIN_QC = account.quotaConQC;
+    let CREDIT_LINE_IN_MONTH_QC = this.model.hanMucThangQC;
+    let CREDIT_LINE_IN_DAY_QC = this.model.hanMucNgayQC;
+    let QUOTA_QC = this.model.quotaQC;
+    let QUOTA_REMAIN_QC = this.model.quotaConQC;
     if (QUOTA_QC > 0) QUOTA_REMAIN_QC = QUOTA_QC;
 
-    let IS_ADMIN = account.isAdmin == true ? 1 : 0;
-    let IS_ACTIVE = account.isActive == true ? 1 : 0;
-    let UNLIMIT_QUOTA = account.limitQuota == true ? 1 : 0;
-    let ENABLE_SMS_CSKH = account.enableSmsCSKH == true ? 1 : 0;
-    let ENABLE_SMS_QC = account.enableSmsQC == true ? 1 : 0;
-    let ENABLE_SHORT_NUMBER = account.enableDauSoNgan == true ? 1 : 0;
-    let ENABLE_OTT = account.enableOTT == true ? 1 : 0;
-    let ENABLE_OTP = account.enableOTP == true ? 1 : 0;
+    let IS_ADMIN = this.model.isAdmin == true ? 1 : 0;
+    let IS_ACTIVE = this.checkActive == true ? 1 : 0;
+    let UNLIMIT_QUOTA = this.model.limitQuota == true ? 1 : 0;
+    let ENABLE_SMS_CSKH = this.model.enableSmsCSKH == true ? 1 : 0;
+    let ENABLE_SMS_QC = this.model.enableSmsQC == true ? 1 : 0;
+    let ENABLE_SHORT_NUMBER = this.model.enableDauSoNgan == true ? 1 : 0;
+    let ENABLE_OTT = this.model.enableOTT == true ? 1 : 0;
+    let ENABLE_OTP = this.model.enableOTP == true ? 1 : 0;
+    let ENABLE_SMS_LOOP = this.model.checkSendSmsLoop == true ? 1 : 0;
 
-    let DLVR = account.dlvr == true ? 1 : 0;
-    let DLVR_URL = account.dlvrURL;
-    let EMAIL_REPORT = account.emailReport;
-    let PARENT_ID = account.parentID.length > 0 ? account.parentID[0].id : "";
+    let DLVR = this.model.dlvr == true ? 1 : 0;
+    let DLVR_URL = this.model.dlvrURL;
+    let EMAIL_REPORT = this.model.emailReport;
+    let PARENT_ID = this.selectedAccountID.length > 0 ? this.selectedAccountID[0].id : "";
     let CREATE_USER = this.authService.currentUserValue.USER_NAME;
-
-    if (USER_NAME == "" || USER_NAME == null) {
-      this.notificationService.displayErrorMessage("Bạn phải nhập tên tài khoản");
-      return;
-    }
-    if (PASSWORD == "" || PASSWORD == null) {
-      this.notificationService.displayErrorMessage("Bạn phải nhập mật khẩu hoặc tạo mật khẩu tự động");
-      return;
-    }
 
     let PAYMENT_TYPE = this.selectedAccountType.length > 0 ? this.selectedAccountType[0].id : "";
     if (PAYMENT_TYPE == "") {
@@ -346,7 +347,7 @@ export class AccountComponent implements OnInit {
       CREDIT_LINE_IN_MONTH_CSKH, CREDIT_LINE_IN_DAY_CSKH, QUOTA_CSKH, QUOTA_REMAIN_CSKH,
       CREDIT_LINE_IN_MONTH_QC, CREDIT_LINE_IN_DAY_QC, QUOTA_QC, QUOTA_REMAIN_QC,
       IS_ADMIN, IS_ACTIVE, UNLIMIT_QUOTA, ENABLE_SMS_CSKH, ENABLE_SMS_QC,
-      ENABLE_SHORT_NUMBER, ENABLE_OTT, ENABLE_OTP, PARENT_ID, ROLE_ACCESS, CREATE_USER
+      ENABLE_SHORT_NUMBER, ENABLE_OTT, ENABLE_OTP, PARENT_ID, ROLE_ACCESS, CREATE_USER, ENABLE_SMS_LOOP
     });
 
     if (dataInsert.err_code == 0) {
@@ -365,6 +366,7 @@ export class AccountComponent implements OnInit {
     else if (error > 0) {
       this.notificationService.displayErrorMessage("Có lỗi xảy ra!");
     }
+    this.model = {}
   }
   //#endregion
 
@@ -441,6 +443,7 @@ export class AccountComponent implements OnInit {
         enableDauSoNgan: new FormControl(dataAccount.ENABLE_SHORT_NUMBER),
         enableOTT: new FormControl(dataAccount.ENABLE_OTT),
         enableOTP: new FormControl(dataAccount.ENABLE_OTP),
+        checkSendSmsLoop: new FormControl(dataAccount.IS_SEND_SMS_LOOP),
 
         dlvr: new FormControl(dataAccount.DLVR),
         dlvrURL: new FormControl(dataAccount.DLVR_URL),
@@ -492,6 +495,7 @@ export class AccountComponent implements OnInit {
     let ENABLE_SHORT_NUMBER = formData.enableDauSoNgan.value == true ? 1 : 0;
     let ENABLE_OTT = formData.enableOTT.value == true ? 1 : 0;
     let ENABLE_OTP = formData.enableOTP.value == true ? 1 : 0;
+    let IS_SEND_SMS_LOOP = formData.checkSendSmsLoop.value == true ? 1 : 0;
 
     let DLVR = formData.dlvr.value == true ? 1 : 0;
     let DLVR_URL = formData.dlvrURL.value;
@@ -519,7 +523,7 @@ export class AccountComponent implements OnInit {
       CREDIT_LINE_IN_MONTH_QC, CREDIT_LINE_IN_DAY_QC, QUOTA_QC, QUOTA_REMAIN_QC,
       DLVR, DLVR_URL, EMAIL_REPORT,
       IS_ADMIN, IS_ACTIVE, UNLIMIT_QUOTA, ENABLE_SMS_CSKH, ENABLE_SMS_QC, ENABLE_SHORT_NUMBER, ENABLE_OTT, ENABLE_OTP,
-      PARENT_ID, ROLE_ACCESS, EDIT_USER
+      PARENT_ID, ROLE_ACCESS, EDIT_USER, IS_SEND_SMS_LOOP
     })
     if (dataEdit.err_code == 0) {
       this.getDataAccount();

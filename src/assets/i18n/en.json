@@ -204,12 +204,12 @@
     "quota_cskh": "Quota CSKH",
     "quota_qc": "Quota QC",
     "quota_remain_cskh": "Quota remain CSKH",
-    "quota_remain_qc": "Quota remain CSKH",
+    "quota_remain_qc": "Quota remain QC",
     "send_cskh": "Send sms CSKH",
     "send_qc": "Send sms QC",
     "send_otp": "Send OTP",
     "send_ott": "Send OTT",
-    "send_short_number": "Send short number",
+    "send_short_number": "Send 8x88",
     "receive_report_sms": "Receive sms report",
     "url_result": "URL receive result",
     "url_report": "URL monthty report",
@@ -217,7 +217,8 @@
     "total_quota": "Total quota",
     "cskh_remain": "CSKH remain",
     "qc_remain": "QC remain",
-    "quota_provide": "Quota"
+    "quota_provide": "Quota",
+    "sms_loop": "Send SMS loop after 5m"
   },
   "sms_list": {
     "sms_list_title": "Sms list",
@@ -237,7 +238,8 @@
     "telco": "Telco",
     "count_sms": "Sms number",
     "port": "Port",
-    "status": "Status"
+    "status": "Status",
+    "status_detail": "Detail status"
   },
   "sender_group": {
     "sender_group_management": "Sender group management",
@@ -615,7 +617,8 @@
     "edit": "Edit customer",
     "add_customer_group": "Add customer to birthday group",
     "import_customer": "Add customer from excel file",
-    "select_group": "Select group"
+    "select_group": "Select group",
+    "is_send_birth": "Is send birthday?"
   },
   "account_fee": {
     "list_account_fee": "Other fee list",
@@ -689,17 +692,18 @@
     "telco": "Telco",
     "port": "Port",
     "type": "Type",
-    "maintaining_fee": "Maintaining fee",
-    "iMaintaining_fee": "Input Maintaining fee",
+    "maintaining_fee": "Maintaining fee (VND)",
+    "iMaintaining_fee": "Input Maintaining fee (VND)",
     "order": "Order",
     "order_tamp": "Order temporary",
     "iOrder_tamp": "Input Order temporary",
     "time_reset": "Time reset(minute)",
     "iTime_reset": "Input Time reset",
-    "status": "Active",
+    "status": "Status",
     "add_mapping": "Add new",
     "edit_mapping": "Edit thread",
-    "delete_mapping": "Delete"
+    "delete_mapping": "Delete",
+    "active": "Active"
   },
   "general": {
     "title": "General statistic",
@@ -757,7 +761,10 @@
     "move_data_manager": "Move campaign management",
     "is_send_sms": "Is send SMS to customer?",
     "send_from_file_list": "Send from file list",
-    "send_from_excel": "Send from excel"
+    "send_from_excel": "Send from excel",
+    "confirm_send_sms": "Are you sure you want to send a message to this information?",
+    "quota_expected": "Quota Expected",
+    "data_phone_list": "Data phone list"
   },
   "free_domain": {
     "title": "sponsored traffic domain",

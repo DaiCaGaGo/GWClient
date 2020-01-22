@@ -79,6 +79,8 @@ export class PackageComponent implements OnInit {
       amt: new FormControl(),
       dateUse: new FormControl()
     });
+
+    this.dataAccount.push({"id": "", "itemName": "Tất cả"});
   }
 
   async ngOnInit() {
@@ -114,7 +116,7 @@ export class PackageComponent implements OnInit {
   async getData() {
     let account = this.selectedAccount.length != 0 && this.selectedAccount[0].id != "" ? this.selectedAccount[0].id : "";
     let response: any = await this.dataService.getAsync('/api/packageDomain/GetPackageDomainPaging?pageIndex=' + this.pagination.pageIndex +
-      "&pageSize=" + this.pagination.pageSize + "&account_id=" + account + "&package_name=" + this.inPackageName)
+      "&pageSize=" + this.pagination.pageSize + "&account_id=" + account + "&package_name=" + this.inPackageName.trim())
     this.loadData(response);
   }
 
@@ -183,7 +185,7 @@ export class PackageComponent implements OnInit {
     //   this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-84"));
     //   return;
     // }
-    if (DATA_FROM > DATA_TO) {
+    if (DATA_FROM.number > DATA_TO.number) {
       this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-81"));
       return;
     }
@@ -259,7 +261,7 @@ export class PackageComponent implements OnInit {
       this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-82"));
       return;
     }
-    else if (DATA_FROM < 300) {
+    else if (DATA_FROM.number < 300) {
       this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-84"));
       return;
     }
@@ -268,11 +270,11 @@ export class PackageComponent implements OnInit {
       this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-83"));
       return;
     }
-    else if (DATA_TO < 300) {
+    else if (DATA_TO.number < 300) {
       this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-84"));
       return;
     }
-    if (DATA_FROM > DATA_TO) {
+    if (DATA_FROM.number > DATA_TO.number) {
       this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-81"));
       return;
     }

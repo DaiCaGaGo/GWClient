@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpResponse, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpResponse, HttpHeaders, HttpRequest } from '@angular/common/http';
 import { AppConst } from '../common/app.constants';
 import { map } from 'rxjs/operators';
 import { saveAs } from 'file-saver';
@@ -153,26 +153,6 @@ export class DataService {
     }
   }
 
-  public async importExcelAndSaveAsync(postData: any, files: File[], listType: any, lstName: any) {
-    try {
-      let formData: FormData = new FormData();
-      formData.append('files', files[0], files[0].name);
-      if (postData !== "" && postData !== undefined && postData !== null) {
-        for (var property in postData) {
-          if (postData.hasOwnProperty(property)) {
-            formData.append(property, postData[property]);
-          }
-        }
-      }
-      const response = await this.postAsync("/api/FileExtention/ImportExcelAndSave?listType=" + listType + "&lstName=" + lstName, formData);
-      return response;
-    }
-    catch (error) {
-      console.log('importExcelAsync.:', error);
-      return null;
-    }
-  }
-
   public async importExcelAndSavePhoneListAsync(postData: any, files: File[], listType: any, lstName: any) {
     try {
       let formData: FormData = new FormData();
@@ -193,7 +173,7 @@ export class DataService {
     }
   }
 
-  public async importExcelAndSaveAsync1(postData: any, files: File[], listType: any, lstName: any) {
+  public async importExcelAndSaveAsync(postData: any, files: File[], listType: any, lstName: any, accountID: any, accountName: any) {
     try {
       let formData: FormData = new FormData();
       formData.append('files', files[0], files[0].name);
@@ -204,7 +184,8 @@ export class DataService {
           }
         }
       }
-      const response = await this.postAsync("/api/FileExtention/ImportExcelAndSave1?listType=" + listType + "&lstName=" + lstName, formData);
+      const response = await this.postAsync("/api/FileExtention/ImportExcelAndSave?listType=" + listType + "&lstName=" + 
+      lstName + "&accountID=" + accountID + "&accountName=" + accountName, formData);
       return response;
     }
     catch (error) {

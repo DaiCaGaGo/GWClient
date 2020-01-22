@@ -45,7 +45,7 @@
                   [settings]="settingsFilterSmsStatus" name="smsStatus" (onSelect)="onItemSelectSmsStatus()"
                   (onDeSelect)="OnItemDeSelectSmsStatus()">
                 </angular2-multiselect>
-              </div>              
+              </div>
               <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
                 <angular2-multiselect [data]="dataSmsType" [(ngModel)]="selectedSmsType"
                   [settings]="settingsFilterSmsType" name="smsType" (onSelect)="onItemSelectSmsType()"
@@ -148,8 +148,10 @@
                           {{'sms_list.sent_time' | translate}}</th>
                         <th class="text-center" style="width: 100px; vertical-align: middle;">
                           {{'sms_list.user_sent' | translate}}</th>
-                        <th class="text-center" style="width: 100px; vertical-align: middle;" *ngIf="is_root">
+                        <th class="text-center" style="width: 100px; vertical-align: middle;">
                           {{'sms_list.choose_status' | translate}}</th>
+                        <th class="text-center" style="width: 200px; vertical-align: middle;" *ngIf="is_root">
+                          {{'sms_list.status_detail' | translate}}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -164,7 +166,8 @@
                         <td class="text-center">{{item.SMS_COUNT}}</td>
                         <td>{{convertStringDate(item.SCHEDULE_TIME)}}</td>
                         <td>{{item.USER_NAME}}</td>
-                        <td *ngIf="is_root">{{item.RECEIVE_RESULT}}</td>
+                        <td>{{item.RECEIVE_CODE == 0 ? 'DELIVERED' : (item.RECEIVE_CODE + '|UNDELIVERED')}}</td>
+                        <td *ngIf="is_root">{{item.SENT_ERR_MSG}}</td>
                       </tr>
                     </tbody>
                   </table>

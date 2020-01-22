@@ -223,12 +223,11 @@ export class CustomersComponent implements OnInit {
       this.utilityService.formatDateToString(customers.birthday, "yyyyMMdd") : "";
     let ADDRESS = customers.address;
     let EMAIL = customers.email;
-    let BIRTHDAY_PRODUCT = customers.isBirthday == true ? "1" : "0";
-    debugger
+    let IS_SEND = customers.isBirthday == true ? "1" : "0";
     let DESCRIPTION = customers.description;
     let response: any = await this.dataService.postAsync('/api/customer', {
       ACCOUNT_ID, DANH_XUNG, FULL_NAME,
-      PHONE, BIRTHDAY, BIRTHDAY_PRODUCT, ADDRESS, EMAIL, DESCRIPTION
+      PHONE, BIRTHDAY, IS_SEND, ADDRESS, EMAIL, DESCRIPTION
     })
     if (response.err_code == 0) {
       this.notificationService.displaySuccessMessage(this.utilityService.getErrorMessage("100"));
@@ -253,10 +252,10 @@ export class CustomersComponent implements OnInit {
           fullName: new FormControl(dataCustomers.FULL_NAME),
           phone: new FormControl(dataCustomers.PHONE),
           birthday: new FormControl(dataCustomers.BIRTHDAY),
-          isBirthday: new FormControl(dataCustomers.BIRTHDAY_PRODUCT == "1" ? true : false),
           address: new FormControl(dataCustomers.ADDRESS),
           email: new FormControl(dataCustomers.EMAIL),
-          description: new FormControl(dataCustomers.DESCRIPTION)
+          description: new FormControl(dataCustomers.DESCRIPTION),
+          isBirthday: new FormControl(dataCustomers.IS_SEND == 1 ? true : false)
         });
         this.editThisModal.show();
       } else {
@@ -286,7 +285,7 @@ export class CustomersComponent implements OnInit {
       return;
     }
 
-    let BIRTHDAY_PRODUCT = formData.isBirthday.value == true ? "1" : "0";
+    let IS_SEND = formData.isBirthday.value == true ? "1" : "0";
     let BIRTHDAY = (formData.birthday.value != "" && formData.birthday.value != undefined && formData.birthday.value != "Invalid Date") ?
       this.utilityService.formatDateToString(formData.birthday.value, "yyyyMMdd") : "";
     let ADDRESS = formData.address.value;
@@ -294,7 +293,7 @@ export class CustomersComponent implements OnInit {
     let DESCRIPTION = formData.description.value;
 
     this.dataService.put('/api/customer/' + ID, {
-      ACCOUNT_ID, DANH_XUNG, FULL_NAME, BIRTHDAY_PRODUCT, PHONE, BIRTHDAY, ADDRESS, EMAIL, DESCRIPTION
+      ACCOUNT_ID, DANH_XUNG, FULL_NAME, IS_SEND, PHONE, BIRTHDAY, ADDRESS, EMAIL, DESCRIPTION
     })
       .subscribe((response: any) => {
         if (response.err_code == 0) {

@@ -449,6 +449,7 @@ export class MappingComponent implements OnInit {
     }
     if (strTelco != "") {
       this.notificationService.displayWarnMessage("Mạng " + strTelco + " đã được cấu hình. Vui lòng kiểm tra lại.");
+      return
     }
   }
 

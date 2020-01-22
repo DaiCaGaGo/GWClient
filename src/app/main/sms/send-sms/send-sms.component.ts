@@ -25,7 +25,6 @@ export class SendSMSComponent implements OnInit {
 
   public dataPhone = [];
   public dataPhoneTamp = [];
-  public dataPhonePagingg = [];
   public dataPhoneList = [];
   public dataAccount = [];
   public dataSenderName = [];
@@ -189,7 +188,8 @@ export class SendSMSComponent implements OnInit {
     this.dataPhoneList = [];
     this.selectedItemComboboxPhoneList = [];
     if (this.selectedItemComboboxAccount.length > 0) {
-      let accountId = this.accountId == null || this.accountId == "" ? this.selectedItemComboboxAccount[0].id : this.accountId;
+      let accountId = this.selectedItemComboboxAccount[0].id != null && this.selectedItemComboboxAccount[0].id != "" ?
+        this.selectedItemComboboxAccount[0].id : this.accountId;
       let response: any = await this.dataService.getAsync('/api/AccountPhoneList/GetPhoneListByAccountAndType?accountID=' +
         accountId + '&listType=Normal');
       for (let index in response.data) {
@@ -213,24 +213,30 @@ export class SendSMSComponent implements OnInit {
       this.lstIdsAccountPhoneList = [];
       this.lstIdsAccountPhoneList.push(ids);
     }
-    // get và lọc trùng sđt
-    let response: any = await this.dataService.getAsync('/api/AccountPhoneListDetail/AccountPhoneListDetailByIdsAccountPhoneList?lstPhone=' + ids)
+
+    let listTelco = ""
+    if (this.isCheckSendVTL) listTelco += "VIETTEL,"
+    if (this.isCheckSendGPC) listTelco += "GPC,"
+    if (this.isCheckSendVMS) listTelco += "VMS,"
+    if (this.isCheckSendVNM) listTelco += "VNM,"
+    if (this.isCheckSendGTEL) listTelco += "GTEL,"
+    if (this.isCheckSendSFONE) listTelco += "SFONE,"
+
+    if (listTelco != "") listTelco = listTelco.substring(0, listTelco.length - 1)
+    let response: any = await this.dataService.getAsync('/api/AccountPhoneListDetail/GetPhoneByListID?listID=' + ids + '&listTelco=' + listTelco)
     if (response) {
-      this.dataPhone = response.data;
-      response = [];
-      let tamp = Array.from(new Set(this.dataPhone.map(s => s.PHONE))).map(p => {
-        return {
-          LIST_ID: this.dataPhone.find(s => s.PHONE == p).LIST_ID,
-          PHONE: p,
-          TELCO: this.dataPhone.find(s => s.PHONE == p).TELCO
-        }
-      });
-      this.dataPhone = tamp;
-      for (let i in this.dataPhone) {
-        this.dataPhoneTamp.push(this.dataPhone[i]);
-      }
-      this.countPhoneByTelco();
-      this.phonePaging(response.data);
+
+      let data = response.data;
+      this.dataPhone = data.listPhoneTelco
+      this.dataPhoneTamp = data.listPhoneTelco
+      this.countAll = data.countTotal
+      this.countVTL = data.countVIETTEL
+      this.countGPC = data.countGPC
+      this.countVMS = data.countVMS
+      this.countVNM = data.countVNM
+      this.countGtel = data.countGTEL
+      this.countSFone = data.countSFONE
+      this.getDataPaging(this.dataPhone);
     }
   }
   //#endregion
@@ -318,20 +324,15 @@ export class SendSMSComponent implements OnInit {
     }
   }
 
-  setPageIndex(pageNo: number): void {
-    this.pagination.pageIndex = pageNo;
-    this.phonePaging();
-  }
-
   pageChanged(event: any): void {
-    this.setPageIndex(event.page);
-    this.phonePaging();
+    this.pagination.pageIndex = event.page;
+    this.getDataPaging();
   }
 
   changePageSize(size) {
     this.pagination.pageSize = size;
     this.pagination.pageIndex = 1;
-    this.phonePaging();
+    this.getDataPaging();
   }
   //#endregion
 
@@ -395,104 +396,41 @@ export class SendSMSComponent implements OnInit {
     }
   }
 
-  // count phone by telco
-  async countPhoneByTelco() {
-    let countVTL = 0;
-    let countGPC = 0;
-    let countVMS = 0;
-    let countVNM = 0;
-    let countGtel = 0;
-    let countSFone = 0;
-    //let countDDMobile = 0;
-    for (let item in this.dataPhone) {
-      switch (this.dataPhone[item].TELCO) {
-        case "VIETTEL":
-          countVTL++;
-          break;
-        case "GPC":
-          countGPC++;
-          break;
-        case "VMS":
-          countVMS++;
-          break;
-        case "VNM":
-          countVNM++;
-          break;
-        case "GTEL":
-          countGtel++;
-          break;
-        case "SFONE":
-          countSFone++;
-          break;
-        // case "DDMobile":
-        //   countDDMobile++;
-        //   break;
-        default:
-          break;
-      }
-    }
-    this.countVTL = countVTL.toString();
-    this.countGPC = countGPC.toString();
-    this.countVMS = countVMS.toString();
-    this.countVNM = countVNM.toString();
-    this.countGtel = countGtel.toString();
-    this.countSFone = countSFone.toString();
-    //this.countDDMobile = countDDMobile.toString();
-    this.countAll = (countVTL + countGPC + countVMS + countVNM + countGtel + countSFone).toString();
-  }
-
   CalcNumber(telco, checked) {
     if (telco == 'VIETTEL') {
-      if (!checked)
-        this.countAll = (Number(this.countAll) - Number(this.countVTL)).toString();
-      else
-        this.countAll = (Number(this.countAll) + Number(this.countVTL)).toString();
+      if (!checked) this.isCheckSendVTL = false
+      else this.isCheckSendVTL = true
     }
     if (telco == 'GPC') {
-      if (!checked)
-        this.countAll = (Number(this.countAll) - Number(this.countGPC)).toString();
-      else
-        this.countAll = (Number(this.countAll) + Number(this.countGPC)).toString();
+      if (!checked) this.isCheckSendGPC = false
+      else this.isCheckSendGPC = true
     }
     if (telco == 'VMS') {
-      if (!checked)
-        this.countAll = (Number(this.countAll) - Number(this.countVMS)).toString();
-      else
-        this.countAll = (Number(this.countAll) + Number(this.countVMS)).toString();
+      if (!checked) this.isCheckSendVMS = false
+      else this.isCheckSendVMS = true
     }
     if (telco == 'VNM') {
-      if (!checked)
-        this.countAll = (Number(this.countAll) - Number(this.countVNM)).toString();
-      else
-        this.countAll = (Number(this.countAll) + Number(this.countVNM)).toString();
+      if (!checked) this.isCheckSendVNM = false
+      else this.isCheckSendVNM = true
     }
     if (telco == 'GTEL') {
-      if (!checked)
-        this.countAll = (Number(this.countAll) - Number(this.countGtel)).toString();
-      else
-        this.countAll = (Number(this.countAll) + Number(this.countGtel)).toString();
+      if (!checked) this.isCheckSendGTEL = false
+      else this.isCheckSendGTEL = true
     }
     if (telco == 'SFONE') {
-      if (!checked)
-        this.countAll = (Number(this.countAll) - Number(this.countSFone)).toString();
-      else
-        this.countAll = (Number(this.countAll) + Number(this.countSFone)).toString();
+      if (!checked) this.isCheckSendSFONE = false
+      else this.isCheckSendSFONE = true
     }
-    // if (telco == 'DDMobile') {
-    //   if (!checked)
-    //     this.countAll = (Number(this.countAll) - Number(this.countDDMobile)).toString();
-    //   else
-    //     this.countAll = (Number(this.countAll) + Number(this.countDDMobile)).toString();
-    // }
+    this.getPhoneNumber(event)
   }
 
-  phonePaging(data?: any) {
+  getDataPaging(data?: any) {
     if (this.pagination.pageSize != 'ALL') {
+      this.dataPhone = [];
       data = (data == null) ? this.dataPhoneTamp : data;
       this.pagination.totalRow = data.length;
       this.pagination.totalPage = this.utilityService.formatNumberTotalPage(this.pagination.totalRow / this.pagination.pageSize);
       let beginItem: number = (this.pagination.pageIndex - 1) * this.pagination.pageSize;
-
       let dataPaging: any = [];
       for (let index in data) {
         if (Number(index) >= beginItem && Number(index) < (beginItem + Number(this.pagination.pageSize))) {
@@ -502,7 +440,7 @@ export class SendSMSComponent implements OnInit {
       this.dataPhone = dataPaging;
     }
     else {
-      this.dataPhone = this.dataPhonePagingg;
+      this.dataPhone = this.dataPhoneTamp
     }
   }
 
@@ -578,11 +516,14 @@ export class SendSMSComponent implements OnInit {
     else if (lengthsms < 307) {
       this.numberSMS = "2";
     }
-    else {
+    else if (lengthsms < 460) {
       this.numberSMS = "3";
+    }
+    else {
+      this.numberSMS = "4";
 
-      if (lengthsms > 459)
-        this.smsContent = smsContent.substr(0, 459);
+      if (lengthsms > 612)
+        this.smsContent = smsContent.substr(0, 612);
     }
   }
 
@@ -640,7 +581,6 @@ export class SendSMSComponent implements OnInit {
           return;
         }
         this.uploadExcelModal.hide();
-        this.dataPhoneList = [];
         this.bindDataPhoneList();
         this.notificationService.displaySuccessMessage(this.utilityService.getErrorMessage("130"));
       }
@@ -668,6 +608,122 @@ export class SendSMSComponent implements OnInit {
   showModalSendSMS() {
     this.loading = false;
     this.confirmSendSMSModal.show();
+  }
+
+  async confirmSendSMS1() {
+    this.loading = true;
+    //#region  check valid
+    let SMS_TYPE = this.selectedSmsType.length > 0 ? this.selectedSmsType[0].id : "";
+    if (SMS_TYPE === '' || SMS_TYPE === null) {
+      this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-20"));
+      this.confirmSendSMSModal.hide();
+      return;
+    }
+    let ACCOUNT_ID = this.selectedItemComboboxAccount.length > 0 ? this.selectedItemComboboxAccount[0].id : 0;
+    if (ACCOUNT_ID == 0) {
+      this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-21"));
+      this.confirmSendSMSModal.hide();
+      return;
+    }
+    let SENDER_NAME = this.selectedItemComboboxSender.length > 0 ? this.selectedItemComboboxSender[0].itemName : "";
+    if (SENDER_NAME == "") {
+      this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-22"));
+      this.confirmSendSMSModal.hide();
+      return;
+    }
+    let IS_VIRTUAL = this.isVirtual == true ? 1 : 0;
+    let CODE_NAME = this.codeName;
+    if (CODE_NAME === '' || CODE_NAME === null) {
+      this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-23"));
+      this.confirmSendSMSModal.hide();
+      return;
+    }
+    let SMS_TEMPLATE = this.utilityService.removeSign4VietnameseString(this.utilityService.removeDiacritics(this.smsContent));
+    if (SMS_TEMPLATE === '' || SMS_TEMPLATE === null) {
+      this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-24"));
+      this.confirmSendSMSModal.hide();
+      return;
+    }
+    //#endregion
+
+    let dt = [];
+    let is_schedule = 0;
+    let time = new Date();
+    if (this.isShowDateTime) {
+      is_schedule = 1;
+      time = this.timeSchedule;
+    }
+    let TIMESCHEDULE = this.utilityService.formatDateToString(time, "yyyyMMddHHmmss");
+    let REPORT_BY_EMAIL = this.reportByMail == true ? 1 : 0;
+
+    // if input phone number then add to listSMS
+    if (this.phoneList.length > 0 && this.numberPhone > 0) {
+      let phoneSplit = [];
+      phoneSplit = this.phoneList.split(';');
+
+      if (phoneSplit != null && phoneSplit.length == 1) {
+        let p = this.utilityService.GetPhoneNew(this.utilityService.FilterPhone(phoneSplit[0]));
+        let phone = this.dataPhoneTamp.filter(s => p.includes(s.PHONE));
+        if (phone == null || phone.length == 0) {
+          let telco = this.utilityService.getTelco(p);
+          dt.push({ LIST_ID: 0, PHONE: p, TELCO: telco });
+        }
+      }
+      else if (phoneSplit != null && phoneSplit.length > 1) {
+        for (let i in phoneSplit) {
+          let p = this.utilityService.GetPhoneNew(this.utilityService.FilterPhone(phoneSplit[i]));
+          let phone = this.dataPhoneTamp.filter(s => p.includes(s.PHONE));
+          if (phone == null || phone.length == 0) {
+            let telco = this.utilityService.getTelco(this.utilityService.FilterPhone(phoneSplit[i]));
+            dt.push({ LIST_ID: 0, PHONE: p, TELCO: telco });
+          }
+        }
+      }
+    }
+    for (let i in this.dataPhoneTamp) {
+      dt.push(this.dataPhoneTamp[i]);
+    }
+    // check exists phone list
+    if (dt.length == 0) {
+      this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-25"));
+      this.confirmSendSMSModal.hide();
+      return;
+    }
+
+    let listSmsSend = [];
+    for (let i = 0; i < dt.length; i++) {
+      let phone = dt[i].PHONE;
+      let telco = dt[i].TELCO;
+      if (telco != undefined && telco != null && telco != "") {
+        listSmsSend.push({
+          PHONE: phone, TELCO: telco, SMS_CONTENT: SMS_TEMPLATE, SENDER_NAME: SENDER_NAME, SCHEDULE_TIME: TIMESCHEDULE,
+          ORDER_NAME: CODE_NAME, ACCOUNT_ID: ACCOUNT_ID, SMS_TYPE: SMS_TYPE,
+          IS_VIRTUAL: IS_VIRTUAL, REPORT_BY_EMAIL: REPORT_BY_EMAIL, SMS_TEMPLATE: SMS_TEMPLATE,
+          STATUS: (is_schedule == 0 && SMS_TYPE == "CSKH") ? 2 : 0,
+          CODE_NAME: CODE_NAME, SENDER_ID: this.selectedItemComboboxSender[0].id
+        });
+      }
+    }
+
+    let sendViettel = 0, sendVMS = 0, sendGPC = 0, sendVNM = 0, sendSfone = 0, sendGtel = 0, sendDD = 0;
+    if (this.isCheckSendVTL) sendViettel = 1;
+    if (this.isCheckSendVMS) sendVMS = 1;
+    if (this.isCheckSendGPC) sendGPC = 1;
+    if (this.isCheckSendVNM) sendVNM = 1;
+    if (this.isCheckSendSFONE) sendSfone = 1;
+    if (this.isCheckSendGTEL) sendGtel = 1;
+    // if (this.isCheckSendDDMBLE) sendDD = 1;
+    let insertSms = await this.dataService.postAsync('/api/sms/InsertListSMS?isSchedule=' + is_schedule +
+      '&sendViettel=' + sendViettel + '&sendVMS=' + sendVMS + '&sendGPC=' + sendGPC + '&sendVNM=' + sendVNM +
+      '&sendSfone=' + sendSfone + '&sendGtel=' + sendGtel + '&sendDD=' + sendDD, listSmsSend);
+    if (insertSms.err_code == 0)
+      this.notificationService.displaySuccessMessage(insertSms.err_message);
+    else this.notificationService.displayErrorMessage(insertSms.err_message);
+
+    this.viewQuyTin(ACCOUNT_ID);
+    this.loading = false;
+    this.confirmAfterSuccess();
+    this.confirmSendSMSModal.hide();
   }
 
   async confirmSendSMS() {
@@ -727,8 +783,6 @@ export class SendSMSComponent implements OnInit {
         if (phone == null || phone.length == 0) {
           let telco = this.utilityService.getTelco(p);
           dt.push({ LIST_ID: 0, PHONE: p, TELCO: telco });
-          // this.dataPhone.push({ LIST_ID: 0, PHONE: p, TELCO: telco });
-          // this.dataPhoneTamp.push({ LIST_ID: 0, PHONE: p, TELCO: telco });
         }
       }
       else if (phoneSplit != null && phoneSplit.length > 1) {
@@ -738,17 +792,17 @@ export class SendSMSComponent implements OnInit {
           if (phone == null || phone.length == 0) {
             let telco = this.utilityService.getTelco(this.utilityService.FilterPhone(phoneSplit[i]));
             dt.push({ LIST_ID: 0, PHONE: p, TELCO: telco });
-            // this.dataPhone.push({ LIST_ID: 0, PHONE: p, TELCO: telco });
-            // this.dataPhoneTamp.push({ LIST_ID: 0, PHONE: p, TELCO: telco });
           }
         }
       }
     }
-    dt.push(this.dataPhoneTamp);
-
+    for (let i in this.dataPhoneTamp) {
+      dt.push(this.dataPhoneTamp[i]);
+    }
     // check exists phone list
     if (dt.length == 0) {
       this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-25"));
+      this.confirmSendSMSModal.hide();
       return;
     }
 
@@ -775,15 +829,18 @@ export class SendSMSComponent implements OnInit {
     if (this.isCheckSendSFONE) sendSfone = 1;
     if (this.isCheckSendGTEL) sendGtel = 1;
     // if (this.isCheckSendDDMBLE) sendDD = 1;
-    let insertSms = await this.dataService.postAsync('/api/sms/InsertListSMS?isSchedule=' + is_schedule +
+      debugger
+    let insertSms = await this.dataService.postAsync('/api/SmsHistory/InsertListSMSHistory?isSchedule=' + is_schedule +
       '&sendViettel=' + sendViettel + '&sendVMS=' + sendVMS + '&sendGPC=' + sendGPC + '&sendVNM=' + sendVNM +
       '&sendSfone=' + sendSfone + '&sendGtel=' + sendGtel + '&sendDD=' + sendDD, listSmsSend);
+      debugger
     if (insertSms.err_code == 0)
       this.notificationService.displaySuccessMessage(insertSms.err_message);
     else this.notificationService.displayErrorMessage(insertSms.err_message);
 
     this.viewQuyTin(ACCOUNT_ID);
     this.loading = false;
+    this.confirmAfterSuccess();
     this.confirmSendSMSModal.hide();
   }
   //#endregion

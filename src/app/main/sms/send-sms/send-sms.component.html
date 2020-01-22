@@ -66,7 +66,7 @@
                 </div>
                 <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback" style="padding: 0">
                   <textarea type="text" class="form-control has-feedback-left modal-popup" name="smsContent" rows="3"
-                    placeholder="{{ 'campaign.iSms_content' | translate }}" [(ngModel)]="smsContent"
+                    placeholder="{{ 'campaign.iSms_content' | translate }}" [(ngModel)]="smsContent" maxlength="612"
                     (change)="countSMS($event.target.value)" (keyup)="countSMS($event.target.value)"
                     (keydow)="countSMS($event.target.value)"></textarea>
                 </div>
@@ -141,8 +141,8 @@
                 <div style="display: inline-block; padding-right:15px">
                   <div class="checkbox" style="padding-top:0">
                     <label><input type="checkbox" class="checkbox" name="countVTL" checked
-                        (change)="CalcNumber('Viettel',$event.currentTarget.checked)">
-                      <span style="display:inline-block !important">{{ 'send_sms.viettel' | translate }}</span>
+                        (change)="CalcNumber('VIETTEL',$event.currentTarget.checked)">
+                      <span style="display:inline-block !important">VIETTEL</span>
                       (<span
                         style="display:inline-block !important">{{countVTL}}</span>{{ 'campaign.text_num' | translate }})
                     </label>
@@ -152,7 +152,7 @@
                   <div class="checkbox" style="padding-top:0">
                     <label><input type="checkbox" class="checkbox" name="countGPC" checked
                         (change)="CalcNumber('GPC',$event.currentTarget.checked)">
-                      <span style="display:inline-block !important">{{ 'send_sms.gpc' | translate }}</span>
+                      <span style="display:inline-block !important">GPC</span>
                       (<span
                         style="display:inline-block !important">{{countGPC}}</span>{{ 'campaign.text_num' | translate }})
                     </label>
@@ -162,7 +162,7 @@
                   <div class="checkbox" style="padding-top:0">
                     <label><input type="checkbox" class="checkbox" name="countVMS" checked
                         (change)="CalcNumber('VMS',$event.currentTarget.checked)">
-                      <span style="display:inline-block !important">{{ 'send_sms.vms' | translate }}</span>
+                      <span style="display:inline-block !important">VMS</span>
                       (<span
                         style="display:inline-block !important">{{countVMS}}</span>{{ 'campaign.text_num' | translate }})
                     </label>
@@ -172,7 +172,7 @@
                   <div class="checkbox" style="padding-top:0">
                     <label><input type="checkbox" class="checkbox" name="countVNM" checked
                         (change)="CalcNumber('VNM',$event.currentTarget.checked)">
-                      <span style="display:inline-block !important">{{ 'send_sms.vnm' | translate }}</span>
+                      <span style="display:inline-block !important">VNM</span>
                       (<span
                         style="display:inline-block !important">{{countVNM}}</span>{{ 'campaign.text_num' | translate }})
                     </label>
@@ -181,8 +181,8 @@
                 <div style="display: inline-block; padding-right:15px">
                   <div class="checkbox" style="padding-top:0">
                     <label><input type="checkbox" class="checkbox" name="countGtel" checked
-                        (change)="CalcNumber('Gtel',$event.currentTarget.checked)">
-                      <span style="display:inline-block !important">{{ 'send_sms.gtel' | translate }}</span>
+                        (change)="CalcNumber('GTEL',$event.currentTarget.checked)">
+                      <span style="display:inline-block !important">GTEL</span>
                       (<span
                         style="display:inline-block !important">{{countGtel}}</span>{{ 'campaign.text_num' | translate }})
                     </label>
@@ -191,8 +191,8 @@
                 <div style="display: inline-block;">
                   <div class="checkbox" style="padding-top:0">
                     <label><input type="checkbox" class="checkbox" name="countSFone" checked
-                        (change)="CalcNumber('SFone',$event.currentTarget.checked)">
-                      <span style="display:inline-block !important">{{ 'send_sms.sfone' | translate }}</span>
+                        (change)="CalcNumber('SFONE',$event.currentTarget.checked)">
+                      <span style="display:inline-block !important">SFONE</span>
                       (<span
                         style="display:inline-block !important">{{countSFone}}</span>{{ 'campaign.text_num' | translate }})
                     </label>
@@ -220,7 +220,7 @@
                   <table class="table table-bordered clear-bottom">
                     <thead>
                       <tr>
-                        <th class="text-center" style="width:7%">STT</th>
+                        <th class="text-center" style="width:7%">{{'global.order' | translate}}</th>
                         <th class="text-center">{{ 'send_sms.phone' | translate }}</th>
                         <th class="text-center">{{ 'send_sms.telco' | translate }}</th>
                         <th class="text-center" style="width:7%">{{ 'global.tool' | translate }}</th>
@@ -228,7 +228,7 @@
                     </thead>
                     <tbody>
                       <tr *ngFor="let item of dataPhone; let i = index" [attr.data-index]="i">
-                        <td scope="row">{{i+1}}</td>
+                        <td scope="row">{{ pagination.pageSize * (pagination.pageIndex -1) + (i+1) }}</td>
                         <td>{{item.PHONE}}</td>
                         <td>{{item.TELCO}}</td>
                         <td class="text-center">

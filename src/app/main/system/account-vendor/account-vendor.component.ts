@@ -1,19 +1,32 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, NgModule } from '@angular/core';
 import { AppConst } from 'src/app/core/common/app.constants';
 import { DataService } from '../../../core/services/data.service';
 import { Pagination } from '../../../core/models/pagination';
 import { BsModalService, BsModalRef, ModalDirective } from 'ngx-bootstrap/modal';
 import { NotificationService } from '../../../core/services/notification.service';
-import { FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormGroup, Validators, FormControl, FormsModule } from '@angular/forms';
 import { UtilityService } from '../../../core/services/utility.service';
 import { Role } from 'src/app/core/models/role';
 import { ActivatedRoute } from '@angular/router';
+import { BrowserModule } from '@angular/platform-browser';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-account-vendor',
   templateUrl: './account-vendor.component.html',
   styleUrls: ['./account-vendor.component.css']
 })
+
+// @NgModule({
+//   imports: [
+//     BrowserModule,
+//     FormsModule
+//   ],
+//   declarations: [
+//     AppComponent
+//   ],
+//   bootstrap: [AppComponent]
+// })
 
 export class AccountVendorComponent implements OnInit {
   @ViewChild('confirmDeleteModal', { static: false }) public confirmDeleteModal: ModalDirective;
@@ -391,5 +404,15 @@ export class AccountVendorComponent implements OnInit {
     else {
       this.notificationService.displayErrorMessage("Xuất template lỗi");
     }
+  }
+
+  model: any = {};
+
+  onSubmit() {
+    debugger
+    console.log(this.model);
+    let users = JSON.stringify(this.model);
+    let userName = this.model.firstName;
+    alert('SUCCESS!! :-)\n\n' + JSON.stringify(this.model))
   }
 }

@@ -17,8 +17,8 @@ export class SendDataComponent implements OnInit {
 
   @ViewChild('confirmDeleteModal', { static: false }) public confirmDeleteModal: ModalDirective;
   @ViewChild('confirmDeleteFilePhoneModal', { static: false }) public confirmDeleteFilePhoneModal: ModalDirective;
-  @ViewChild('confirmSendSMSModal', { static: false }) public confirmSendSMSModal: ModalDirective;
   @ViewChild('confirmAfterSuccessModal', { static: false }) public confirmAfterSuccessModal: ModalDirective;
+  @ViewChild('confirmSendDataSMSModal', { static: false }) public confirmSendDataSMSModal: ModalDirective;
   @ViewChild('uploadFile', { static: false }) public uploadFile;
   @ViewChild('uploadExcelModal', { static: false }) public uploadExcelModal;
 
@@ -39,6 +39,7 @@ export class SendDataComponent implements OnInit {
   public selectedItemComboboxSender = [];
   public lstIdsAccountPhoneList = [];
   public lstChecked = [];
+  public lstCheckedName = [];
   public phone;
   public lstId;
   public lstName;
@@ -49,6 +50,17 @@ export class SendDataComponent implements OnInit {
   public phoneList: string = "";
   public fileName;
   public slType;
+  public senderName: string = "";
+  public account: string = "";
+  public timeSend: string = "";
+  public quotaExpected: string = "";
+  public fileList: string = "";
+  public ACCOUNT_ID: any = null;
+  public SENDER_NAME: any = null;
+  public SMS_TEMPLATE: any = null;
+  public PROGRAM_NAME: any = null;
+  public TIMESCHEDULE: any = null;
+  public IS_SEND_SMS: any = null;
 
   public numberPhone = 0;
   public totalNumber = 0;
@@ -184,14 +196,19 @@ export class SendDataComponent implements OnInit {
   async getPhoneNumber(event) {
     this.dataPhoneTamp = [];
     this.dataPhone = [];
-    if (!this.lstChecked.includes(event.id))
+    if (!this.lstChecked.includes(event.id)) {
       this.lstChecked.push(event.id);
+      this.lstCheckedName.push(event.itemName);
+    }
     else {
       let index = this.lstChecked.indexOf(event.id);
-      if (index != -1)
+      if (index != -1) {
         this.lstChecked.splice(index, 1);
+        this.lstCheckedName.splice(index, 1);
+      }
     }
     let ids = this.lstChecked.join(",");
+    this.fileList = this.lstCheckedName.join(",");
     if (ids != "") {
       this.lstIdsAccountPhoneList = [];
       this.lstIdsAccountPhoneList.push(ids);
@@ -309,9 +326,10 @@ export class SendDataComponent implements OnInit {
   async getDataSenderName(accountID) {
     this.selectedItemComboboxSender = [];
     this.dataSenderName = [];
-    let response: any = await this.dataService.getAsync('/api/AccountSenderMapping/GetByAccountOrSender?account_id=' + accountID)
+    let response: any = await this.dataService.getAsync('/api/SenderName/GetSenderByAccountAndType?accountID=' +
+        accountID + "&smsType='CSKH'")
     for (let index in response.data) {
-      this.dataSenderName.push({ "id": response.data[index].SENDER_ID, "itemName": response.data[index].SENDER_NAME });
+      this.dataSenderName.push({ "id": response.data[index].ID, "itemName": response.data[index].NAME });
     }
     if (this.dataSenderName.length == 1)
       this.selectedItemComboboxSender.push({ "id": this.dataSenderName[0].id, "itemName": this.dataSenderName[0].itemName });
@@ -373,31 +391,6 @@ export class SendDataComponent implements OnInit {
     }
   }
 
-  // countPhone(phone) {
-  //   let phoneIn: any = [];
-  //   phoneIn = this.checkPhone(phone);
-  //   if (phoneIn.length == 0)
-  //     this.numberPhone = 0;
-  //   else if (phoneIn.includes(";"))
-  //     this.numberPhone = phoneIn.split(';').length - 1;
-  //   else
-  //     this.numberPhone = 1;
-  // }
-
-  // count phone
-  // checkPhone(phone) {
-  //   let phoneSplit: any = [];
-  //   let temp = "";
-  //   phoneSplit = phone.split(';');
-  //   for (let i in phoneSplit) {
-  //     let phoneNew = this.utilityService.FilterPhone(phoneSplit[i].replace(/\s/g, ""));
-  //     if (this.utilityService.getTelco(phoneNew) != "") {
-  //       temp += phoneNew + ";";
-  //     }
-  //   }
-  //   return temp;
-  // }
-
   //#region 
   // show modal upload excel
   showModalUpload() {
@@ -413,7 +406,6 @@ export class SendDataComponent implements OnInit {
     this.loading = true;
     if (this.lstName === '' || this.lstName === null || this.lstName === 'undefined') {
       this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-23"));
-      this.confirmSendSMSModal.hide();
       return;
     }
     let file = this.uploadFile.nativeElement;
@@ -422,6 +414,7 @@ export class SendDataComponent implements OnInit {
       if (response) {
         if (response == null || response.err_code != 0) {
           this.notificationService.displayErrorMessage(this.utilityService.getErrorMessage("110"));
+          this.loading = false;
           return;
         }
         this.dataFileList = [];
@@ -430,6 +423,7 @@ export class SendDataComponent implements OnInit {
       }
       else {
         this.notificationService.displayErrorMessage(this.utilityService.getErrorMessage("110"));
+        this.loading = false;
       }
     }
     this.loading = false;
@@ -450,60 +444,69 @@ export class SendDataComponent implements OnInit {
   }
 
   //#region  show modal and send sms
-  showModalSendSMS() {
-    this.loading = false;
-    this.confirmSendSMSModal.show();
-  }
+  // showModalSendSMS() {
+  //   this.loading = false;
+  //   this.confirmSendSMSModal.show();
+  // }
 
-  async confirmSendSMS() {
-    this.loading = true;
-    //#region  check valid
-    let ACCOUNT_ID = this.selectedItemComboboxAccount.length > 0 ? this.selectedItemComboboxAccount[0].id : 0;
-    if (ACCOUNT_ID == 0) {
+  //show confirm send data sms
+  async sendDataSMS() {
+    this.ACCOUNT_ID = this.selectedItemComboboxAccount.length > 0 ? this.selectedItemComboboxAccount[0].id : 0;
+    if (this.ACCOUNT_ID == 0) {
       this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-21"));
-      this.confirmSendSMSModal.hide();
+      this.confirmSendDataSMSModal.hide();
       return;
     }
+    this.account = this.selectedItemComboboxAccount[0].itemName;
 
-    let SENDER_NAME = "";
-    let SMS_TEMPLATE = "";
     //send sms to customer from One
     if (this.isSendSMS) {
-      SENDER_NAME = this.selectedItemComboboxSender.length > 0 ? this.selectedItemComboboxSender[0].itemName : "";
-      if (SENDER_NAME == "") {
+      this.SENDER_NAME = this.selectedItemComboboxSender.length > 0 ? this.selectedItemComboboxSender[0].itemName : "";
+      if (this.SENDER_NAME == "") {
         this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-22"));
-        this.confirmSendSMSModal.hide();
+        this.confirmSendDataSMSModal.hide();
         return;
       }
+      this.senderName = this.SENDER_NAME;
 
       // check đã nhập nội dung tin nhắn chưa
-      SMS_TEMPLATE = this.utilityService.removeSign4VietnameseString(this.utilityService.removeDiacritics(this.smsContent));
-      if (SMS_TEMPLATE === '' || SMS_TEMPLATE === null) {
+      this.SMS_TEMPLATE = this.utilityService.removeSign4VietnameseString(this.utilityService.removeDiacritics(this.smsContent));
+      if (this.SMS_TEMPLATE === '' || this.SMS_TEMPLATE === null) {
         this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-24"));
-        this.confirmSendSMSModal.hide();
+        this.confirmSendDataSMSModal.hide();
         return;
       }
     }
 
     // check tên chương trình
-    let PROGRAM_NAME = this.programName;
-    if (PROGRAM_NAME === '' || PROGRAM_NAME === null) {
+    this.PROGRAM_NAME = this.programName;
+    if (this.PROGRAM_NAME === '' || this.PROGRAM_NAME === null) {
       this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-23"));
-      this.confirmSendSMSModal.hide();
+      this.confirmSendDataSMSModal.hide();
       return;
     }
-    //#endregion
 
     let time = new Date();
     if (this.isShowDateTime) {
       time = this.timeSchedule;
     }
-    let TIMESCHEDULE = this.utilityService.formatDateToString(time, "yyyyMMddHHmmss");
+    this.TIMESCHEDULE = this.utilityService.formatDateToString(time, "yyyyMMddHHmmss");
+    this.timeSend = this.utilityService.formatDateToString(time, "yyyy/MM/dd HH:mm:ss");
+    this.IS_SEND_SMS = this.isSendSMS ? 1 : 0;
 
+    if(this.isSendExcel)
+      this.fileList = "Tất cả";
+    this.confirmSendDataSMSModal.show();
+  }
+
+  // send data sms
+  async confirmSendSMS() {
+    this.loading = true;
     if (this.isSendExcel) {
       if (this.lstName === '' || this.lstName === null || this.lstName === 'undefined') {
         this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-23"));
-        this.confirmSendSMSModal.hide();
+        this.loading = false;
+        this.confirmSendDataSMSModal.hide();
         return;
       }
       let file = this.uploadFile.nativeElement;
@@ -511,26 +514,26 @@ export class SendDataComponent implements OnInit {
         let response: any = await this.dataService.getDataFromExcelAsync(null, file.files);
         if (response.err_code == 0) {
           let listSmsSend = [];
-          let IS_SEND_SMS = this.isSendSMS ? 1 : 0;
           for (let i = 0; i < response.data.length; i++) {
             let phone = response.data[i].PHONE;
             let DATA_VOL = response.data[i].DATA_VOL;
             listSmsSend.push({
-              ACCOUNT_ID: ACCOUNT_ID, PHONE: phone, DATA_VOL: DATA_VOL, SENDER_NAME: SENDER_NAME, SMS_CONTENT: SMS_TEMPLATE
-              , TIME_SCHEDULE: TIMESCHEDULE, TYPE: "DATA_SPONSOR", PROGRAM_NAME: PROGRAM_NAME, IS_SEND_SMS: IS_SEND_SMS
+              ACCOUNT_ID: this.ACCOUNT_ID, PHONE: phone, DATA_VOL: DATA_VOL, SENDER_NAME: this.SENDER_NAME, SMS_CONTENT: this.SMS_TEMPLATE
+              , TIME_SCHEDULE: this.TIMESCHEDULE, TYPE: "DATA_SPONSOR", PROGRAM_NAME: this.PROGRAM_NAME, IS_SEND_SMS: this.IS_SEND_SMS
             });
           }
 
-          let insertSms = await this.dataService.postAsync('/api/DataSMS/InsertListSMS?', listSmsSend);
+          let insertSms: any = await this.dataService.postAsync('/api/DataSMS/InsertListSMS?', listSmsSend);
           if (insertSms.err_code == 0)
             this.notificationService.displaySuccessMessage(insertSms.err_message);
           else this.notificationService.displayErrorMessage(insertSms.err_message);
 
-          this.viewQuyData(ACCOUNT_ID);
-          this.confirmSendSMSModal.hide();
+          this.viewQuyData(this.ACCOUNT_ID);
+          this.confirmSendDataSMSModal.hide();
         }
         else {
           this.notificationService.displayErrorMessage(this.utilityService.getErrorMessage("110"));
+          this.loading = false;
           return;
         }
         this.dataFileList = [];
@@ -541,14 +544,16 @@ export class SendDataComponent implements OnInit {
       let TOTAL_DATA = this.addData;
       if (TOTAL_DATA == "" || TOTAL_DATA == "0") {
         this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-74"));
-        this.confirmSendSMSModal.hide();
+        this.loading = false;
+        this.confirmSendDataSMSModal.hide();
         return;
       }
 
       // check exists phone list
       if (this.dataPhoneTamp.length == 0) {
         this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-25"));
-        this.confirmSendSMSModal.hide();
+        this.loading = false;
+        this.confirmSendDataSMSModal.hide();
         return;
       }
 
@@ -557,8 +562,8 @@ export class SendDataComponent implements OnInit {
         for (let i = 0; i < this.dataPhoneTamp.length; i++) {
           let phone = this.dataPhoneTamp[i].PHONE;
           listSmsSend.push({
-            ACCOUNT_ID: ACCOUNT_ID, PHONE: phone, DATA_VOL: TOTAL_DATA, SENDER_NAME: SENDER_NAME, SMS_CONTENT: SMS_TEMPLATE
-            , TIME_SCHEDULE: TIMESCHEDULE, TYPE: "DATA_SPONSOR", PROGRAM_NAME: PROGRAM_NAME
+            ACCOUNT_ID: this.ACCOUNT_ID, PHONE: phone, DATA_VOL: TOTAL_DATA, SENDER_NAME: this.SENDER_NAME, SMS_CONTENT: this.SMS_TEMPLATE
+            , TIME_SCHEDULE: this.TIMESCHEDULE, TYPE: "DATA_SPONSOR", PROGRAM_NAME: this.PROGRAM_NAME, IS_SEND_SMS: this.IS_SEND_SMS
           });
         }
       }
@@ -566,7 +571,7 @@ export class SendDataComponent implements OnInit {
         for (let i = 0; i < this.dataPhoneTamp.length; i++) {
           let phone = this.dataPhoneTamp[i].PHONE;
           listSmsSend.push({
-            ACCOUNT_ID: ACCOUNT_ID, PHONE: phone, DATA_VOL: TOTAL_DATA, PROGRAM_NAME: PROGRAM_NAME
+            ACCOUNT_ID: this.ACCOUNT_ID, PHONE: phone, DATA_VOL: TOTAL_DATA, PROGRAM_NAME: this.PROGRAM_NAME
             , TYPE: "DATA_SPONSOR", IS_READ: 1
           });
         }
@@ -577,9 +582,9 @@ export class SendDataComponent implements OnInit {
         this.notificationService.displaySuccessMessage(insertSms.err_message);
       else this.notificationService.displayErrorMessage(insertSms.err_message);
 
-      this.viewQuyData(ACCOUNT_ID);
-      this.confirmSendSMSModal.hide();
+      this.viewQuyData(this.ACCOUNT_ID);
     }
+    this.confirmSendDataSMSModal.hide();
     this.loading = false;
   }
   //#endregion

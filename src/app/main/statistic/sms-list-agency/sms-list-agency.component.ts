@@ -251,9 +251,13 @@ export class SmsListAgencyComponent implements OnInit {
 
   //#region load data and paging
   public async getListSms() {
-    if (this.selectedAccountID.length > 0) {
+    let account_id = this.selectedAccountID.length > 0 ? this.selectedAccountID[0].id : "";
+    if(!this.is_root && account_id == ""){
+      this.dataSms = [];
+      this.viewSumSms = "Tổng số tin: 0";
+    }else{
       let response = await this.dataService.getAsync('/api/sms/GetListFillterPaging?pageIndex=' + this.pagination.pageIndex +
-        '&pageSize=' + this.pagination.pageSize + '&account_id=' + this.selectedAccountID[0].id +
+        '&pageSize=' + this.pagination.pageSize + '&account_id=' + account_id +
         '&sender_name=' + (this.selectedSenderID.length > 0 ? this.selectedSenderID[0].itemName : "") + '&sms_content=' + this.smsContent + '&phone=' + this.phone +
         '&sms_type=' + (this.selectedSmsType.length > 0 ? this.selectedSmsType[0].id : "") + '&viettel=' + this.stringVTL +
         '&vina=' + this.stringGPC + '&mobi=' + this.stringVMS +
@@ -270,7 +274,7 @@ export class SmsListAgencyComponent implements OnInit {
 
         let sumSms = response.pagination.TotalSms;
         if (sumSms > 0) {
-          let responseFillter = await this.dataService.getAsync('/api/sms/GetListFillter?account_id=' + this.selectedAccountID[0].id +
+          let responseFillter = await this.dataService.getAsync('/api/sms/GetListFillter?account_id=' + account_id +
             '&sender_name=' + (this.selectedSenderID.length > 0 ? this.selectedSenderID[0].itemName : "") +
             '&sms_content=' + this.smsContent + '&phone=' + this.phone +
             '&sms_type=' + (this.selectedSmsType.length > 0 ? this.selectedSmsType[0].id : "") +
@@ -299,10 +303,6 @@ export class SmsListAgencyComponent implements OnInit {
         }
         else this.viewSumSms = "Tổng số tin: 0";
       }
-    }
-    else {
-      this.dataSms = [];
-      this.viewSumSms = "Tổng số tin: 0";
     }
   }
 

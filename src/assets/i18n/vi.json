@@ -119,7 +119,7 @@
     "err_description": "Nhập mô tả lỗi",
     "create_new": "Thêm mã lỗi",
     "update_errcode": "Cập nhật mã lỗi",
-    "num_retry": "Số lần"
+    "num_retry": "Số lần gửi lại"
   },
   "partner_product": {
     "product_management": "Quản lý gói cước theo đối tác",
@@ -214,7 +214,7 @@
     "bank_account_name": "Tên tài khoản",
     "limit_quota": "Giới hạn quota",
     "is_admin": "Là admin",
-    "account_active": "Kích hoạt tài khoản",
+    "account_active": "Active",
     "account_status": "Trạng thái",
     "permission": "Phân quyền",
     "reset_pass": "Đặt lại MK",
@@ -225,13 +225,13 @@
     "limit_day_qc": "Hạn mức tin/ngày CSKH",
     "quota_cskh": "Số tin CSKH đã cấp",
     "quota_qc": "Số tin QC đã cấp",
-    "quota_remain_cskh": "Số tin CSKH đã cấp",
-    "quota_remain_qc": "Số tin CSKH đã cấp",
+    "quota_remain_cskh": "Số tin CSKH còn lại",
+    "quota_remain_qc": "Số tin QC còn lại",
     "send_cskh": "Gửi tin CSKH",
     "send_qc": "Gửi tin QC",
     "send_otp": "Gửi tin OTP",
     "send_ott": "Gửi tin OTT",
-    "send_short_number": "Gửi tin đầu số ngắn",
+    "send_short_number": "Gửi tin 8x88",
     "receive_report_sms": "Nhận báo cáo SMS",
     "url_result": "URL nhận kết quả",
     "url_report": "URL báo cáo hàng tháng",
@@ -239,8 +239,8 @@
     "total_quota": "Tổng được cấp",
     "cskh_remain": "CSKH còn lại",
     "qc_remain": "QC còn lại",
-    "quota_provide": "Cấp tin"
-
+    "quota_provide": "Cấp tin",
+    "sms_loop": "Gửi tin trùng sau 5p"
   },
   "account_cimast_tran": {
     "list_acc_cimast": "Danh sách tài khoản giao dịch",
@@ -281,7 +281,8 @@
     "telco": "Nhà mạng",
     "count_sms": "Số tin",
     "port": "Cổng",
-    "status": "Trạng thái"
+    "status": "Trạng thái",
+    "status_detail": "Chi tiết lỗi"
   },
   "account_fee": {
     "list_account_fee": "Danh sách thu phí khác",
@@ -360,7 +361,8 @@
     "edit": "Sửa khách hàng",
     "add_customer_group": "Thêm khách hàng gửi tin sinh nhật",
     "import_customer": "Thêm khách hàng từ file excel",
-    "select_group": "Chọn nhóm"
+    "select_group": "Chọn nhóm",
+    "is_send_birth": "Gửi tin sinh nhật?"
   },
   "account-sender": {
     "title": "Tài khoản thương hiệu",
@@ -690,18 +692,19 @@
     "telco": "Nhà mạng",
     "port": "Cổng",
     "type": "Loại",
-    "maintaining_fee": "Phí duy trì",
-    "iMaintaining_fee": "Nhập phí duy trì",
+    "maintaining_fee": "Phí duy trì (VNĐ)",
+    "iMaintaining_fee": "Nhập phí duy trì (VNĐ)",
     "order": "Thứ tự",
     "iOrder": "Nhập thứ tự",
     "order_tamp": "Thứ tự tạm",
     "iOrder_tamp": "Nhập thứ tự tạm thời",
-    "time_reset": "Thời gian reset(phút)",
+    "time_reset": "Thời gian reset (phút)",
     "iTime_reset": "Nhập thời gian reset",
-    "status": "Hiệu lực",
+    "status": "Trạng thái",
     "add_mapping": "Thêm luồng mới",
     "edit_mapping": "Sửa luồng",
-    "delete_mapping": "Xóa luồng"
+    "delete_mapping": "Xóa luồng",
+    "active": "Hiệu lực"
   },
   "general": {
     "title": "Thống kê tổng hợp",
@@ -759,7 +762,10 @@
     "move_data_manager": "Đi đến quản lý đơn hàng",
     "is_send_sms": "Gửi tin cho khách hàng?",
     "send_from_file_list": "Gửi từ danh sách trên hệ thống",
-    "send_from_excel": "Gửi từ file excel"
+    "send_from_excel": "Gửi từ file excel",
+    "confirm_send_sms": "Bạn có chắc muốn gửi tin nhắn theo thông tin này?",
+    "quota_expected": "Quota dự kiến",
+    "data_phone_list": "Danh sách số điện thoại"
   },
   "free_domain": {
     "title": "Tài trợ lưu lượng",

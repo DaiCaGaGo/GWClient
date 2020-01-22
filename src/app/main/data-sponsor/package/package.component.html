@@ -33,7 +33,7 @@
                                     placeholder="{{ 'package.inPackage_name' | translate }}">
                             </div>
                             <div class=" col-md-6 col-sm-6 col-xs-12 form-group has-feedback">
-                                <button type="button" style="float: right; margin-right: 0;"
+                                <button type="button" style="float: right; margin-right: 0;" (click)="getData()"
                                     class="btn btn-primary btn-sm">{{ 'global.search' | translate }}</button>
                             </div>
                         </form>
@@ -84,8 +84,8 @@
                                                 <td class="text-center" scope="row">{{i+1}}</td>
                                                 <td>{{item.USER_NAME}}</td>
                                                 <td>{{item.PACKAGE_NAME}}</td>
-                                                <td class="text-center">{{item.DATA_FROM}} ~ {{item.DATA_TO}}</td>
-                                                <td>{{item.TOTAL_AMT}}</td>
+                                                <td class="text-center">{{item.DATA_FROM | number}} ~ {{item.DATA_TO | number}}</td>
+                                                <td>{{item.TOTAL_AMT | number }}</td>
                                                 <td class="text-center">{{item.CREATE_DATE}}</td>
                                                 <td class="text-center">{{item.CREATE_USER}}</td>
                                                 <td class="text-center">

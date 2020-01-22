@@ -130,12 +130,13 @@ export class IndexComponent implements OnInit {
   public totalSenderExpired = 0;
   public totalSmsWaitApprove = 0;
   public thisAccount;
+  public isAdmin: boolean = false;
 
   public settingsFilterSender = {};
   public selectedSenderID = [];
   public dataSender = [];
   public dataSmsByPhone = [];
-  
+
   public phone = "";
   public pagination: Pagination = new Pagination();
 
@@ -154,43 +155,55 @@ export class IndexComponent implements OnInit {
 
   ngOnInit() {
     this.loadListSenderName();
-    this.getSenderExpired();
     this.getSmsWaitApprove();
     this.getSMSError();
-    this.getAccountExpiredQuota();
-    this.getAccountNew();
+    this.getAccountLogin();
+    if(!this.isAdmin){
+      this.getSenderExpired();
+      this.getAccountExpiredQuota();
+      this.getAccountNew();
+    }
     this.getSmsPartner();
     this.getSmsTelco();
     this.getSmsGroupSender();
+  }
+
+  // bind data account
+  //#region account
+  async getAccountLogin() {
+    let result = await this.dataService.getAsync('/api/account/GetInfoAccountLogin');
+    let roleAccess = result.data[0].ROLE_ACCESS;
+    if (roleAccess == 50)
+      this.isAdmin = true;
+    else
+      this.isAdmin = false;
   }
 
   //#region sender
   async loadListSenderName() {
     this.dataSender = [];
     this.selectedSenderID = [];
-
-    let response = await this.dataService.getAsync('/api/SenderName/');
+    let response = await this.dataService.getAsync('/api/SenderName/GetSenderNameByAccountLogin');
     for (let index in response.data) {
       this.dataSender.push({ "id": response.data[index].ID, "itemName": response.data[index].NAME });
     }
-    // this.getListSms();
   }
   //#endregion
-  
+
   //#region load sms list by phone
   public async searchSms(form) {
     this.phone = form.phone.trim();
     this.getListSms();
   }
 
-  async getListSms(){
+  async getListSms() {
     this.dataSmsByPhone = [];
     // if (this.phone != undefined && this.phone != null && this.phone != ""){
-      let response = await this.dataService.getAsync('/api/sms/FindSmsByPhone?pageIndex=' + this.pagination.pageIndex +
+    let response = await this.dataService.getAsync('/api/sms/FindSmsByPhone?pageIndex=' + this.pagination.pageIndex +
       '&pageSize=' + this.pagination.pageSize + '&phone=' + this.phone +
       '&sender_name=' + (this.selectedSenderID.length > 0 ? this.selectedSenderID[0].itemName : "") +
       '&tu_ngay=&den_ngay=');
-      this.loadData(response);
+    this.loadData(response);
     // }
   }
 
@@ -210,11 +223,11 @@ export class IndexComponent implements OnInit {
     this.pagination.pageIndex = pageNo;
     this.getListSms();
   }
-  
+
   pageChanged(event: any): void {
     this.setPageIndex(event.page);
   }
-  
+
   changePageSize(size) {
     this.pagination.pageSize = size;
     this.pagination.pageIndex = 1;

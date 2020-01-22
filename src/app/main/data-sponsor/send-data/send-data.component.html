@@ -25,7 +25,7 @@
                             </div>
                             <div class="col-md-6 col-sm-6 col-xs-12 form-group text-right">
                                 <button type="submit" class="btn btn-primary btn-sm" *ngIf="role.IS_ADD"
-                                    (click)="showModalSendSMS()">{{ 'send_data.send' | translate }}</button>
+                                    (click)="sendDataSMS()">{{ 'send_data.send' | translate }}</button>
                                 <button type="button" class="btn btn-primary btn-sm" *ngIf="!isSendExcel"
                                     (click)="showModalUpload()">{{ 'send_data.up_load' | translate }}</button>
                             </div>
@@ -64,7 +64,7 @@
                                 </div>
                                 <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback" style="padding: 0">
                                     <textarea type="text" class="form-control has-feedback-left modal-popup"
-                                        name="smsContent" rows="3"
+                                        name="smsContent" rows="3" maxlength="459"
                                         placeholder="{{ 'campaign.iSms_content' | translate }}" [(ngModel)]="smsContent"
                                         (change)="countSMS($event.target.value)" (keyup)="countSMS($event.target.value)"
                                         (keydow)="countSMS($event.target.value)"></textarea>
@@ -77,11 +77,6 @@
                                 </div>
                                 <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback" style="padding: 0"
                                     *ngIf="!isSendExcel">
-                                    <!-- <textarea class="form-control has-feedback-left modal-popup" name="phoneList"
-                                        rows="3" placeholder="{{ 'send_data.iText_add_phone_number' | translate }}"
-                                        [(ngModel)]="phoneList" (change)="countPhone($event.target.value)"
-                                        (keyup)="countPhone($event.target.value)"
-                                        (keydow)="countPhone($event.target.value)"></textarea> -->
                                     <div class="col-md-12 col-sm-6 col-xs-12 form-group has-feedback"
                                         style="padding: 0;">
                                         <angular2-multiselect [data]="dataFileList"
@@ -316,7 +311,7 @@
 </div>
 
 <!-- confirm gửi tin -->
-<div class="modal fade" bsModal #confirmSendSMSModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+<!-- <div class="modal fade" bsModal #confirmSendSMSModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
     role="dialog" aria-labelledby="dialog-static-name">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
@@ -341,7 +336,7 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
 
 <!-- Confirm after send sms success -->
 <div class="modal fade" bsModal #confirmAfterSuccessModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
@@ -413,6 +408,93 @@
                     (click)="confirmDeleteFilePhoneModal.hide()">{{'global.cancel' | translate}}</button>
                 <button type="submit" class="btn btn-success"
                     (click)="confirmDeleteListFile()">{{'global.confirm' | translate}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- confirm send sms -->
+<div class="modal fade" bsModal #confirmSendDataSMSModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+    role="dialog" aria-labelledby="dialog-static-name">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 id="dialog-static-name" class="modal-title pull-left">{{'send_data.confirm_send_sms' | translate}}
+                </h4>
+                <button type="button" class="close pull-right" aria-label="Close"
+                    (click)="confirmSendDataSMSModal.hide()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-7 col-sm-12 col-xs-12">
+                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding: 0">
+                            <label style="margin-bottom: 0;">{{'campaign.text_countmes1' | translate}}
+                                (<span style="display:inline-block !important">{{numberChar}}</span>
+                                {{'campaign.text_countmes2' | translate}}) (<span
+                                    style="display:inline-block !important">{{numberSMS}}</span>{{'campaign.text_countmes3' | translate}})
+                            </label>
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12 form-group has-feedback" style="padding: 0">
+                            <textarea type="text" class="form-control has-feedback-left modal-popup" name="smsContent"
+                                rows="3" placeholder="{{ 'campaign.iSms_content' | translate }}"
+                                [(ngModel)]="smsContent" readonly></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding: 0">
+                            <label>{{'data_cimast.account' | translate}}</label>
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding: 0">
+                            <label style="font-weight:unset">{{account}}</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding: 0">
+                            <label>{{'campaign.total' | translate}}</label>
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding: 0">
+                            <label style="font-weight:unset">{{totalNumber}}</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding: 0">
+                            <label>{{'sms_list.sent_time' | translate}}</label>
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding: 0">
+                            <label style="font-weight:unset">{{timeSend}}</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row" style="padding-top: 10px;" *ngIf="isSendSMS">
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding: 0">
+                            <label>{{'general.sender' | translate}}</label>
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding: 0">
+                            <label style="font-weight:unset">{{senderName}}</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding: 0">
+                            <label>{{'send_data.data_phone_list' | translate}}</label>
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12" style="padding: 0">
+                            <label style="font-weight:unset">{{fileList}}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                    <img *ngIf="loading" class="pl-2" style="margin-right: 10px"
+                    src="data:image/gif;base64,R0lGODlhEAAQAPIAAP///wAAAMLCwkJCQgAAAGJiYoKCgpKSkiH/C05FVFNDQVBFMi4wAwEAAAAh/hpDcmVhdGVkIHdpdGggYWpheGxvYWQuaW5mbwAh+QQJCgAAACwAAAAAEAAQAAADMwi63P4wyklrE2MIOggZnAdOmGYJRbExwroUmcG2LmDEwnHQLVsYOd2mBzkYDAdKa+dIAAAh+QQJCgAAACwAAAAAEAAQAAADNAi63P5OjCEgG4QMu7DmikRxQlFUYDEZIGBMRVsaqHwctXXf7WEYB4Ag1xjihkMZsiUkKhIAIfkECQoAAAAsAAAAABAAEAAAAzYIujIjK8pByJDMlFYvBoVjHA70GU7xSUJhmKtwHPAKzLO9HMaoKwJZ7Rf8AYPDDzKpZBqfvwQAIfkECQoAAAAsAAAAABAAEAAAAzMIumIlK8oyhpHsnFZfhYumCYUhDAQxRIdhHBGqRoKw0R8DYlJd8z0fMDgsGo/IpHI5TAAAIfkECQoAAAAsAAAAABAAEAAAAzIIunInK0rnZBTwGPNMgQwmdsNgXGJUlIWEuR5oWUIpz8pAEAMe6TwfwyYsGo/IpFKSAAAh+QQJCgAAACwAAAAAEAAQAAADMwi6IMKQORfjdOe82p4wGccc4CEuQradylesojEMBgsUc2G7sDX3lQGBMLAJibufbSlKAAAh+QQJCgAAACwAAAAAEAAQAAADMgi63P7wCRHZnFVdmgHu2nFwlWCI3WGc3TSWhUFGxTAUkGCbtgENBMJAEJsxgMLWzpEAACH5BAkKAAAALAAAAAAQABAAAAMyCLrc/jDKSatlQtScKdceCAjDII7HcQ4EMTCpyrCuUBjCYRgHVtqlAiB1YhiCnlsRkAAAOwAAAAAAAAAAAA==" />
+                <button type="button" class="btn btn-default"
+                    (click)="confirmSendDataSMSModal.hide()">{{'global.cancel' | translate}}</button>
+                <button type="submit" class="btn btn-success"
+                    (click)="confirmSendSMS()">{{'global.confirm' | translate}}</button>
             </div>
         </div>
     </div>

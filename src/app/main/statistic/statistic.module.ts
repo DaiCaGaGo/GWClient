@@ -16,7 +16,6 @@ import { StatisticComponent } from './statistic.component';
 import { AccountCimastComponent } from './account-cimast/account-cimast.component';
 import { SmsListAgencyComponent } from './sms-list-agency/sms-list-agency.component';
 import { AccountCimastTranComponent } from './account-cimast-tran/account-cimast-tran.component';
-import { SmsListComponent } from './sms-list/sms-list.component';
 import { AccountFeeComponent } from './account-fee/account-fee.component';
 import { CustomersComponent } from './customers/customers.component';
 import { QuotaRemainComponent } from './quota-remain/quota-remain.component';
@@ -32,7 +31,6 @@ export const smsRoutes: Routes = [{
     { path: '', redirectTo: 'home', pathMatch: 'full' },
     { path: 'account-cimast', component: AccountCimastComponent, data: { MENU_CODE: 'ACCOUNT_CIMAST' }, canActivate: [AuthGuard] },
     { path: 'account-cimast-tran', component: AccountCimastTranComponent, data: { MENU_CODE: 'ACCOUNT_CIMAST_TRAN' }, canActivate: [AuthGuard] },
-    { path: 'sms-list', component: SmsListComponent, data: { MENU_CODE: 'SMS_LIST' }, canActivate: [AuthGuard] },
     { path: 'account-fee', component: AccountFeeComponent, data: { MENU_CODE: 'ACCOUNT_FEE' }, canActivate: [AuthGuard] },
     { path: 'customers', component: CustomersComponent, data: { MENU_CODE: 'CUSTOMER' }, canActivate: [AuthGuard] },
     { path: 'sms-list-agency', component: SmsListAgencyComponent, data: { MENU_CODE: 'SMS_LIST_AGENCY' }, canActivate: [AuthGuard] },
@@ -49,7 +47,6 @@ export const smsRoutes: Routes = [{
     SmsListAgencyComponent,
     AccountCimastComponent,
     AccountCimastTranComponent,
-    SmsListComponent,
     AccountFeeComponent,
     CustomersComponent,
     QuotaRemainComponent,

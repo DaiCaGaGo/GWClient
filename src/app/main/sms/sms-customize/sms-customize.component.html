@@ -45,13 +45,17 @@
                   </div>
                 </div>
                 <div class="row">
-                  <div class="col-md-2 col-sm-6 col-sm-12" style="text-align: right; padding-top: 8px;">
-                    <label>{{'sms_customize.select_list' | translate}}</label>
-                  </div>
-                  <div class="col-md-4 col-sm-6 col-sm-12" style="display: inline-block">
-                    <angular2-multiselect [data]="dataPhoneList" [(ngModel)]="selectedPhoneList"
-                      [settings]="settingsFilterPhoneList" name="phoneList">
-                    </angular2-multiselect>
+                  <div class="col-md-6 col-sm-6 col-sm-12">
+                    <div class="row">
+                      <div class="col-md-5 col-sm-6 col-sm-12" style="padding-top: 8px;">
+                        <label>{{'sms_customize.select_list' | translate}}</label>
+                      </div>
+                      <div class="col-md-7 col-sm-6 col-sm-12">
+                        <angular2-multiselect [data]="dataPhoneList" [(ngModel)]="selectedPhoneList"
+                          [settings]="settingsFilterPhoneList" name="phoneList">
+                        </angular2-multiselect>
+                      </div>
+                    </div>
                   </div>
                   <div class="col-md-3 col-sm-6 col-sm-12">
                     <button type="button" class="btn btn-primary btn-sm"
@@ -80,7 +84,8 @@
                   <div class="col-md-12 col-sm-12 col-sm-12" style="padding-top: 8px;">
                     <label style="color: red;" name="lbQuyTinCSKH">{{'global.quota_cskh' | translate}}:
                       {{ viewQuyTinCSKH }}</label>&nbsp;&nbsp;&nbsp;
-                    <label style="color: red;" name="lbQuyTinQC">{{'global.quota_qc' | translate}}: {{ viewQuyTinQC }}</label>
+                    <label style="color: red;" name="lbQuyTinQC">{{'global.quota_qc' | translate}}:
+                      {{ viewQuyTinQC }}</label>
                   </div>
                 </div>
               </div>
@@ -148,8 +153,8 @@
               <div style="display: inline-block; padding-right:15px">
                 <div class="checkbox" style="padding-top:0">
                   <label><input type="checkbox" class="checkbox" name="countVTL" checked="isCheckSendVTL"
-                      (change)="onCheckSendVTL($event.currentTarget.checked)">
-                    <span style="display:inline-block !important">{{ 'send_sms.viettel' | translate }}</span>
+                      (change)="onCheckSend('VIETTEL', $event.currentTarget.checked)">
+                    <span style="display:inline-block !important">VIETTEL</span>
                     (<span
                       style="display:inline-block !important">{{countVTL}}</span>{{ 'campaign.text_num' | translate }})
                   </label>
@@ -158,8 +163,8 @@
               <div style="display: inline-block; padding-right:15px">
                 <div class="checkbox" style="padding-top:0">
                   <label><input type="checkbox" class="checkbox" name="countGPC" checked="isCheckSendGPC"
-                      (change)="onCheckSendGPC($event.currentTarget.checked)">
-                    <span style="display:inline-block !important">{{ 'send_sms.gpc' | translate }}</span>
+                      (change)="onCheckSend('GPC', $event.currentTarget.checked)">
+                    <span style="display:inline-block !important">GPC</span>
                     (<span
                       style="display:inline-block !important">{{countGPC}}</span>{{ 'campaign.text_num' | translate }})
                   </label>
@@ -168,8 +173,8 @@
               <div style="display: inline-block; padding-right:15px">
                 <div class="checkbox" style="padding-top:0">
                   <label><input type="checkbox" class="checkbox" name="countVMS" checked="isCheckSendVMS"
-                      (change)="onCheckSendVMS($event.currentTarget.checked)">
-                    <span style="display:inline-block !important">{{ 'send_sms.vms' | translate }}</span>
+                      (change)="onCheckSend('VMS', $event.currentTarget.checked)">
+                    <span style="display:inline-block !important">VMS</span>
                     (<span
                       style="display:inline-block !important">{{countVMS}}</span>{{ 'campaign.text_num' | translate }})
                   </label>
@@ -178,8 +183,8 @@
               <div style="display: inline-block; padding-right:15px">
                 <div class="checkbox" style="padding-top:0">
                   <label><input type="checkbox" class="checkbox" name="countVNM" checked="isCheckSendVNM"
-                      (change)="onCheckSendVNM($event.currentTarget.checked)">
-                    <span style="display:inline-block !important">VN mobile</span>
+                      (change)="onCheckSend('VNM', $event.currentTarget.checked)">
+                    <span style="display:inline-block !important">VNM</span>
                     (<span
                       style="display:inline-block !important">{{countVNM}}</span>{{ 'campaign.text_num' | translate }})
                   </label>
@@ -188,8 +193,8 @@
               <div style="display: inline-block; padding-right:15px">
                 <div class="checkbox" style="padding-top:0">
                   <label><input type="checkbox" class="checkbox" name="countGtel" checked="isCheckSendGTEL"
-                      (change)="onCheckSendGTEL($event.currentTarget.checked)">
-                    <span style="display:inline-block !important">{{ 'send_sms.gtel' | translate }}</span>
+                      (change)="onCheckSend('GTEL', $event.currentTarget.checked)">
+                    <span style="display:inline-block !important">GTEL</span>
                     (<span
                       style="display:inline-block !important">{{countGTEL}}</span>{{ 'campaign.text_num' | translate }})
                   </label>
@@ -198,7 +203,7 @@
               <div style="display: none">
                 <div class="checkbox" style="padding-top:0">
                   <label><input type="checkbox" class="checkbox" name="countSFone" checked="isCheckSendSFONE"
-                      (change)="onCheckSendSFONE($event.currentTarget.checked)">
+                      (change)="onCheckSend('SFONE', $event.currentTarget.checked)">
                     <span style="display:inline-block !important">{{ 'send_sms.sfone' | translate }}</span>
                     (<span
                       style="display:inline-block !important">{{countSFONE}}</span>{{ 'campaign.text_num' | translate }})

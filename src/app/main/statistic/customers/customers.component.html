@@ -73,8 +73,9 @@
                         <th class="text-center">{{ 'customers.full_name' | translate }}</th>
                         <th class="text-center" style="width: 150px">{{ 'customers.phone' | translate }}</th>
                         <th class="text-center" style="width: 150px">{{ 'customers.birthday' | translate }}</th>
+                        <th class="text-center" style="width: 150px">{{ 'customers.is_send_birth' | translate }}</th>
                         <th class="text-center">{{ 'customers.description' | translate }}</th>
-                        <th class="text-center" style="width: 50px">{{ 'global.tool' | translate }}</th>
+                        <th class="text-center" style="width: 80px">{{ 'global.tool' | translate }}</th>
                       </tr>
                     </thead>
                     <tbody class="table-content">
@@ -84,6 +85,9 @@
                         <td>{{customers.FIRST_NAME + ' ' + customers.LAST_NAME}}</td>
                         <td>{{customers.PHONE}}</td>
                         <td>{{customers.BIRTHDAY}}</td>
+                        <td class="text-center">
+                          <input type="checkbox" [checked]="customers.IS_SEND == 1 ? true : false" class="checkbox" disabled>
+                        </td>
                         <td>{{customers.DESCRIPTION}}</td>
                         <td class="text-center">
                           <div class="tool">

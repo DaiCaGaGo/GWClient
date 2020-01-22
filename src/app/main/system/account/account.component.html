@@ -19,23 +19,23 @@
             <form class="row form-horizontal form-label-left input_mask" #formSearchAccount="ngForm"
               (ngSubmit)="searchAccount(formSearchAccount.value)">
               <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
-                <input type="text" class="form-control has-feedback-left" id="inputSuccess1"
+                <input type="text" class="form-control has-feedback-left"
                   placeholder="{{ 'account_vendor.acc_name' | translate }}" name="fillterUserName" ngModel>
                 <span class="fa fa-list-ul form-control-feedback left" aria-hidden="true"></span>
               </div>
               <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
-                <input type="text" class="form-control has-feedback-left" id="inputSuccess4"
+                <input type="text" class="form-control has-feedback-left"
                   placeholder="{{ 'account_vendor.name_email' | translate }}" name="fillterFullName" ngModel>
                 <span class="fa fa-envelope form-control-feedback left" aria-hidden="true"></span>
               </div>
               <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
-                <input type="text" class="form-control has-feedback-left" id="inputSuccess2"
+                <input type="text" class="form-control has-feedback-left"
                   placeholder="{{ 'account_vendor.acc_company' | translate }}" name="fillterCompanyName" ngModel>
                 <span class="fa fa-list-ul form-control-feedback left" aria-hidden="true"></span>
               </div>
               <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
-                <input type="text" class="form-control has-feedback-left" id="inputSuccess2"
-                  placeholder="{{ 'global.phone' | translate }}" name="fillterPhone" ngModel>
+                <input type="text" class="form-control has-feedback-left" placeholder="{{ 'global.phone' | translate }}"
+                  name="fillterPhone" ngModel>
                 <span class="fa fa-phone form-control-feedback left" aria-hidden="true"></span>
               </div>
               <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
@@ -114,7 +114,8 @@
                       </tr>
                       <tr>
                         <th class="text-center" style="vertical-align: middle;">Total CSKH</th>
-                        <th class="text-center" style="vertical-align: middle;">{{'account.cskh_remain' | translate}}</th>
+                        <th class="text-center" style="vertical-align: middle;">{{'account.cskh_remain' | translate}}
+                        </th>
                         <th class="text-center" style="vertical-align: middle;">Total QC</th>
                         <th class="text-center" style="vertical-align: middle;">{{'account.qc_remain' | translate}}</th>
                       </tr>
@@ -204,24 +205,33 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
-      <form #Account="ngForm" (ngSubmit)="createAccount(Account.value)">
+      <form name="form" (ngSubmit)="f.form.valid && createAccount()" #f="ngForm" novalidate>
         <div class="modal-body">
           <div class="row">
             <div class="col-md-3 col-sm-6 col-xs-12">
-              <label for="userName">{{'account.account_name'|translate}} <span style="color:red;">(*)</span></label>
-              <input type="text" id="userName" class="form-control" name="userName" required=""
-                [(ngModel)]="createUserName">
+              <label>{{'account.account_name'|translate}} <span style="color:red;">(*)</span></label>
+              <input type="text" class="form-control" name="userName" [(ngModel)]="model.userName" #userName="ngModel"
+                [ngClass]="{ 'is-invalid': f.submitted && userName.invalid }" required />
+              <div style="color: red;" *ngIf="f.submitted && userName.invalid" class="invalid-feedback">
+                <div *ngIf="userName.errors.required">Username is required</div>
+              </div>
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
               <div class="col-md-6 col-sm-6 col-xs-12" style="padding-left: 0px">
-                <label for="password">{{'account.account_pass' | translate}} <span style="color:red;">(*)</span></label>
-                <input [disabled]="isDisablePass" type="text" class="form-control" name="password" required=""
-                  [(ngModel)]="passRandom">
+                <label>{{'account.account_pass' | translate}} <span style="color:red;">(*)</span></label>
+                <input type="text" [disabled]="isDisablePass" class="form-control" name="password"
+                  [(ngModel)]="passRandom" #password="ngModel"
+                  [ngClass]="{ 'is-invalid': f.submitted && password.invalid }" required minlength="6" />
+                <div style="color: red;" *ngIf="f.submitted && password.invalid" class="invalid-feedback">
+                  <div *ngIf="password.errors.required">Password is required</div>
+                  <div *ngIf="password.errors.minlength">Password must be at least 6 characters</div>
+                </div>
               </div>
               <div class="col-md-6 col-sm-6 col-xs-12">
                 <div class="checkbox" style="margin-top:35px;">
-                  <label><input type="checkbox" value="" class="checkbox" name="randomPass" required=""
-                      (change)="checkCreateRandomPass($event.currentTarget.checked)" [(ngModel)]="is_random_pass">
+                  <label><input type="checkbox" class="checkbox" name="randomPass" [(ngModel)]="model.randomPass"
+                      #randomPass="ngModel" [ngClass]="{ 'is-invalid': f.submitted}"
+                      (change)="checkCreateRandomPass($event.currentTarget.checked)" />
                     <span>Tạo MK</span>
                   </label>
                 </div>
@@ -230,167 +240,185 @@
             <div class="col-md-3 col-sm-6 col-xs-12">
               <label>{{'account.account_type' | translate}} <span style="color:red;">(*)</span></label>
               <angular2-multiselect [data]="listAccountType" [(ngModel)]="selectedAccountType"
-                [settings]="settingsFilterAccountType" name="accountType">
+                [settings]="settingsFilterAccountType" name="accountType" [ngClass]="{ 'is-invalid': f.submitted}">
               </angular2-multiselect>
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
               <label>{{'account.role' | translate}} <span style="color:red;">(*)</span></label>
               <angular2-multiselect [data]="listRole" [(ngModel)]="selectedRole" [settings]="settingsFilterRole"
-                name="accountRole">
+                name="accountRole" [ngClass]="{ 'is-invalid': f.submitted}">
               </angular2-multiselect>
             </div>
           </div>
-          <div class="row" style="margin-top: 10px">
+          <div class="row" style="margin-top: 15px">
             <div class="col-md-3 col-sm-6 col-xs-12">
-              <label for="phone">{{'global.phone' | translate}}</label>
-              <input type="text" id="phone" class="form-control" name="phone" required="" ngModel>
+              <label>{{'global.phone' | translate}}</label>
+              <input type="text" class="form-control" name="phone" [(ngModel)]="model.phone" #phone="ngModel"
+                [ngClass]="{ 'is-invalid': f.submitted}" [pattern]="mobNumberPattern"/>
+              <div style="color: red;" *ngIf="phone.invalid && f.submitted" class="invalid-feedback">
+                <div *ngIf="phone.errors.pattern">
+                  Mobile number not valid.
+                </div>
+              </div>
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
-              <label for="email">{{'global.email'|translate}}</label>
-              <input type="email" id="email" class="form-control" name="email" required="" ngModel>
+              <label>{{'global.email'|translate}}</label>
+              <input type="text" class="form-control" name="email" [(ngModel)]="model.email" #email="ngModel"
+                [ngClass]="{ 'is-invalid': f.submitted}" email />
+              <div style="color: red;" *ngIf="f.submitted && email.invalid" class="invalid-feedback">
+                <div *ngIf="email.errors.email">Email must be a valid email address</div>
+              </div>
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
-              <label for="skype">Skype</label>
-              <input type="text" id="skype" class="form-control" name="skype" required="" ngModel>
+              <label>Skype</label>
+              <input type="text" class="form-control" name="skype" [(ngModel)]="model.skype" #skype="ngModel"
+                [ngClass]="{ 'is-invalid': f.submitted}" />
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
               <label>{{'account.account_parent' | translate}}</label>
               <angular2-multiselect [data]="listAccount" [(ngModel)]="selectedAccountID"
-                [settings]="settingsFilterAccount" name="parentID">
+                [settings]="settingsFilterAccount" name="parentID" [ngClass]="{ 'is-invalid': f.submitted}">
               </angular2-multiselect>
             </div>
           </div>
-          <div class="row" style="margin-top: 10px">
+          <div class="row" style="margin-top: 15px">
             <div class="col-md-3 col-sm-6 col-xs-12">
               <div class="checkbox">
-                <label><input type="checkbox" value="" id="limitQuota" class="checkbox" name="limitQuota" required=""
-                    ngModel> <span>{{'account.limit_quota' | translate}}</span> </label>
-              </div>
-            </div>
-            <div class="col-md-3 col-sm-6 col-xs-12">
-              <label for="bankName">{{'account.bank_name' | translate}}</label>
-              <input type="text" id="bankName" class="form-control" name="bankName" required="" ngModel>
-            </div>
-            <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
-              <label for="fullName">{{'account.account_fullname' | translate}}</label>
-              <input type="text" id="fullName" class="form-control" name="fullName" required="" ngModel>
-            </div>
-            <div class="col-md-3 col-sm-6 col-xs-12">
-              <label for="companyName">{{'account.company' | translate}}</label>
-              <input type="text" id="companyName" class="form-control" name="companyName" required="" ngModel>
-            </div>
-          </div>
-          <div class="row" style="margin-top: 10px">
-            <div class="col-md-3 col-sm-6 col-xs-12">
-              <div class="checkbox">
-                <label><input type="checkbox" value="" id="isAdmin" class="checkbox" name="isAdmin" required="" ngModel>
+                <label><input type="checkbox" class="checkbox" name="limitQuota" [(ngModel)]="model.limitQuota"
+                    #limitQuota="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" />
+                  <span>{{'account.limit_quota' | translate}}</span> </label>
+                <label class="pull-right"><input type="checkbox" class="checkbox" name="isAdmin"
+                    [(ngModel)]="model.isAdmin" #isAdmin="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" />
                   <span>{{'account.is_admin' | translate}}</span> </label>
               </div>
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
-              <label for="bankAccount">{{'account.bank_account' | translate}}</label>
-              <input type="text" id="bankAccount" class="form-control" name="bankAccount" required="" ngModel>
+              <label>{{'account.bank_name' | translate}}</label>
+              <input type="text" class="form-control" name="bankName" [(ngModel)]="model.bankName" #bankName="ngModel"
+                [ngClass]="{ 'is-invalid': f.submitted}" />
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12 form-group has-feedback">
+              <label>{{'account.account_fullname' | translate}}</label>
+              <input type="text" class="form-control" name="fullName" [(ngModel)]="model.fullName" #fullName="ngModel"
+                [ngClass]="{ 'is-invalid': f.submitted}" />
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
-              <label for="hanMucThangCSKH">{{'account.limit_month_cskh' | translate}}</label>
-              <input type="number" min=0 id="hanMucThangCSKH" class="form-control" name="hanMucThangCSKH" required=""
-                ngModel>
-            </div>
-            <div class="col-md-3 col-sm-6 col-xs-12">
-              <label for="hanMucThangQC">{{'account.limit_month_qc' | translate}}</label>
-              <input type="number" min=0 id="hanMucThangQC" class="form-control" name="hanMucThangQC" required=""
-                ngModel>
-            </div>
-          </div>
-          <div class="row" style="margin-top: 10px">
-            <div class="col-md-3 col-sm-6 col-xs-12">
-              <div class="checkbox">
-                <label><input type="checkbox" value="" class="checkbox" name="isActive" required=""
-                    [(ngModel)]="checkActive"> <span>{{'account.account_active' | translate}}</span> </label>
-              </div>
-            </div>
-            <div class="col-md-3 col-sm-6 col-xs-12">
-              <label for="bankAccountName">{{'account.bank_account_name' | translate}}</label>
-              <input type="text" id="bankAccountName" class="form-control" name="bankAccountName" required="" ngModel>
-            </div>
-            <div class="col-md-3 col-sm-6 col-xs-12">
-              <label for="hanMucNgayCSKH">{{'account.limit_day_cskh' | translate}}</label>
-              <input type="number" min=0 id="hanMucNgayCSKH" class="form-control" name="hanMucNgayCSKH" required=""
-                ngModel>
-            </div>
-            <div class="col-md-3 col-sm-6 col-xs-12">
-              <label for="hanMucNgayQC">{{'account.limit_day_qc' | translate}}</label>
-              <input type="number" min=0 id="hanMucNgayQC" class="form-control" name="hanMucNgayQC" required="" ngModel>
+              <label>{{'account.company' | translate}}</label>
+              <input type="text" class="form-control" name="companyName" [(ngModel)]="model.companyName"
+                #companyName="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" />
             </div>
           </div>
-          <div class="row" style="margin-top: 10px">
+          <div class="row" style="margin-top: 15px">
             <div class="col-md-3 col-sm-6 col-xs-12">
               <div class="checkbox">
-                <label><input type="checkbox" value="" id="enableSmsCSKH" class="checkbox" name="enableSmsCSKH"
-                    required="" ngModel> <span>{{'account.send_cskh' | translate}}</span> </label>
+                <label><input type="checkbox" class="checkbox" name="isActive" [(ngModel)]="checkActive"
+                    #isActive="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" />
+                  <span>{{'account.account_active' | translate}}</span> </label>
+                <label class="pull-right">
+                  <input type="checkbox" class="checkbox" name="checkSendSmsLoop" [(ngModel)]="model.checkSendSmsLoop"
+                    #checkLoop="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" />
+                  <span>{{'account.sms_loop' | translate}}</span> </label>
               </div>
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
-              <div class="checkbox">
-                <label><input type="checkbox" value="" id="enableOTT" class="checkbox" name="enableOTT" required=""
-                    ngModel> <span>{{'account.send_ott' | translate}}</span> </label>
-              </div>
+              <label>{{'account.bank_account' | translate}}</label>
+              <input type="text" class="form-control" name="bankAccount" [(ngModel)]="model.bankAccount"
+                #bankAccount="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" />
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
-              <label for="quotaCSKH">{{'account.quota_cskh' | translate}}</label>
-              <input type="number" min=0 id="quotaCSKH" class="form-control" name="quotaCSKH" required=""
-                [attr.disabled]="true" ngModel>
+              <label>{{'account.limit_month_cskh' | translate}}</label>
+              <input type="number" class="form-control" name="hanMucThangCSKH" [(ngModel)]="model.hanMucThangCSKH"
+                #hanMucThangCSKH="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" min="0" />
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
-              <label for="quotaQC">{{'account.quota_qc' | translate}}</label>
-              <input type="number" min=0 id="quotaQC" class="form-control" name="quotaQC" required=""
-                [attr.disabled]="true" ngModel>
+              <label>{{'account.limit_month_qc' | translate}}</label>
+              <input type="number" class="form-control" name="hanMucThangQC" [(ngModel)]="model.hanMucThangQC"
+                #hanMucThangQC="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" min="0" />
             </div>
           </div>
-          <div class="row" style="margin-top: 10px">
+          <div class="row" style="margin-top: 15px">
             <div class="col-md-3 col-sm-6 col-xs-12">
               <div class="checkbox">
-                <label><input type="checkbox" value="" id="enableSmsQC" class="checkbox" name="enableSmsQC" required=""
-                    ngModel> <span>{{'account.send_qc' | translate}}</span> </label>
+                <label><input type="checkbox" class="checkbox" name="enableSmsCSKH" [(ngModel)]="model.enableSmsCSKH"
+                    #enableSmsCSKH="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" />
+                  <span>{{'account.send_cskh' | translate}}</span> </label>
+                <label class="pull-right">
+                  <input type="checkbox" class="checkbox" name="enableSmsQC" [(ngModel)]="model.enableSmsQC"
+                    #enableSmsQC="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" />
+                  <span>{{'account.send_qc' | translate}}</span> </label>
               </div>
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
-              <div class="checkbox">
-                <label><input type="checkbox" value="" id="enableOTP" class="checkbox" name="enableOTP" required=""
-                    ngModel> <span>{{'account.send_otp' | translate}}</span> </label>
-              </div>
+              <label>{{'account.bank_account_name' | translate}}</label>
+              <input type="text" class="form-control" name="bankAccountName" [(ngModel)]="model.bankAccountName"
+                #bankAccountName="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" />
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
-              <label for="quotaConCSKH">{{'account.quota_remain_cskh' | translate}}</label>
-              <input type="number" min=0 id="quotaConCSKH" class="form-control" name="quotaConCSKH" required=""
-                [attr.disabled]="true" ngModel>
+              <label>{{'account.limit_day_cskh' | translate}}</label>
+              <input type="number" class="form-control" name="hanMucNgayCSKH" [(ngModel)]="model.hanMucNgayCSKH"
+                #hanMucNgayCSKH="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" min="0" />
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
-              <label for="quotaConQC">{{'account.quota_remain_qc' | translate}}</label>
-              <input type="number" min=0 id="quotaConQC" class="form-control" name="quotaConQC" required=""
-                [attr.disabled]="true" ngModel>
+              <label>{{'account.limit_day_qc' | translate}}</label>
+              <input type="number" class="form-control" name="hanMucNgayQC" [(ngModel)]="model.hanMucNgayQC"
+                #hanMucNgayQC="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" min="0" />
             </div>
           </div>
-          <div class="row" style="margin-top: 10px">
+          <div class="row" style="margin-top: 15px">
             <div class="col-md-3 col-sm-6 col-xs-12">
               <div class="checkbox">
-                <label><input type="checkbox" value="" id="enableDauSoNgan" class="checkbox" name="enableDauSoNgan"
-                    required="" ngModel> <span>{{'account.send_short_number' | translate}}</span> </label>
-              </div>
-            </div>
-            <div class="col-md-3 col-sm-6 col-xs-12">
-              <div class="checkbox">
-                <label><input type="checkbox" value="" class="checkbox" name="dlvr" required="">
-                  <span>{{'account.receive_report_sms' | translate}}</span> </label>
+                <label><input type="checkbox" class="checkbox" name="enableOTT" [(ngModel)]="model.enableOTT"
+                    #enableOTT="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" />
+                  <span>{{'account.send_ott' | translate}}</span> </label>
+                <label class="pull-right">
+                  <input type="checkbox" class="checkbox" name="enableOTP" [(ngModel)]="model.enableOTP"
+                    #enableOTP="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" />
+                  <span>{{'account.send_otp' | translate}}</span> </label>
               </div>
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
               <label>{{'account.url_result' | translate}}</label>
-              <input type="text" class="form-control" name="dlvrURL" required="">
+              <input type="text" class="form-control" name="dlvrURL" [(ngModel)]="model.dlvrURL" #dlvrURL="ngModel"
+                [ngClass]="{ 'is-invalid': f.submitted}" />
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account.quota_cskh' | translate}}</label>
+              <input type="number" class="form-control" name="quotaCSKH" [(ngModel)]="model.quotaCSKH"
+                #quotaCSKH="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" min="0" />
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account.quota_qc' | translate}}</label>
+              <input type="number" class="form-control" name="quotaQC" [(ngModel)]="model.quotaQC" #quotaQC="ngModel"
+                [ngClass]="{ 'is-invalid': f.submitted}" min="0" />
+            </div>
+          </div>
+          <div class="row" style="margin-top: 15px">
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <div class="checkbox">
+                <label><input type="checkbox" class="checkbox" name="enableDauSoNgan"
+                    [(ngModel)]="model.enableDauSoNgan" #enableDauSoNgan="ngModel"
+                    [ngClass]="{ 'is-invalid': f.submitted}" />
+                  <span>{{'account.send_short_number' | translate}}</span> </label>
+                <label class="pull-right">
+                  <input type="checkbox" class="checkbox" name="dlvr" [(ngModel)]="model.dlvr" #dlvr="ngModel"
+                    [ngClass]="{ 'is-invalid': f.submitted}" />
+                  <span>{{'account.receive_report_sms' | translate}}</span> </label>
+              </div>
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
               <label>{{'account.url_report' | translate}}</label>
-              <input type="text" class="form-control" name="emailReport" required="">
+              <input type="text" class="form-control" name="emailReport" [(ngModel)]="model.emailReport"
+                #emailReport="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" />
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account.quota_remain_cskh' | translate}}</label>
+              <input type="number" class="form-control" name="quotaConCSKH" [(ngModel)]="model.quotaConCSKH"
+                #quotaConCSKH="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" min="0" />
+            </div>
+            <div class="col-md-3 col-sm-6 col-xs-12">
+              <label>{{'account.quota_remain_qc' | translate}}</label>
+              <input type="number" class="form-control" name="quotaConQC" [(ngModel)]="model.quotaConQC"
+                #quotaConQC="ngModel" [ngClass]="{ 'is-invalid': f.submitted}" min="0" />
             </div>
           </div>
         </div>
@@ -467,6 +495,9 @@
               <div class="checkbox">
                 <label><input type="checkbox" value="" class="checkbox" formControlName="limitQuota" required="">
                   <span>{{'account.limit_quota' | translate}}</span> </label>
+                <label class="pull-right"><input type="checkbox" value="" class="checkbox" formControlName="isAdmin"
+                    required="">
+                  <span>{{'account.is_admin' | translate}}</span> </label>
               </div>
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
@@ -484,8 +515,11 @@
           <div class="row" style="margin-top: 10px">
             <div class="col-md-3 col-sm-6 col-xs-12">
               <div class="checkbox">
-                <label><input type="checkbox" value="" class="checkbox" formControlName="isAdmin" required="">
-                  <span>{{'account.is_admin' | translate}}</span> </label>
+                <label><input type="checkbox" value="" class="checkbox" formControlName="isActive" required="">
+                  <span>{{'account.account_active' | translate}}</span> </label>
+                <label class="pull-right"><input type="checkbox" value="" class="checkbox"
+                    formControlName="checkSendSmsLoop" required="" [(ngModel)]="checkSendSmsLoop">
+                  <span>{{'account.sms_loop' | translate}}</span> </label>
               </div>
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
@@ -504,8 +538,11 @@
           <div class="row" style="margin-top: 10px">
             <div class="col-md-3 col-sm-6 col-xs-12">
               <div class="checkbox">
-                <label><input type="checkbox" value="" class="checkbox" formControlName="isActive" required="">
-                  <span>{{'account.account_active' | translate}}</span> </label>
+                <label><input type="checkbox" value="" class="checkbox" formControlName="enableSmsCSKH" required="">
+                  <span>{{'account.send_cskh' | translate}}</span> </label>
+                <label class="pull-right"><input type="checkbox" value="" class="checkbox" formControlName="enableSmsQC"
+                    required="">
+                  <span>{{'account.send_qc' | translate}}</span> </label>
               </div>
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
@@ -524,15 +561,16 @@
           <div class="row" style="margin-top: 10px">
             <div class="col-md-3 col-sm-6 col-xs-12">
               <div class="checkbox">
-                <label><input type="checkbox" value="" class="checkbox" formControlName="enableSmsCSKH" required="">
-                  <span>{{'account.send_cskh' | translate}}</span> </label>
+                <label><input type="checkbox" value="" class="checkbox" formControlName="enableOTT" required="">
+                  <span>{{'account.send_ott' | translate}}</span> </label>
+                <label class="pull-right"><input type="checkbox" value="" class="checkbox" formControlName="enableOTP"
+                    required="">
+                  <span>{{'account.send_otp' | translate}}</span> </label>
               </div>
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
-              <div class="checkbox">
-                <label><input type="checkbox" value="" class="checkbox" formControlName="enableOTT" required="">
-                  <span>{{'account.send_ott' | translate}}</span> </label>
-              </div>
+              <label>{{'account.url_result' | translate}}</label>
+              <input type="text" class="form-control" formControlName="dlvrURL" required="">
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
               <label>{{'account.quota_cskh' | translate}}</label>
@@ -548,15 +586,16 @@
           <div class="row" style="margin-top: 10px">
             <div class="col-md-3 col-sm-6 col-xs-12">
               <div class="checkbox">
-                <label><input type="checkbox" value="" class="checkbox" formControlName="enableSmsQC" required="">
-                  <span>{{'account.send_qc' | translate}}</span> </label>
+                <label><input type="checkbox" value="" class="checkbox" formControlName="enableDauSoNgan" required="">
+                  <span>{{'account.send_short_number' | translate}}</span> </label>
+                <label class="pull-right"><input type="checkbox" value="" class="checkbox" formControlName="dlvr"
+                    required="">
+                  <span>{{'account.receive_report_sms' | translate}}</span> </label>
               </div>
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
-              <div class="checkbox">
-                <label><input type="checkbox" value="" class="checkbox" formControlName="enableOTP" required="">
-                  <span>{{'account.send_otp' | translate}}</span> </label>
-              </div>
+              <label>{{'account.url_report' | translate}}</label>
+              <input type="text" class="form-control" formControlName="emailReport" required="">
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
               <label>{{'account.quota_remain_cskh' | translate}}</label>
@@ -567,28 +606,6 @@
               <label>{{'account.quota_remain_qc' | translate}}</label>
               <input type="number" min=0 class="form-control" formControlName="quotaConQC" required=""
                 [attr.disabled]="true">
-            </div>
-          </div>
-          <div class="row" style="margin-top: 10px">
-            <div class="col-md-3 col-sm-6 col-xs-12">
-              <div class="checkbox">
-                <label><input type="checkbox" value="" class="checkbox" formControlName="enableDauSoNgan" required="">
-                  <span>{{'account.send_short_number' | translate}}</span> </label>
-              </div>
-            </div>
-            <div class="col-md-3 col-sm-6 col-xs-12">
-              <div class="checkbox">
-                <label><input type="checkbox" value="" class="checkbox" formControlName="dlvr" required="">
-                  <span>{{'account.receive_report_sms' | translate}}</span> </label>
-              </div>
-            </div>
-            <div class="col-md-3 col-sm-6 col-xs-12">
-              <label>{{'account.url_result' | translate}}</label>
-              <input type="text" class="form-control" formControlName="dlvrURL" required="">
-            </div>
-            <div class="col-md-3 col-sm-6 col-xs-12">
-              <label>{{'account.url_report' | translate}}</label>
-              <input type="text" class="form-control" formControlName="emailReport" required="">
             </div>
           </div>
         </div>

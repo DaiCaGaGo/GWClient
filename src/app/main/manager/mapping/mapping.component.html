@@ -67,16 +67,16 @@
                   <table class="table table-bordered clear-bottom">
                     <thead>
                       <tr>
-                        <th class="text-center">Tài khoản</th>
-                        <th class="text-center">Tên thương hiệu</th>
-                        <th class="text-center">Loại</th>
-                        <th class="text-center">Mạng</th>
-                        <th class="text-center">Đối tác</th>
-                        <th class="text-center">Phí duy trì</th>
-                        <th class="text-center">Thứ tự</th>
-                        <th class="text-center">Thứ tự tạm thời</th>
-                        <th class="text-center">Thời gian reset</th>
-                        <th class="text-center">Trạng thái</th>
+                        <th class="text-center">{{'account-sender.account_name' | translate}}</th>
+                        <th class="text-center">{{'mapping.sender_name' | translate}}</th>
+                        <th class="text-center">{{'mapping.type' | translate}}</th>
+                        <th class="text-center">{{'mapping.telco' | translate}}</th>
+                        <th class="text-center">{{'mapping.port' | translate}}</th>
+                        <th class="text-center">{{'mapping.maintaining_fee' | translate}}</th>
+                        <th class="text-center">{{'mapping.order' | translate}}</th>
+                        <th class="text-center">{{'mapping.order_tamp' | translate}}</th>
+                        <th class="text-center">{{'mapping.time_reset' | translate}}</th>
+                        <th class="text-center">{{'mapping.active' | translate}}</th>
                         <th class="text-center">{{ 'global.tool' | translate }}</th>
                       </tr>
                     </thead>
@@ -224,7 +224,7 @@
               <div class="checkbox">
                 <label><input type="checkbox" value="" class="checkbox" name="activeViettel"
                     [(ngModel)]="checkActiveViettel">
-                  <span>{{'mapping.status' | translate}}</span> </label>
+                  <span>{{'mapping.active' | translate}}</span> </label>
               </div>
             </div>
           </div>
@@ -264,7 +264,7 @@
               <label></label>
               <div class="checkbox">
                 <label><input type="checkbox" value="" class="checkbox" name="activeGPC" [(ngModel)]="checkActiveGPC">
-                  <span>{{'mapping.status' | translate}}</span> </label>
+                  <span>{{'mapping.active' | translate}}</span> </label>
               </div>
             </div>
           </div>
@@ -304,7 +304,7 @@
               <label></label>
               <div class="checkbox">
                 <label><input type="checkbox" value="" class="checkbox" name="activeVMS" [(ngModel)]="checkActiveVMS">
-                  <span>{{'mapping.status' | translate}}</span> </label>
+                  <span>{{'mapping.active' | translate}}</span> </label>
               </div>
             </div>
           </div>
@@ -339,7 +339,7 @@
               <label></label>
               <div class="checkbox">
                 <label><input type="checkbox" value="" class="checkbox" name="activeVNM" [(ngModel)]="checkActiveVNM">
-                  <span>{{'mapping.status' | translate}}</span> </label>
+                  <span>{{'mapping.active' | translate}}</span> </label>
               </div>
             </div>
           </div>
@@ -374,7 +374,7 @@
               <label></label>
               <div class="checkbox">
                 <label><input type="checkbox" value="" class="checkbox" name="activeGtel" [(ngModel)]="checkActiveGtel">
-                  <span>{{'mapping.status' | translate}}</span> </label>
+                  <span>{{'mapping.active' | translate}}</span> </label>
               </div>
             </div>
           </div>
@@ -461,7 +461,7 @@
               <label></label>
               <div class="checkbox">
                 <label><input type="checkbox" value="" class="checkbox" formControlName="active" ngModel>
-                  <span>{{'mapping.status' | translate}}</span> </label>
+                  <span>{{'mapping.active' | translate}}</span> </label>
               </div>
             </div>
           </div>
