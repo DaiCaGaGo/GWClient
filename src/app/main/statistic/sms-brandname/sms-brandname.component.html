@@ -77,7 +77,7 @@
                       <tr>
                         <!-- <th class="text-center" style="width: 60px;">{{'global.order' | translate}}</th> -->
                         <th class="text-center">{{'sms_list.choose_sender' | translate}}</th>
-                        <th class="text-center">Service type</th>
+                        <th class="text-center">{{'sms_list.choose_type' | translate}}</th>
                         <th class="text-center">{{'sms_list.partner' | translate}}</th>
                         <th class="text-center" style="width: 100px">Telco</th>
                         <th class="text-center" style="width: 100px;">{{'sms_brandname.sum_sms' | translate}}</th>
@@ -96,9 +96,9 @@
                             style="vertical-align: inherit">
                             {{item.LIST_SERVICE[0].LIST_PARTNER[0].PARTNER_NAME}}</td>
                           <td> {{item.LIST_SERVICE[0].LIST_PARTNER[0].LIST_SMS[0].TELCO}}</td>
-                          <td>{{item.LIST_SERVICE[0].LIST_PARTNER[0].LIST_SMS[0].SUM_SMS}}</td>
-                          <td>{{item.LIST_SERVICE[0].LIST_PARTNER[0].LIST_SMS[0].SUM_SMS_SUCCESS}}</td>
-                          <td>{{item.LIST_SERVICE[0].LIST_PARTNER[0].LIST_SMS[0].SUM_SMS_FAILE}}</td>
+                          <td class="text-center">{{item.LIST_SERVICE[0].LIST_PARTNER[0].LIST_SMS[0].SUM_SMS}}</td>
+                          <td class="text-center">{{item.LIST_SERVICE[0].LIST_PARTNER[0].LIST_SMS[0].SUM_SMS_SUCCESS}}</td>
+                          <td class="text-center">{{item.LIST_SERVICE[0].LIST_PARTNER[0].LIST_SMS[0].SUM_SMS_FAILE}}</td>
                         </tr>
 
                         <ng-container *ngFor="let i3 of item.LIST_SERVICE; let i13= index;">
@@ -106,24 +106,24 @@
                             <td [attr.rowspan]="i3.LENGTH_TYPE" style="vertical-align: inherit">{{i3.SMS_TYPE}}</td>
                             <td>{{i3.LIST_PARTNER[0].PARTNER_NAME}}</td>
                             <td>{{i3.LIST_PARTNER[0].LIST_SMS[0].TELCO}}</td>
-                            <td>{{i3.LIST_PARTNER[0].LIST_SMS[0].SUM_SMS}}</td>
-                            <td>{{i3.LIST_PARTNER[0].LIST_SMS[0].SUM_SMS_SUCCESS}}</td>
-                            <td>{{i3.LIST_PARTNER[0].LIST_SMS[0].SUM_SMS_FAILE}}</td>
+                            <td class="text-center">{{i3.LIST_PARTNER[0].LIST_SMS[0].SUM_SMS}}</td>
+                            <td class="text-center">{{i3.LIST_PARTNER[0].LIST_SMS[0].SUM_SMS_SUCCESS}}</td>
+                            <td class="text-center">{{i3.LIST_PARTNER[0].LIST_SMS[0].SUM_SMS_FAILE}}</td>
                           </tr>
                           <ng-container *ngFor="let i2 of i3.LIST_PARTNER; let i12= index;">
                             <tr *ngIf="i12!=0">
                               <td [attr.rowspan]="i2.LENGTH_PARTNER" style="vertical-align: inherit">{{i2.PARTNER_NAME}}</td>
                               <td>{{i2.LIST_SMS[0].TELCO}}</td>
-                              <td>{{i2.LIST_SMS[0].SUM_SMS}}</td>
-                              <td>{{i2.LIST_SMS[0].SUM_SMS_SUCCESS}}</td>
-                              <td>{{i2.LIST_SMS[0].SUM_SMS_FAILE}}</td>
+                              <td class="text-center">{{i2.LIST_SMS[0].SUM_SMS}}</td>
+                              <td class="text-center">{{i2.LIST_SMS[0].SUM_SMS_SUCCESS}}</td>
+                              <td class="text-center">{{i2.LIST_SMS[0].SUM_SMS_FAILE}}</td>
                             </tr>
                             <ng-container *ngFor="let i1 of i2.LIST_SMS; let i11= index;">
                               <tr *ngIf="i11!=0">
                                 <td>{{i1.TELCO}}</td>
-                                <td>{{i1.SUM_SMS}}</td>
-                                <td>{{i1.SUM_SMS_SUCCESS}}</td>
-                                <td>{{i1.SUM_SMS_FAILE}}</td>
+                                <td class="text-center">{{i1.SUM_SMS}}</td>
+                                <td class="text-center">{{i1.SUM_SMS_SUCCESS}}</td>
+                                <td class="text-center">{{i1.SUM_SMS_FAILE}}</td>
                               </tr>
                             </ng-container>
                           </ng-container>

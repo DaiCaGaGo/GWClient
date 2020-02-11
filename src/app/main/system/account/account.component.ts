@@ -9,7 +9,7 @@ import { AccountMenuComponent } from '../account-menu/account-menu.component';
 import { Role } from 'src/app/core/models/role';
 import { UtilityService } from 'src/app/core/services/utility.service';
 import { ActivatedRoute, Router } from '@angular/router';
-import { AccountSenderComponent } from '../account-sender/account-sender.component';
+import { AppConst } from 'src/app/core/common/app.constants';
 
 @Component({
   selector: 'app-account',
@@ -24,8 +24,8 @@ export class AccountComponent implements OnInit {
   @ViewChild('phanQuyenModal', { static: false }) public phanQuyenModal: ModalDirective;
   @ViewChild("accountMenuComponent", { static: false }) accountMenu: AccountMenuComponent;
   @ViewChild('confirmResetPassModal', { static: false }) public confirmResetPassModal: ModalDirective;
-  @ViewChild('accountSenderModal', { static: false }) public accountSenderModal: ModalDirective;
-  @ViewChild("accountSenderComponent", { static: false }) accountSenderComponent: AccountSenderComponent;
+  @ViewChild('uploadImage', { static: false }) public uploadImage;
+  @ViewChild('uploadImageEdit', { static: false }) public uploadImageEdit;
 
   public formEditAccount: FormGroup;
   public dataAccount = [];
@@ -63,6 +63,10 @@ export class AccountComponent implements OnInit {
   public selectedRole = [];
   public settingsFilterRole = {};
 
+  public formResetPass: FormGroup;
+  public urlImageUpload
+  public urlImageUploadEdit
+
   constructor(
     private dataService: DataService,
     private modalService: BsModalService,
@@ -71,6 +75,11 @@ export class AccountComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private utilityService: UtilityService) {
     this.modalService.config.backdrop = 'static';
+
+    this.formResetPass = new FormGroup({
+      id: new FormControl(),
+      newPass: new FormControl(),
+    })
 
     this.activatedRoute.data.subscribe(data => {
       this.utilityService.getRole(data.MENU_CODE).then((response) => {
@@ -174,7 +183,7 @@ export class AccountComponent implements OnInit {
 
   // get tai khoan sap het quota
   async getAccountExpiredQuota() {
-    let response: any = await this.dataService.getAsync('/api/account/GetAccountExpiredQuota');
+    let response: any = await this.dataService.getAsync('/api/account/GetAccountExpiredQuota?pageIndex=' + this.pagination.pageIndex + '&pageSize=' + this.pagination.pageSize);
     if (response) {
       this.loadData(response);
     }
@@ -195,7 +204,7 @@ export class AccountComponent implements OnInit {
 
   //#region load account parent
   async getAccountNew() {
-    let response: any = await this.dataService.getAsync('/api/account/GetAccountNew?pageIndex=1&pageSize=999999');
+    let response: any = await this.dataService.getAsync('/api/account/GetAccountNew?pageIndex=' + this.pagination.pageIndex + '&pageSize=' + this.pagination.pageSize);
     if (response) {
       this.loadData(response);
     }
@@ -244,7 +253,15 @@ export class AccountComponent implements OnInit {
 
   setPageIndex(pageNo: number): void {
     this.pagination.pageIndex = pageNo;
-    this.getDataAccount();
+    if (this.activatedRoute.snapshot.queryParamMap.get('redirectFrom') && this.activatedRoute.snapshot.queryParamMap.get('redirectFrom') == 'home') {
+      this.getAccountNew();
+    }
+    else if (this.activatedRoute.snapshot.queryParamMap.get('redirectFrom') && this.activatedRoute.snapshot.queryParamMap.get('redirectFrom') == 'quota_expired') {
+      this.getAccountExpiredQuota();
+    }
+    else {
+      this.getDataAccount();
+    }
   }
 
   pageChanged(event: any): void {
@@ -256,7 +273,15 @@ export class AccountComponent implements OnInit {
   changePageSize(size) {
     this.pagination.pageSize = size;
     this.pagination.pageIndex = 1;
-    this.getDataAccount();
+    if (this.activatedRoute.snapshot.queryParamMap.get('redirectFrom') && this.activatedRoute.snapshot.queryParamMap.get('redirectFrom') == 'home') {
+      this.getAccountNew();
+    }
+    else if (this.activatedRoute.snapshot.queryParamMap.get('redirectFrom') && this.activatedRoute.snapshot.queryParamMap.get('redirectFrom') == 'quota_expired') {
+      this.getAccountExpiredQuota();
+    }
+    else {
+      this.getDataAccount();
+    }
   }
   //#endregion
 
@@ -266,7 +291,15 @@ export class AccountComponent implements OnInit {
     this.fillterCompanyName = fillter.fillterCompanyName;
     this.fillterPhone = fillter.fillterPhone;
     this.fillterPaymentType = fillter.fillterPaymentType;
-    this.getDataAccount();
+    if (this.activatedRoute.snapshot.queryParamMap.get('redirectFrom') && this.activatedRoute.snapshot.queryParamMap.get('redirectFrom') == 'home') {
+      this.getAccountNew();
+    }
+    else if (this.activatedRoute.snapshot.queryParamMap.get('redirectFrom') && this.activatedRoute.snapshot.queryParamMap.get('redirectFrom') == 'quota_expired') {
+      this.getAccountExpiredQuota();
+    }
+    else {
+      this.getDataAccount();
+    }
   }
 
   //#region  create account
@@ -276,6 +309,8 @@ export class AccountComponent implements OnInit {
     this.isDisablePass = false;
     this.passRandom = "";
     this.createUserName = "";
+    this.urlImageUpload = ""
+    this.uploadImage.nativeElement.value = "";
     this.createAccountModal.show();
   }
 
@@ -283,7 +318,7 @@ export class AccountComponent implements OnInit {
   // mobNumberPattern = "^((\\+91-?)|0)?[0-9]{10}$";  
   mobNumberPattern = "^(84|0)?[0-9]{9}$"
 
-  async createAccount(){
+  async createAccount() {
     // let users = JSON.stringify(this.model);
 
     let USER_NAME = this.model.userName;
@@ -326,6 +361,8 @@ export class AccountComponent implements OnInit {
     let PARENT_ID = this.selectedAccountID.length > 0 ? this.selectedAccountID[0].id : "";
     let CREATE_USER = this.authService.currentUserValue.USER_NAME;
 
+    let AVATAR = (this.urlImageUpload != null && this.urlImageUpload != "undefined" && this.urlImageUpload != "") ? this.urlImageUpload : ""
+
     let PAYMENT_TYPE = this.selectedAccountType.length > 0 ? this.selectedAccountType[0].id : "";
     if (PAYMENT_TYPE == "") {
       this.notificationService.displayErrorMessage("Bạn phải chọn loại tài khoản");
@@ -338,8 +375,6 @@ export class AccountComponent implements OnInit {
       return;
     }
 
-    let success = 0;
-    let error = 0;
     let dataInsert = await this.dataService.postAsync('/api/account', {
       USER_NAME, PASSWORD, FULL_NAME, PHONE, SKYPE, EMAIL,
       COMPANY_NAME, PAYMENT_TYPE, BANK_NAME, BANK_ACCOUNT, BANK_ACCOUNT_NAME,
@@ -347,24 +382,17 @@ export class AccountComponent implements OnInit {
       CREDIT_LINE_IN_MONTH_CSKH, CREDIT_LINE_IN_DAY_CSKH, QUOTA_CSKH, QUOTA_REMAIN_CSKH,
       CREDIT_LINE_IN_MONTH_QC, CREDIT_LINE_IN_DAY_QC, QUOTA_QC, QUOTA_REMAIN_QC,
       IS_ADMIN, IS_ACTIVE, UNLIMIT_QUOTA, ENABLE_SMS_CSKH, ENABLE_SMS_QC,
-      ENABLE_SHORT_NUMBER, ENABLE_OTT, ENABLE_OTP, PARENT_ID, ROLE_ACCESS, CREATE_USER, ENABLE_SMS_LOOP
+      ENABLE_SHORT_NUMBER, ENABLE_OTT, ENABLE_OTP, PARENT_ID, ROLE_ACCESS, CREATE_USER, ENABLE_SMS_LOOP, AVATAR
     });
 
     if (dataInsert.err_code == 0) {
       this.createAccountModal.hide();
       this.getDataAccount();
       this.loadListAccountParent();
-      success++;
+      this.notificationService.displaySuccessMessage(dataInsert.err_message)
     }
     else {
-      error++;
-    }
-    if (success > 0) {
-      this.notificationService.displaySuccessMessage("Tạo tài khoản thành công!");
-      this.accountMenu.loadListAccount();
-    }
-    else if (error > 0) {
-      this.notificationService.displayErrorMessage("Có lỗi xảy ra!");
+      this.notificationService.displayErrorMessage(dataInsert.err_message)
     }
     this.model = {}
   }
@@ -457,6 +485,8 @@ export class AccountComponent implements OnInit {
           [{ "id": "", "itemName": "Chọn nhóm quyền" }]
         )
       });
+      this.urlImageUploadEdit = dataAccount.AVATAR
+      this.uploadImageEdit.nativeElement.value = "";
       this.editAccountModal.show();
     } else {
       this.notificationService.displayErrorMessage(response.err_message);
@@ -503,6 +533,8 @@ export class AccountComponent implements OnInit {
 
     let PARENT_ID = formData.parentID.value.length > 0 ? formData.parentID.value[0].id : "";
     let EDIT_USER = this.authService.currentUserValue.USER_NAME;
+    let AVATAR = (this.urlImageUploadEdit != null && this.urlImageUploadEdit != "undefined" && this.urlImageUploadEdit != "") ?
+      this.urlImageUploadEdit : ""
 
     let PAYMENT_TYPE = formData.paymentType.value.length > 0 ? formData.paymentType.value[0].id : "";
     if (PAYMENT_TYPE == "") {
@@ -523,7 +555,7 @@ export class AccountComponent implements OnInit {
       CREDIT_LINE_IN_MONTH_QC, CREDIT_LINE_IN_DAY_QC, QUOTA_QC, QUOTA_REMAIN_QC,
       DLVR, DLVR_URL, EMAIL_REPORT,
       IS_ADMIN, IS_ACTIVE, UNLIMIT_QUOTA, ENABLE_SMS_CSKH, ENABLE_SMS_QC, ENABLE_SHORT_NUMBER, ENABLE_OTT, ENABLE_OTP,
-      PARENT_ID, ROLE_ACCESS, EDIT_USER, IS_SEND_SMS_LOOP
+      PARENT_ID, ROLE_ACCESS, EDIT_USER, IS_SEND_SMS_LOOP, AVATAR
     })
     if (dataEdit.err_code == 0) {
       this.getDataAccount();
@@ -633,25 +665,59 @@ export class AccountComponent implements OnInit {
   }
 
   public async resetPass(accountId) {
-    this.AccountId = accountId;
-    let data = await this.dataService.putAsync('/api/account/UpdatePasswordAccount?accountid=' + accountId +
-      '&password=' + this.createRadomPass(6));
-    if (data.err_code == 0) {
-      this.confirmResetPassModal.hide();
-      this.loadListAccountParent();
-      this.notificationService.displaySuccessMessage("Cập nhật mật khẩu thành công");
+
+    let formData = this.formResetPass.controls;
+    let passNew = formData.newPass.value;
+
+    if (passNew != "undefined" && passNew != null && passNew != "") {
+      this.AccountId = accountId;
+      let data = await this.dataService.putAsync('/api/account/UpdatePasswordAccount?accountid=' + accountId +
+        '&password=' + passNew);
+      if (data.err_code == 0) {
+        this.confirmResetPassModal.hide();
+        this.loadListAccountParent();
+        this.notificationService.displaySuccessMessage("Cập nhật mật khẩu thành công");
+        this.getDataAccount()
+      }
+      else {
+        this.notificationService.displayErrorMessage(data.err_message);
+      }
     }
     else {
-      this.notificationService.displayErrorMessage(data.err_message);
+      this.notificationService.displayErrorMessage("Mật khẩu không được để trống.");
     }
   }
   //#endregion
 
-  //#region account-sender
-  showAccountSender(){
-    this.accountSenderModal.show();
-    this.accountSenderComponent.selectedAccountID = [];
-    this.accountSenderComponent.selectedSenderID = [];
+  //#region upload avatar
+  public async submitUploadImage() {
+    let file = this.uploadImage.nativeElement;
+    if (file.files.length > 0) {
+      let response: any = await this.dataService.postFileAsync(null, file.files);
+      if (response) {
+        this.urlImageUpload = AppConst.BASE_API + response.data;
+      }
+      else {
+        this.notificationService.displayErrorMessage("Upload ảnh không thành công");
+      }
+    }
+  }
+
+  public async submitUploadImageEdit() {
+    let file = this.uploadImageEdit.nativeElement;
+    if (file.files.length > 0) {
+      let response: any = await this.dataService.postFileAsync(null, file.files);
+      if (response) {
+        this.urlImageUploadEdit = AppConst.BASE_API + response.data;
+      }
+      else {
+        this.notificationService.displayErrorMessage("Upload ảnh không thành công");
+      }
+    }
+  }
+
+  removeImage(){
+    this.urlImageUploadEdit = ""
   }
   //#endregion
 

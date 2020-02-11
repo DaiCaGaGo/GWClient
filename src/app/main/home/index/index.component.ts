@@ -278,7 +278,7 @@ export class IndexComponent implements OnInit {
 
   // get tin nhan loi
   async getSMSError() {
-    let response: any = await this.dataService.getAsync('/api/sms/GetSmsError?pageIndex=1&pageSize=99999999&account_id=&sender_name=&sms_content=&phone=&sms_type=&viettel=&vina=&mobi=&vnMobile=&gtel=&sfone=&tu_ngay=&den_ngay=&partner_code=&receive_result=');
+    let response: any = await this.dataService.getAsync('/api/sms/GetSmsError?pageIndex=1&pageSize=9999999&account_id=&sender_name=&sms_content=&phone=&sms_type=&viettel=&vina=&mobi=&vnMobile=&gtel=&sfone=&tu_ngay=&den_ngay=&partner_code=&receive_result=');
     if (response) {
       this.smsErr = response.data.length;
     }
@@ -286,17 +286,17 @@ export class IndexComponent implements OnInit {
 
   // get khach moi
   async getAccountNew() {
-    let response: any = await this.dataService.getAsync('/api/account/GetAccountNew?pageIndex=1&pageSize=999999');
+    let response: any = await this.dataService.getAsync('/api/account/GetAccountNew?pageIndex=1&pageSize=1');
     if (response) {
-      this.newCustomer = response.data.length;
+      this.newCustomer = response.pagination.TotalRows;
     }
   }
 
   // get tai khoan sap het quota
   async getAccountExpiredQuota() {
-    let response: any = await this.dataService.getAsync('/api/account/GetAccountExpiredQuota');
+    let response: any = await this.dataService.getAsync('/api/account/GetAccountExpiredQuota?pageIndex=1&pageSize=1');
     if (response) {
-      this.accountExpiredQuota = response.data.length;
+      this.accountExpiredQuota = response.pagination.TotalRows;
     }
   }
 

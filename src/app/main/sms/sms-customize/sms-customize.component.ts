@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, DebugElement } from '@angular/core';
+import { Component, OnInit, ViewChild} from '@angular/core';
 import { DataService } from 'src/app/core/services/data.service';
 import { NotificationService } from 'src/app/core/services/notification.service';
 import { UtilityService } from 'src/app/core/services/utility.service';
@@ -78,6 +78,7 @@ export class SmsCustomizeComponent implements OnInit {
   public numberSMS: string = '0';
   public role: Role = new Role();
   public loading: boolean = false;
+  public filePhoneList: string = "";
 
   public messageSendSms = "";
 
@@ -198,9 +199,9 @@ export class SmsCustomizeComponent implements OnInit {
   onItemSelect() {
     if (this.selectedAccountID.length > 0 && this.selectedSmsType.length > 0) {
       this.bindDataSender(this.selectedAccountID[0].id, this.selectedSmsType[0].id);
+      this.viewQuyTin(this.selectedAccountID[0].id);
     }
     this.bindDataPhoneList();
-    this.viewQuyTin(this.selectedAccountID[0].id);
   }
 
   OnItemDeSelect() {
@@ -287,38 +288,30 @@ export class SmsCustomizeComponent implements OnInit {
     if (file.files.length > 0) {
       let response: any = await this.dataService.importExcelAndSaveAsync(null, file.files, 2, this.campaignName.nativeElement.value,
         this.selectedAccountID[0].id, this.selectedAccountID[0].itemName)
-        debugger
       if (response.err_code == 0) {
         let result = response.data;
         this.listHeaderFile = result.arr_fields;
         let listTelco = result.telco;
 
-        if (this.listHeaderFile.length > 0 && this.listHeaderFile[0] == "PHONE") {
-          this.isShowTable = true;
-          this.isShowSendSms = true;
-          this.listDataFile = result.data;
-          this.countTotal = listTelco[0];
-          this.countVTL = listTelco[1];
-          this.countGPC = listTelco[2];
-          this.countVMS = listTelco[3];
-          this.countVNM = listTelco[4];
-          this.countGTEL = listTelco[5];
-          this.countSFONE = listTelco[6];
-          this.countDDMBLE = listTelco[7];
+        this.isShowTable = true;
+        this.isShowSendSms = true;
+        this.listDataFile = result.data;
+        this.countTotal = listTelco[0];
+        this.countVTL = listTelco[1];
+        this.countGPC = listTelco[2];
+        this.countVMS = listTelco[3];
+        this.countVNM = listTelco[4];
+        this.countGTEL = listTelco[5];
+        this.countSFONE = listTelco[6];
+        this.countDDMBLE = listTelco[7];
 
-          this.fillNoiDung = [];
-          for (let i = 0; i < this.listDataFile.length; i++) {
-            this.fillNoiDung.push({ NOI_DUNG: "" });
-          }
+        this.fillNoiDung = [];
+        for (let i = 0; i < this.listDataFile.length; i++) {
+          this.fillNoiDung.push({ NOI_DUNG: "" });
+        }
 
-          this.getDataImport(this.listDataFile);
-          this.notificationService.displaySuccessMessage("Import file excel thành công");
-        }
-        else {
-          this.notificationService.displayErrorMessage("File phải có cột đầu tiên là \'PHONE\'");
-          this.importExcel.nativeElement.value = "";
-          return;
-        }
+        this.getDataImport(this.listDataFile);
+        this.notificationService.displaySuccessMessage("Import file excel thành công");
       }
       else {
         this.notificationService.displayErrorMessage("Có lỗi xảy ra!");
@@ -422,100 +415,6 @@ export class SmsCustomizeComponent implements OnInit {
     this.confirmSendSmsModal.show();
   }
 
-  public async sendMessage1() {
-    this.loading = true;
-    this.listContentSMS = [];
-    let senderName = "";
-    if (this.selectedSenderName.length > 0) {
-      senderName = this.selectedSenderName[0].itemName;
-    }
-    let dataType = "";
-    if (this.selectedSmsType.length > 0) dataType = this.selectedSmsType[0].id;
-    else {
-      this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-90"));
-      this.confirmSendSmsModal.hide();
-      return;
-    }
-    let timeNow = new Date();
-    let scheduleTime = this.utilityService.formatDateToString(timeNow, "yyyyMMddHHmmss");
-
-    let CODE_NAME = this.campaignName.nativeElement.value;
-    if (CODE_NAME == "" || CODE_NAME == null || CODE_NAME == undefined) {
-      this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-23"));
-      this.campaignName.nativeElement.focus();
-      this.confirmSendSmsModal.hide();
-      return;
-    }
-
-    //#region hen gio gui
-    let is_schedule = 0;
-    if (this.isHenGio == true) {
-      is_schedule = 1;
-      let time = this.henGio.nativeElement.value;
-      if (time == null || time == "Invalid date" || time == "") {
-        this.notificationService.displayWarnMessage("Input schedule time!");
-        this.henGio.nativeElement.focus();
-        this.confirmSendSmsModal.hide();
-        return;
-      }
-      else {
-        scheduleTime = this.utilityService.formatDateToString(time, "yyyyMMddHHmmss");
-      }
-    }
-    //#endregion
-
-    //#region check valid
-    if (this.selectedAccountID.length == 0) {
-      this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-21"));
-      this.confirmSendSmsModal.hide();
-      return;
-    }
-    let accountID = this.selectedAccountID[0].id;
-
-    if (senderName == null || senderName == "") {
-      this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-44"));
-      this.confirmSendSmsModal.hide();
-      return;
-    }
-    //#endregion
-
-    for (let i = 0; i < this.listDataFile.length; i++) {
-      let noi_dung = this.fillNoiDung[i].NOI_DUNG;
-      this.fillNoiDung.push({ NOI_DUNG: noi_dung });
-      let phone = this.listDataFile[i][this.listHeaderFile[0]];
-      if (noi_dung != "" && phone != "") {
-        this.listContentSMS.push({
-          PHONE: phone, SMS_CONTENT: noi_dung, SENDER_NAME: senderName, SCHEDULE_TIME: scheduleTime,
-          ORDER_NAME: this.campaignName.nativeElement.value, ACCOUNT_ID: accountID, SMS_TYPE: dataType,
-          IS_VIRTUAL: this.isSendVirtual ? 1 : 0, REPORT_BY_EMAIL: this.isReportByEmail ? 1 : 0,
-          SMS_TEMPLATE: this.nhapNoiDung != undefined ? this.nhapNoiDung : "",
-          STATUS: (is_schedule == 0 && dataType == "CSKH") ? 2 : 0,
-          CODE_NAME: this.campaignName.nativeElement.value,
-          SENDER_ID: this.selectedSenderName[0].id,
-          TELCO: this.listDataFile[i]["TELCO"]
-        });
-      }
-    }
-
-    let sendViettel = 0, sendVMS = 0, sendGPC = 0, sendVNM = 0, sendSfone = 0, sendGtel = 0, sendDD = 0;
-    if (this.isCheckSendVTL) sendViettel = 1;
-    if (this.isCheckSendVMS) sendVMS = 1;
-    if (this.isCheckSendGPC) sendGPC = 1;
-    if (this.isCheckSendVNM) sendVNM = 1;
-    if (this.isCheckSendSFONE) sendSfone = 1;
-    if (this.isCheckSendGTEL) sendGtel = 1;
-    if (this.isCheckSendDDMBLE) sendDD = 1;
-    let insertSms = await this.dataService.postAsync('/api/sms/InsertListSMS?isSchedule=' + is_schedule +
-      '&sendViettel=' + sendViettel + '&sendVMS=' + sendVMS + '&sendGPC=' + sendGPC + '&sendVNM=' + sendVNM +
-      '&sendSfone=' + sendSfone + '&sendGtel=' + sendGtel + '&sendDD=' + sendDD, this.listContentSMS);
-    this.messageSendSms = insertSms.err_message;
-
-    this.loading = false;
-    this.confirmSendSmsModal.hide();
-    this.messageSendSmsModal.show();
-    this.viewQuyTin(accountID);
-  }
-
   public async sendMessage() {
     this.loading = true;
     this.listContentSMS = [];
@@ -591,6 +490,14 @@ export class SmsCustomizeComponent implements OnInit {
       }
     }
 
+    // get list file send sms
+    if (this.selectedPhoneList != null && this.selectedPhoneList.length > 0)
+      this.filePhoneList = this.selectedPhoneList[0].itemName + ",";
+    if (this.contentSMS != null && this.contentSMS != "")
+      this.filePhoneList = this.contentSMS + ",";
+    if (this.filePhoneList != null && this.filePhoneList != "")
+      this.filePhoneList = this.filePhoneList.substring(0, this.filePhoneList.length - 1);
+
     let sendViettel = 0, sendVMS = 0, sendGPC = 0, sendVNM = 0, sendSfone = 0, sendGtel = 0, sendDD = 0;
     if (this.isCheckSendVTL) sendViettel = 1;
     if (this.isCheckSendVMS) sendVMS = 1;
@@ -599,10 +506,11 @@ export class SmsCustomizeComponent implements OnInit {
     if (this.isCheckSendSFONE) sendSfone = 1;
     if (this.isCheckSendGTEL) sendGtel = 1;
     if (this.isCheckSendDDMBLE) sendDD = 1;
-    let insertSms = await this.dataService.postAsync('/api/SmsHistory/InsertListSMSHistory?isSchedule=' + is_schedule +
+    let insertSms = await this.dataService.postAsync('/api/sms/InsertListSMS?isSchedule=' + is_schedule +
       '&sendViettel=' + sendViettel + '&sendVMS=' + sendVMS + '&sendGPC=' + sendGPC + '&sendVNM=' + sendVNM +
-      '&sendSfone=' + sendSfone + '&sendGtel=' + sendGtel + '&sendDD=' + sendDD, this.listContentSMS);
+      '&sendSfone=' + sendSfone + '&sendGtel=' + sendGtel + '&sendDD=' + sendDD + '&type=2&phoneList=' + this.filePhoneList, this.listContentSMS);
     this.messageSendSms = insertSms.err_message;
+
     this.loading = false;
     this.confirmSendSmsModal.hide();
     this.messageSendSmsModal.show();

@@ -325,7 +325,6 @@ export class DataService {
 
   public async getFileExtentionSmsByBrandnameAsync(uri: string, listSms: any, fileName: string): Promise<boolean> {
     let result: boolean = false;
-    debugger
     let url = AppConst.BASE_API + uri + '?listSms=' + listSms + '&fileName=' + fileName;
     let response = await this.http.get(url, { responseType: 'arraybuffer' }).toPromise();
     if (response) {

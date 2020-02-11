@@ -119,21 +119,22 @@ export class SmsListAgencyComponent implements OnInit {
     this.bindDataPartner();
     this.bindDataSmsType();
     this.bindDataSmsStatus();
+    this.getListSms()
     this.fromDate = this.utilityService.formatDateToString(this.timeFrom, "yyyyMMdd");
     this.toDate = this.utilityService.formatDateToString(this.timeTo, "yyyyMMdd");
   }
 
-  async getAccountDetail (){
+  async getAccountDetail() {
     let response = await this.dataService.getAccountDetail();
     let is_admin = response.data[0].IS_ADMIN;
-    if (is_admin != null && is_admin == 1){
+    if (is_admin != null && is_admin == 1) {
       this.isShowPartner = true;
       this.is_root = true;
-    } 
-    else{
+    }
+    else {
       this.isShowPartner = false;
       this.is_root = false;
-    } 
+    }
   }
 
   //#region account
@@ -158,7 +159,7 @@ export class SmsListAgencyComponent implements OnInit {
         this.selectedAccountID.push({ "id": 0, "itemName": "Chọn tài khoản" });
     }
     this.loadListSenderName();
-    this.getListSms();
+    // this.getListSms();
   }
 
   onItemSelect() {
@@ -184,7 +185,7 @@ export class SmsListAgencyComponent implements OnInit {
     for (let index in response.data) {
       this.dataSender.push({ "id": response.data[index].ID, "itemName": response.data[index].NAME });
     }
-    this.getListSms();
+    // this.getListSms();
   }
   onItemSelectSender() {
     this.getListSms();
@@ -201,7 +202,7 @@ export class SmsListAgencyComponent implements OnInit {
     for (let i in response.data) {
       this.dataPartner.push({ "id": response.data[i].PARTNER_CODE, "itemName": response.data[i].PARTNER_NAME });
     }
-    this.getListSms();
+    // this.getListSms();
   }
 
   onItemSelectPartner() {
@@ -220,7 +221,7 @@ export class SmsListAgencyComponent implements OnInit {
     for (let i in response.data) {
       this.dataSmsType.push({ "id": response.data[i].VAR_VALUE, "itemName": response.data[i].VAR_NAME });
     }
-    this.getListSms();
+    // this.getListSms();
   }
 
   onItemSelectSmsType() {
@@ -237,7 +238,7 @@ export class SmsListAgencyComponent implements OnInit {
     this.dataSmsStatus = [];
     this.dataSmsStatus.push({ "id": "1", "itemName": "Thành công" });
     this.dataSmsStatus.push({ "id": "2", "itemName": "Thất bại" });
-    this.getListSms();
+    // this.getListSms();
   }
 
   onItemSelectSmsStatus() {
@@ -252,13 +253,16 @@ export class SmsListAgencyComponent implements OnInit {
   //#region load data and paging
   public async getListSms() {
     let account_id = this.selectedAccountID.length > 0 ? this.selectedAccountID[0].id : "";
-    if(!this.is_root && account_id == ""){
+    let dataUser = await this.dataService.getAsync('/api/account/' + this.authService.currentUserValue.ACCOUNT_ID);
+    let isAdmin = dataUser.data[0].IS_ADMIN
+    this.is_root = (isAdmin == 1) ? true : false
+    if (!this.is_root && account_id == "") {
       this.dataSms = [];
       this.viewSumSms = "Tổng số tin: 0";
-    }else{
+    } else {
       let response = await this.dataService.getAsync('/api/sms/GetListFillterPaging?pageIndex=' + this.pagination.pageIndex +
         '&pageSize=' + this.pagination.pageSize + '&account_id=' + account_id +
-        '&sender_name=' + (this.selectedSenderID.length > 0 ? this.selectedSenderID[0].itemName : "") + '&sms_content=' + this.smsContent + '&phone=' + this.phone +
+        '&sender_id=' + (this.selectedSenderID.length > 0 ? this.selectedSenderID[0].id : "") + '&sms_content=' + this.smsContent + '&phone=' + this.phone +
         '&sms_type=' + (this.selectedSmsType.length > 0 ? this.selectedSmsType[0].id : "") + '&viettel=' + this.stringVTL +
         '&vina=' + this.stringGPC + '&mobi=' + this.stringVMS +
         '&vnMobile=' + this.stringVNM + '&gtel=' + this.stringGTEL + '&sfone=' + this.stringSFONE +
@@ -275,7 +279,7 @@ export class SmsListAgencyComponent implements OnInit {
         let sumSms = response.pagination.TotalSms;
         if (sumSms > 0) {
           let responseFillter = await this.dataService.getAsync('/api/sms/GetListFillter?account_id=' + account_id +
-            '&sender_name=' + (this.selectedSenderID.length > 0 ? this.selectedSenderID[0].itemName : "") +
+            '&sender_id=' + (this.selectedSenderID.length > 0 ? this.selectedSenderID[0].id : "") +
             '&sms_content=' + this.smsContent + '&phone=' + this.phone +
             '&sms_type=' + (this.selectedSmsType.length > 0 ? this.selectedSmsType[0].id : "") +
             '&viettel=' + this.stringVTL +
@@ -456,29 +460,24 @@ export class SmsListAgencyComponent implements OnInit {
   }
 
   public async exportExcel() {
-    if (this.selectedAccountID.length > 0) {
-      let result: boolean = await this.dataService.getFileExtentionSmsStatisticAsync("/api/FileExtention/ExportExcelSmsStatistic",
-        this.selectedAccountID[0].id,
-        this.selectedSenderID.length > 0 ? this.selectedSenderID[0].itemName : "",
-        this.smsContent,
-        this.phone,
-        this.selectedSmsType.length > 0 ? this.selectedSmsType[0].id : "",
-        this.stringVTL,
-        this.stringGPC,
-        this.stringVMS,
-        this.stringVNM, this.stringGTEL, this.stringSFONE, this.stringDD, this.fromDate, this.toDate,
-        this.selectedPartnerID.length > 0 ? this.selectedPartnerID[0].id : "",
-        this.selectedSmsStatus.length > 0 ? this.selectedSmsStatus[0].id : ""
-        , "SmsList");
-      if (result) {
-        this.notificationService.displaySuccessMessage(this.utilityService.getErrorMessage("120"));
-      }
-      else {
-        this.notificationService.displayErrorMessage(this.utilityService.getErrorMessage("125"));
-      }
+    let result: boolean = await this.dataService.getFileExtentionSmsStatisticAsync("/api/FileExtention/ExportExcelSmsStatistic",
+      this.selectedAccountID[0].id,
+      this.selectedSenderID.length > 0 ? this.selectedSenderID[0].itemName : "",
+      this.smsContent,
+      this.phone,
+      this.selectedSmsType.length > 0 ? this.selectedSmsType[0].id : "",
+      this.stringVTL,
+      this.stringGPC,
+      this.stringVMS,
+      this.stringVNM, this.stringGTEL, this.stringSFONE, this.stringDD, this.fromDate, this.toDate,
+      this.selectedPartnerID.length > 0 ? this.selectedPartnerID[0].id : "",
+      this.selectedSmsStatus.length > 0 ? this.selectedSmsStatus[0].id : ""
+      , "SmsList");
+    if (result) {
+      this.notificationService.displaySuccessMessage(this.utilityService.getErrorMessage("120"));
     }
     else {
-      this.notificationService.displayErrorMessage(this.utilityService.getErrorMessage("Bạn phải chọn tài khoản"));
+      this.notificationService.displayErrorMessage(this.utilityService.getErrorMessage("125"));
     }
   }
 }

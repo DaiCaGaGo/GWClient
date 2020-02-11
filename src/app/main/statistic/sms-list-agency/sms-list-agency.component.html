@@ -132,25 +132,25 @@
                       <tr>
                         <th class="text-center" style="width: 60px; vertical-align: middle;">
                           {{'global.order' | translate}}</th>
-                        <th class="text-center" style="width: 120px; vertical-align: middle;">
+                        <th class="text-center" style="width: 110px; vertical-align: middle;">
                           {{'sms_list.choose_sender' | translate}}</th>
-                        <th class="text-center" style="width: 120px; vertical-align: middle;">Phone</th>
-                        <th class="text-center" style="width: 80px; vertical-align: middle;">
+                        <th class="text-center" style="width: 110px; vertical-align: middle;">Phone</th>
+                        <th class="text-center" style="width: 70px; vertical-align: middle;">
                           {{'sms_list.telco' | translate}}</th>
-                        <th class="text-center" style="width: 80px; vertical-align: middle;">
+                        <th class="text-center" style="width: 70px; vertical-align: middle;">
                           {{'sms_list.choose_type' | translate}}</th>
-                        <th class="text-center" style="width: 80px; vertical-align: middle;">
+                        <th class="text-center" style="width: 70px; vertical-align: middle;">
                           {{'sms_list.port' | translate}}</th>
                         <th class="text-center" style="vertical-align: middle">{{'sms_list.content' | translate}}</th>
-                        <th class="text-center" style="width: 80px; vertical-align: middle;">
+                        <th class="text-center" style="width: 60px; vertical-align: middle;">
                           {{'sms_list.count_sms' | translate}}</th>
-                        <th class="text-center" style="width: 150px; vertical-align: middle;">
+                        <th class="text-center" style="width: 140px; vertical-align: middle;">
                           {{'sms_list.sent_time' | translate}}</th>
-                        <th class="text-center" style="width: 100px; vertical-align: middle;">
+                        <th class="text-center" style="width: 90px; vertical-align: middle;">
                           {{'sms_list.user_sent' | translate}}</th>
-                        <th class="text-center" style="width: 100px; vertical-align: middle;">
+                        <th class="text-center" style="width: 90px; vertical-align: middle;">
                           {{'sms_list.choose_status' | translate}}</th>
-                        <th class="text-center" style="width: 200px; vertical-align: middle;" *ngIf="is_root">
+                        <th class="text-center" style="width: 90px; vertical-align: middle;" *ngIf="is_root">
                           {{'sms_list.status_detail' | translate}}</th>
                       </tr>
                     </thead>
@@ -166,7 +166,7 @@
                         <td class="text-center">{{item.SMS_COUNT}}</td>
                         <td>{{convertStringDate(item.SCHEDULE_TIME)}}</td>
                         <td>{{item.USER_NAME}}</td>
-                        <td>{{item.RECEIVE_CODE == 0 ? 'DELIVERED' : (item.RECEIVE_CODE + '|UNDELIVERED')}}</td>
+                        <td>{{item.RECEIVE_CODE == '' ? '' : item.RECEIVE_CODE == 0 ? 'DELIVERED' : (item.RECEIVE_CODE + '|UNDELIVERED')}}</td>
                         <td *ngIf="is_root">{{item.SENT_ERR_MSG}}</td>
                       </tr>
                     </tbody>

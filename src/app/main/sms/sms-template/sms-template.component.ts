@@ -91,7 +91,7 @@ export class SmsTemplateComponent implements OnInit {
     this.selectedItemComboboxSender = [];
     this.dataSenderName = [];
     let accountID = this.authService.currentUserValue.ACCOUNT_ID
-    let response: any = await this.dataService.getAsync('/api/SenderName/GetSenderByListAccount?accountID=' + accountID)
+    let response: any = await this.dataService.getAsync('/api/SenderName/GetSenderNameByAccountID?account_id=' + accountID)
     for (let index in response.data) {
       this.dataSenderName.push({ "id": response.data[index].ID, "itemName": response.data[index].NAME });
     }

@@ -478,7 +478,7 @@ export class CustomerSmsComponent implements OnInit {
     if (this.isCheckSendDDMBLE) sendDD = 1;
     let insertSms = await this.dataService.postAsync('/api/sms/InsertListSMS?isSchedule=' + is_schedule +
       '&sendViettel=' + sendViettel + '&sendVMS=' + sendVMS + '&sendGPC=' + sendGPC + '&sendVNM=' + sendVNM +
-      '&sendSfone=' + sendSfone + '&sendGtel=' + sendGtel + '&sendDD=' + sendDD, this.listContentSMS);
+      '&sendSfone=' + sendSfone + '&sendGtel=' + sendGtel + '&sendDD=' + sendDD + '&type=3&phoneList=', this.listContentSMS);
     if (insertSms.err_code == 0)
       this.notificationService.displaySuccessMessage(insertSms.err_message);
     else this.notificationService.displayErrorMessage(insertSms.err_message);
@@ -614,7 +614,7 @@ export class CustomerSmsComponent implements OnInit {
     if (this.isCheckSendDDMBLE) sendDD = 1;
     let insertSms = await this.dataService.postAsync('/api/sms/InsertListSMS?isSchedule=' + is_schedule +
       '&sendViettel=' + sendViettel + '&sendVMS=' + sendVMS + '&sendGPC=' + sendGPC + '&sendVNM=' + sendVNM +
-      '&sendSfone=' + sendSfone + '&sendGtel=' + sendGtel + '&sendDD=' + sendDD, this.listContentSMS);
+      '&sendSfone=' + sendSfone + '&sendGtel=' + sendGtel + '&sendDD=' + sendDD + '&type=3&phoneList=', this.listContentSMS);
     if (insertSms.err_code == 0)
       this.notificationService.displaySuccessMessage(insertSms.err_message);
     else this.notificationService.displayErrorMessage(insertSms.err_message);

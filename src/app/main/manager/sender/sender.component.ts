@@ -19,6 +19,7 @@ export class SenderComponent implements OnInit {
   @ViewChild('showModalUpdate', { static: false }) public showModalUpdate: ModalDirective;
   @ViewChild('showModalThread', { static: false }) public showModalThread: ModalDirective;
   @ViewChild('confirmDeleteMultiModal', { static: false }) public confirmDeleteMultiModal: ModalDirective;
+  @ViewChild('confirmDeleteModal', { static: false }) public confirmDeleteModal: ModalDirective
 
   public dataSender;
   public dataSenderGroup = [];
@@ -74,6 +75,8 @@ export class SenderComponent implements OnInit {
   public isShowAdd = true;
   public isShowEdit = false;
   public isCheckFillter = 0;
+  public senderDelete
+  public senderNameDelete = ""
 
   constructor(
     private dataService: DataService,
@@ -163,7 +166,6 @@ export class SenderComponent implements OnInit {
     this.getDataSenderGroup();
   }
 
-  // 
   public async getSenderExpired() {
     let response = await this.dataService.getAsync('/api/SenderName/GetSenderExpiredTime/');
     if (response) {
@@ -175,7 +177,7 @@ export class SenderComponent implements OnInit {
   async getData() {
     this.inSenderGroup = (this.selectedItemComboboxSenderGroup.length > 0) ? this.selectedItemComboboxSenderGroup[0].id : "";
     let response: any = await this.dataService.getAsync('/api/sendername/GetSenderNamePaging?pageIndex=' + this.pagination.pageIndex + '&pageSize=' +
-      this.pagination.pageSize + "&name=" + this.inSenderName + "&senderGroup=" + this.inSenderGroup)
+      this.pagination.pageSize + "&name=" + this.inSenderName.trim() + "&senderGroup=" + this.inSenderGroup)
     this.loadData(response);
     this.arrIdDelete = [];
   }
@@ -228,6 +230,20 @@ export class SenderComponent implements OnInit {
   openCreateForm() {
     this.isCheckFillter = 1;
     this.isDisableTemp = false;
+    this.timeStart = new Date()
+    this.timeExpired = new Date()
+    this.timeExpiredVTL = new Date()
+    this.timeExpiredGPC = new Date()
+    this.timeExpiredVMS = new Date()
+    this.timeExpiredVNM = new Date()
+    this.timeExpiredGTEL = new Date()
+
+    this.timeExpired.setFullYear(this.timeStart.getFullYear() + 1)
+    this.timeExpiredVTL = this.timeExpired
+    this.timeExpiredGPC = this.timeExpired
+    this.timeExpiredVMS = this.timeExpired
+    this.timeExpiredVNM = this.timeExpired
+    this.timeExpiredGTEL = this.timeExpired
     this.showModalCreate.show();
   }
 
@@ -451,7 +467,6 @@ export class SenderComponent implements OnInit {
 
   //#region enable template 
   checkFillter(event) {
-    debugger
     if (event) this.isDisableTemp = false;
     else this.isDisableTemp = true;
 
@@ -459,16 +474,24 @@ export class SenderComponent implements OnInit {
   //#endregion
 
   //#region delete sender
-  async confirmDelete(id) {
-    let response: any = await this.dataService.deleteAsync('/api/sendername/' + id + "?pageIndex=" + this.pagination.pageIndex + '&pageSize=' + this.pagination.pageSize)
-    if (response.err_code == 0) {
-      this.loadData(response);
-      this.confirmDeleteMultiModal.hide();
-      this.arrIdDelete.push(id);
-      this.notificationService.displaySuccessMessage(this.utilityService.getErrorMessage("200"));
-    }
-    else {
-      this.notificationService.displayErrorMessage(this.utilityService.getErrorMessage("110"));
+  async confirmDelete(id, name) {
+    this.senderDelete = id
+    this.senderNameDelete = name
+    this.confirmDeleteModal.show();
+  }
+
+  async deleteSender(id) {
+    if (id != "undefined") {
+      let response = await this.dataService.deleteAsync('/api/sendername/' + id + "?pageIndex=" + this.pagination.pageIndex +
+        '&pageSize=' + this.pagination.pageSize);
+      if (response.err_code == 0) {
+        this.confirmDeleteModal.hide();
+        this.loadData(response);
+        this.notificationService.displaySuccessMessage(this.utilityService.getErrorMessage("200"));
+      }
+      else {
+        this.notificationService.displayErrorMessage(this.utilityService.getErrorMessage("110"));
+      }
     }
   }
   //#endregion
@@ -535,6 +558,8 @@ export class SenderComponent implements OnInit {
       this.notificationService.displaySuccessMessage(this.utilityService.getErrorMessage("-47") + " (" + count + ")");
     else if (error > 0)
       this.notificationService.displayErrorMessage(this.utilityService.getErrorMessage("-48") + " (" + error + ")");
+    this.arrIdCheckedDelete = []
+    this.arrName = []
   }
   //#endregion
 

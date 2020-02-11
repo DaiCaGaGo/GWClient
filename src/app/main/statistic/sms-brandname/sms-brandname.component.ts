@@ -213,60 +213,13 @@ export class SmsBrandnameComponent implements OnInit {
     this.dataSmsNew = []
     let response = await this.dataService.getAsync('/api/sms/StatisticSmsBySendername?account_id=' +
       (this.selectedAccountID.length > 0 ? this.selectedAccountID[0].id : "") +
-      '&sender_name=' + (this.selectedSenderID.length > 0 ? this.selectedSenderID[0].itemName : "") +
+      '&sender_id=' + (this.selectedSenderID.length > 0 ? this.selectedSenderID[0].id : "") +
       '&sms_type=' + (this.selectedSmsType.length > 0 ? this.selectedSmsType[0].id : "") +
       '&tu_ngay=' + this.fromDate + '&den_ngay=' + this.toDate +
       '&partner_code=' + (this.selectedPartnerID.length > 0 ? this.selectedPartnerID[0].id : "") +
       '&telco=' + '');
     if (response.err_code == 0) {
-      this.dataSmsNew = response.data
-      debugger
-      // this.dataSms = response.data;
-      // if (this.dataSms.length > 0) {
-      //   let sumSms = 0;
-      //   let sumSuccess = 0;
-      //   let sumFaile = 0;
-      //   this.dataSmsNew = [];
-      //   for (let i = this.dataSms.length - 1; i >= 0; i--) {
-      //     sumSms += (this.dataSms[i].SUM_SMS != null && this.dataSms[i].SUM_SMS != undefined && this.dataSms[i].SUM_SMS != "") ? this.dataSms[i].SUM_SMS : 0;
-      //     sumSuccess += (this.dataSms[i].SUM_SMS_SUCCESS != null && this.dataSms[i].SUM_SMS_SUCCESS != undefined && this.dataSms[i].SUM_SMS_SUCCESS != "") ? this.dataSms[i].SUM_SMS_SUCCESS : 0;
-      //     sumFaile += (this.dataSms[i].SUM_SMS_FAILE != null && this.dataSms[i].SUM_SMS_FAILE != undefined && this.dataSms[i].SUM_SMS_FAILE != "") ? this.dataSms[i].SUM_SMS_FAILE : 0;;
-      //     if (i == 0) {
-      //       this.dataSmsNew.push({
-      //         ACCOUNT_ID: this.dataSms[i].ACCOUNT_ID, SENDER_NAME: this.dataSms[i].SENDER_NAME,
-      //         PARTNER_NAME: this.dataSms[i].PARTNER_NAME, TELCO: this.dataSms[i].TELCO, SUM_SMS: this.dataSms[i].SUM_SMS,
-      //         SUM_SMS_SUCCESS: this.dataSms[i].SUM_SMS_SUCCESS, SUM_SMS_FAILE: this.dataSms[i].SUM_SMS_FAILE
-      //       });
-      //       this.dataSmsNew.push({
-      //         ACCOUNT_ID: this.dataSms[i].ACCOUNT_ID, SENDER_NAME: 'Tổng ' + this.dataSms[i].SENDER_NAME,
-      //         PARTNER_NAME: '', TELCO: '',
-      //         SUM_SMS: sumSms, SUM_SMS_SUCCESS: sumSuccess, SUM_SMS_FAILE: sumFaile
-      //       });
-      //     }
-      //     else if (this.dataSms[i].SENDER_NAME == this.dataSms[i - 1].SENDER_NAME) {
-      //       this.dataSmsNew.push({
-      //         ACCOUNT_ID: this.dataSms[i].ACCOUNT_ID, SENDER_NAME: this.dataSms[i].SENDER_NAME,
-      //         PARTNER_NAME: this.dataSms[i].PARTNER_NAME, TELCO: this.dataSms[i].TELCO, SUM_SMS: this.dataSms[i].SUM_SMS,
-      //         SUM_SMS_SUCCESS: this.dataSms[i].SUM_SMS_SUCCESS, SUM_SMS_FAILE: this.dataSms[i].SUM_SMS_FAILE
-      //       });
-      //     }
-      //     else {
-      //       this.dataSmsNew.push({
-      //         ACCOUNT_ID: this.dataSms[i].ACCOUNT_ID, SENDER_NAME: this.dataSms[i].SENDER_NAME,
-      //         PARTNER_NAME: this.dataSms[i].PARTNER_NAME, TELCO: this.dataSms[i].TELCO, SUM_SMS: this.dataSms[i].SUM_SMS,
-      //         SUM_SMS_SUCCESS: this.dataSms[i].SUM_SMS_SUCCESS, SUM_SMS_FAILE: this.dataSms[i].SUM_SMS_FAILE
-      //       });
-      //       this.dataSmsNew.push({
-      //         ACCOUNT_ID: this.dataSms[i].ACCOUNT_ID, SENDER_NAME: 'Tổng ' + this.dataSms[i].SENDER_NAME,
-      //         PARTNER_NAME: '', TELCO: '', SUM_SMS: sumSms,
-      //         SUM_SMS_SUCCESS: sumSuccess, SUM_SMS_FAILE: sumFaile
-      //       });
-      //       sumSms = 0;
-      //       sumSuccess = 0;
-      //       sumFaile = 0;
-      //     }
-      //   }
-      // }
+      this.dataSmsNew = response.data;
     }
   }
   //#endregion

@@ -14,7 +14,7 @@
     "activate": "Kích hoạt",
     "export_excel": "Xuất Excel",
     "import_excel": "Import excel",
-    "avartar": "Ảnh đại diện",
+    "avatar": "Ảnh đại diện",
     "email": "Thư điện tử",
     "phone": "Số điện thoại",
     "name": "Tên",
@@ -45,7 +45,8 @@
     "choose_smstype": "Chọn loại tin nhắn",
     "choose_phone_list": "Chọn danh sách số điện thoại",
     "quota_cskh": "Quỹ tin CSKH",
-    "quota_qc": "Quỹ tin QC"
+    "quota_qc": "Quỹ tin QC",
+    "permanently_delete": "Xóa vĩnh viễn"
   },
   "home": {
     "sms_error": "Tin lỗi",

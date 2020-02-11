@@ -14,7 +14,7 @@
     "activate": "Activate",
     "export_excel": "Export Excel",
     "import_excel": "Import excel",
-    "avartar": "Avartar",
+    "avatar": "Avatar",
     "email": "Email",
     "phone": "Phone",
     "name": "Name",
@@ -44,7 +44,8 @@
     "choose_smstype": "Select sms type",
     "choose_phone_list": "Select phone list",
     "quota_cskh": "Quota CSKH",
-    "quota_qc": "Quota QC"
+    "quota_qc": "Quota QC",
+    "permanently_delete": "Permanently delete"
   },
   "home": {
     "sms_error": "Sms error",

@@ -24,11 +24,9 @@ import { AccountComponent } from './account/account.component';
 import { AccountMenuComponent } from './account-menu/account-menu.component';
 import { PartnerComponent } from './partner/partner.component';
 import { PartnererrcodeComponent } from './partnererrcode/partnererrcode.component';
-import { PartnerSenderComponent } from './partner-sender/partner-sender.component';
 import { PartnerProductComponent } from './partner-product/partner-product.component';
 import { TelcoComponent } from './telco/telco.component';
 import { AccountQuotaComponent } from './account-quota/account-quota.component';
-import { AccountSenderComponent } from '../system/account-sender/account-sender.component';
 
 defineLocale(AppConst.LANGUAGE_VI, viLocale);
 
@@ -45,11 +43,9 @@ export const systemRoutes: Routes = [{
     { path: 'account-menu', component: AccountMenuComponent, data: { MENU_CODE: 'ACCOUNT_MENU' }, canActivate: [AuthGuard] },
     { path: 'partner', component: PartnerComponent, data: { MENU_CODE: 'PARTNER' }, canActivate: [AuthGuard] },
     { path: 'partner-error-code', component: PartnererrcodeComponent, data: { MENU_CODE: 'PARTNER_ERROR_CODE' }, canActivate: [AuthGuard] },
-    { path: 'partner-sender', component: PartnerSenderComponent, data: { MENU_CODE: 'PARTNER_SENDER' }, canActivate: [AuthGuard] },
     { path: 'partner-product', component: PartnerProductComponent, data: { MENU_CODE: 'PARTNER_PRODUCT' }, canActivate: [AuthGuard] },
     { path: 'telco', component: TelcoComponent, data: { MENU_CODE: 'TELCO' }, canActivate: [AuthGuard] },
     { path: 'account-quota', component: AccountQuotaComponent, data: { MENU_CODE: 'ACCOUNT_QUOTA' }, canActivate: [AuthGuard] },
-    { path: 'account-sender', component: AccountSenderComponent, data: { MENU_CODE: 'ACCOUNT_SENDER' }, canActivate: [AuthGuard] },
   ]
 }];
 
@@ -66,11 +62,9 @@ export const systemRoutes: Routes = [{
     AccountMenuComponent,
     PartnerComponent,
     PartnererrcodeComponent,
-    PartnerSenderComponent,
     PartnerProductComponent,
     TelcoComponent,
-    AccountQuotaComponent,
-    AccountSenderComponent
+    AccountQuotaComponent
   ],
   imports: [
     FormsModule,

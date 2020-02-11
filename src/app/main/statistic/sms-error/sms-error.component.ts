@@ -113,6 +113,7 @@ export class SmsErrorComponent implements OnInit {
     this.bindDataSmsStatus();
     this.fromDate = (this.timeFrom == '') ? '' : this.utilityService.formatDateToString(this.timeFrom, "yyyyMMdd");
     this.toDate = (this.timeTo == '') ? '' : this.utilityService.formatDateToString(this.timeTo, "yyyyMMdd");
+    this.getListSms();
   }
 
   async getAccountDetail (){
@@ -144,7 +145,6 @@ export class SmsErrorComponent implements OnInit {
         this.selectedAccountID.push({ "id": 0, "itemName": "Chọn tài khoản" });
     }
     this.loadListSenderName();
-    this.getListSms();
   }
 
   onItemSelect() {
@@ -177,7 +177,6 @@ export class SmsErrorComponent implements OnInit {
         this.dataSender.push({ "id": response.data[index].ID, "itemName": response.data[index].NAME });
       }
     }
-    this.getListSms();
   }
   onItemSelectSender() {
     this.getListSms();
@@ -194,7 +193,6 @@ export class SmsErrorComponent implements OnInit {
     for (let i in response.data) {
       this.dataPartner.push({ "id": response.data[i].PARTNER_CODE, "itemName": response.data[i].PARTNER_NAME });
     }
-    this.getListSms();
   }
 
   onItemSelectPartner() {
@@ -213,7 +211,6 @@ export class SmsErrorComponent implements OnInit {
     for (let i in response.data) {
       this.dataSmsType.push({ "id": response.data[i].VAR_VALUE, "itemName": response.data[i].VAR_NAME });
     }
-    this.getListSms();
   }
 
   onItemSelectSmsType() {
@@ -228,10 +225,9 @@ export class SmsErrorComponent implements OnInit {
   //#region sms status
   public bindDataSmsStatus() {
     this.dataSmsStatus = [];
-    this.dataSmsStatus.push({ "id": "Delivered", "itemName": "DELIVERED" });
-    this.dataSmsStatus.push({ "id": "Undelivered", "itemName": "UNDELIVERED" });
+    this.dataSmsStatus.push({ "id": "0", "itemName": "DELIVERED" });
+    this.dataSmsStatus.push({ "id": "1", "itemName": "UNDELIVERED" });
     this.dataSmsStatus.push({ "id": "", "itemName": "Trạng thái trắng" });
-    this.getListSms();
   }
 
   onItemSelectSmsStatus() {

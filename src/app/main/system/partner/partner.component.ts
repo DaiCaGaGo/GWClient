@@ -9,7 +9,6 @@ import { Partner } from 'src/app/core/models/partner';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { PartnerProductComponent } from '../partner-product/partner-product.component';
-import { PartnerSenderComponent } from '../partner-sender/partner-sender.component';
 import { PartnererrcodeComponent } from '../partnererrcode/partnererrcode.component';
 import { UtilityService } from 'src/app/core/services/utility.service';
 import { Role } from 'src/app/core/models/role';
@@ -27,7 +26,6 @@ export class PartnerComponent implements OnInit {
   @ViewChild('confirmDeleteMultiModal', { static: false }) public confirmDeleteMultiModal: ModalDirective;
   @ViewChild('modalViewDetail', { static: false }) public modalViewDetail: ModalDirective;
   @ViewChild('componentPartnerProduct', { static: false }) public componentPartnerProduct: PartnerProductComponent;
-  @ViewChild('componentPartnerSender', { static: false }) public componentPartnerSender: PartnerSenderComponent;
   @ViewChild('componentPartnerErrCode', { static: false }) public componentPartnerErrCode: PartnererrcodeComponent;
 
   public dataPartner;
@@ -393,12 +391,6 @@ export class PartnerComponent implements OnInit {
     this.componentPartnerProduct.selectedItemComboboxPartnerModal = [{ "id": partnerId, "itemName": partnerName }];
     this.componentPartnerProduct.fromPartner = true;
     this.componentPartnerProduct.getData();
-
-    this.componentPartnerSender.settingsFilterPartner = { disabled: true };
-    this.componentPartnerSender.selectedPartner = [{ "id": partnerId, "itemName": partnerName }];
-    this.componentPartnerSender.selectedSenderName = [];
-    // this.componentPartnerSender.fromPartner = true;
-    this.componentPartnerSender.getData();
 
     this.componentPartnerErrCode.settingsFilterPartner = { disabled: true };
     this.componentPartnerErrCode.selectedItemComboboxPartner = [{ "id": partnerId, "itemName": partnerName }];

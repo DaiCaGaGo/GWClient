@@ -97,6 +97,9 @@
                           <div class="tool">
                             <button type="submit" (click)="confirmUpdateModal(item.ID)" *ngIf="role.IS_EDIT"
                               class="btn btn-success btn-sm">{{ 'global.edit' | translate }}</button>
+                            <button type="button" class="btn btn-danger btn-sm" *ngIf="role.IS_DELETE"
+                              (click)="confirmDelete(item.ID, item.NAME)"
+                              style="margin: 2px">{{ 'global.delete' | translate }}</button>
                             <!-- <button type="submit" (click)="showFormThreadSms(item.ID, item.NAME)" *ngIf="role.IS_EDIT"
                               class="btn btn-success btn-sm">Đối tác</button> -->
                           </div>
@@ -177,8 +180,8 @@
           <div class="row" style="padding-top:10px">
             <div class="col-md-3 col-sm-6 col-xs-12">
               <div class="checkbox">
-                <label><input type="checkbox" value="" class="checkbox" name="fillterTemp" required="" [(ngModel)]="isCheckFillter"
-                    (change)="checkFillter($event.currentTarget.checked)">
+                <label><input type="checkbox" value="" class="checkbox" name="fillterTemp" required=""
+                    [(ngModel)]="isCheckFillter" (change)="checkFillter($event.currentTarget.checked)">
                   <span>{{'sender_name.fillter_template' | translate}}</span> </label>
               </div>
             </div>
@@ -367,7 +370,7 @@
           <div class="row" style="padding-top:10px">
             <div class="col-md-3 col-sm-6 col-xs-12">
               <textarea class="form-control has-feedback-left modal-popup" formControlName="tempContent" rows="2"
-                placeholder="{{ 'sender_name.temp_content' | translate }}" [readonly]="this.isDisableTemp" ></textarea>
+                placeholder="{{ 'sender_name.temp_content' | translate }}" [readonly]="this.isDisableTemp"></textarea>
             </div>
             <div class="col-md-3 col-sm-6 col-xs-12">
               <label>{{'sender_name.sender_group_VMS' | translate}}</label>
@@ -451,15 +454,41 @@
               <input type="text" class="form-control" formControlName="expiredDate" bsDatepicker
                 [bsConfig]="{dateInputFormat: 'DD/MM/YYYY'}" placeholder="Thời gian kết thúc">
             </div>
-            
+
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-default"
             (click)="showModalUpdate.hide()">{{ 'global.cancel' | translate }}</button>
-          <button type="button" (click)="editSenderName()" class="btn btn-success">{{ 'global.confirm' | translate }}</button>
+          <button type="button" (click)="editSenderName()"
+            class="btn btn-success">{{ 'global.confirm' | translate }}</button>
         </div>
       </form>
+    </div>
+  </div>
+</div>
+
+<!-- modal xác nhận xóa tài khoản-->
+<div class="modal fade" bsModal #confirmDeleteModal="bs-modal" [config]="{backdrop: 'static'}" tabindex="-1"
+  role="dialog" aria-labelledby="dialog-static-name">
+  <div class="modal-dialog modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h4 id="dialog-static-name" class="modal-title pull-left">{{'global.confirm' | translate}}</h4>
+        <button type="button" class="close pull-right" aria-label="Close" (click)="confirmDeleteModal.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div>Thương hiệu "<b class="text-success">{{senderNameDelete}}</b>" đang được phân luồng. Vui lòng kiểm tra lại trước khi xóa vĩnh viễn?</div>
+        <!-- <div>{{'global.ask_delete_data' | translate}} "<b class="text-success">{{senderNameDelete}}</b>"?</div> -->
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmDeleteModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="deleteSender(senderDelete)">{{'global.permanently_delete' | translate}}</button>
+      </div>
     </div>
   </div>
 </div>
@@ -476,11 +505,14 @@
         </button>
       </div>
       <div class="modal-body">
-        <div>{{'global.ask_delete_data' | translate}} "<b class="text-success">{{name}}</b>"?</div>
+        <div>Thương hiệu "<b class="text-success">{{name}}</b>" đang được phân luồng. Vui lòng kiểm tra lại trước khi xóa vĩnh viễn?</div>
+        <!-- <div>{{'global.ask_delete_data' | translate}} "<b class="text-success">{{name}}</b>"?</div> -->
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default btn-sm" (click)="confirmDeleteMultiModal.hide()">{{'global.cancel' | translate}}</button>
-        <button type="submit" class="btn btn-success btn-sm" (click)="deleteMulti()">{{'global.confirm' | translate}}</button>
+        <button type="button" class="btn btn-default btn-sm"
+          (click)="confirmDeleteMultiModal.hide()">{{'global.cancel' | translate}}</button>
+        <button type="submit" class="btn btn-success btn-sm"
+          (click)="deleteMulti()">{{'global.confirm' | translate}}</button>
       </div>
     </div>
   </div>

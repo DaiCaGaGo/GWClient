@@ -38,6 +38,7 @@ export class SendSMSComponent implements OnInit {
   public selectedItemComboboxPhoneList = [];
   public lstIdsAccountPhoneList = [];
   public lstChecked = [];
+  public lstNameChecked: string = '';
   public listSMSCampaign = [];
   public isCheckedDelete: boolean = false;
   public arrIdCheckedDelete: string[] = [];
@@ -201,14 +202,18 @@ export class SendSMSComponent implements OnInit {
   async getPhoneNumber(event) {
     this.dataPhoneTamp = [];
     this.dataPhone = [];
-    if (!this.lstChecked.includes(event.id))
+    let lstName = [];
+    if (!this.lstChecked.includes(event.id)){
       this.lstChecked.push(event.id);
+      lstName.push(event.itemName);
+    }
     else {
       let index = this.lstChecked.indexOf(event.id);
       if (index != -1)
         this.lstChecked.splice(index, 1);
     }
     let ids = this.lstChecked.join(",");
+    this.lstNameChecked = lstName.join(",");
     if (ids != "") {
       this.lstIdsAccountPhoneList = [];
       this.lstIdsAccountPhoneList.push(ids);
@@ -610,7 +615,7 @@ export class SendSMSComponent implements OnInit {
     this.confirmSendSMSModal.show();
   }
 
-  async confirmSendSMS1() {
+  async confirmSendSMS() {
     this.loading = true;
     //#region  check valid
     let SMS_TYPE = this.selectedSmsType.length > 0 ? this.selectedSmsType[0].id : "";
@@ -715,125 +720,7 @@ export class SendSMSComponent implements OnInit {
     // if (this.isCheckSendDDMBLE) sendDD = 1;
     let insertSms = await this.dataService.postAsync('/api/sms/InsertListSMS?isSchedule=' + is_schedule +
       '&sendViettel=' + sendViettel + '&sendVMS=' + sendVMS + '&sendGPC=' + sendGPC + '&sendVNM=' + sendVNM +
-      '&sendSfone=' + sendSfone + '&sendGtel=' + sendGtel + '&sendDD=' + sendDD, listSmsSend);
-    if (insertSms.err_code == 0)
-      this.notificationService.displaySuccessMessage(insertSms.err_message);
-    else this.notificationService.displayErrorMessage(insertSms.err_message);
-
-    this.viewQuyTin(ACCOUNT_ID);
-    this.loading = false;
-    this.confirmAfterSuccess();
-    this.confirmSendSMSModal.hide();
-  }
-
-  async confirmSendSMS() {
-    this.loading = true;
-    //#region  check valid
-    let SMS_TYPE = this.selectedSmsType.length > 0 ? this.selectedSmsType[0].id : "";
-    if (SMS_TYPE === '' || SMS_TYPE === null) {
-      this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-20"));
-      this.confirmSendSMSModal.hide();
-      return;
-    }
-    let ACCOUNT_ID = this.selectedItemComboboxAccount.length > 0 ? this.selectedItemComboboxAccount[0].id : 0;
-    if (ACCOUNT_ID == 0) {
-      this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-21"));
-      this.confirmSendSMSModal.hide();
-      return;
-    }
-    let SENDER_NAME = this.selectedItemComboboxSender.length > 0 ? this.selectedItemComboboxSender[0].itemName : "";
-    if (SENDER_NAME == "") {
-      this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-22"));
-      this.confirmSendSMSModal.hide();
-      return;
-    }
-    let IS_VIRTUAL = this.isVirtual == true ? 1 : 0;
-    let CODE_NAME = this.codeName;
-    if (CODE_NAME === '' || CODE_NAME === null) {
-      this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-23"));
-      this.confirmSendSMSModal.hide();
-      return;
-    }
-    let SMS_TEMPLATE = this.utilityService.removeSign4VietnameseString(this.utilityService.removeDiacritics(this.smsContent));
-    if (SMS_TEMPLATE === '' || SMS_TEMPLATE === null) {
-      this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-24"));
-      this.confirmSendSMSModal.hide();
-      return;
-    }
-    //#endregion
-
-    let dt = [];
-    let is_schedule = 0;
-    let time = new Date();
-    if (this.isShowDateTime) {
-      is_schedule = 1;
-      time = this.timeSchedule;
-    }
-    let TIMESCHEDULE = this.utilityService.formatDateToString(time, "yyyyMMddHHmmss");
-    let REPORT_BY_EMAIL = this.reportByMail == true ? 1 : 0;
-
-    // if input phone number then add to listSMS
-    if (this.phoneList.length > 0 && this.numberPhone > 0) {
-      let phoneSplit = [];
-      phoneSplit = this.phoneList.split(';');
-
-      if (phoneSplit != null && phoneSplit.length == 1) {
-        let p = this.utilityService.GetPhoneNew(this.utilityService.FilterPhone(phoneSplit[0]));
-        let phone = this.dataPhoneTamp.filter(s => p.includes(s.PHONE));
-        if (phone == null || phone.length == 0) {
-          let telco = this.utilityService.getTelco(p);
-          dt.push({ LIST_ID: 0, PHONE: p, TELCO: telco });
-        }
-      }
-      else if (phoneSplit != null && phoneSplit.length > 1) {
-        for (let i in phoneSplit) {
-          let p = this.utilityService.GetPhoneNew(this.utilityService.FilterPhone(phoneSplit[i]));
-          let phone = this.dataPhoneTamp.filter(s => p.includes(s.PHONE));
-          if (phone == null || phone.length == 0) {
-            let telco = this.utilityService.getTelco(this.utilityService.FilterPhone(phoneSplit[i]));
-            dt.push({ LIST_ID: 0, PHONE: p, TELCO: telco });
-          }
-        }
-      }
-    }
-    for (let i in this.dataPhoneTamp) {
-      dt.push(this.dataPhoneTamp[i]);
-    }
-    // check exists phone list
-    if (dt.length == 0) {
-      this.notificationService.displayWarnMessage(this.utilityService.getErrorMessage("-25"));
-      this.confirmSendSMSModal.hide();
-      return;
-    }
-
-    let listSmsSend = [];
-    for (let i = 0; i < dt.length; i++) {
-      let phone = dt[i].PHONE;
-      let telco = dt[i].TELCO;
-      if (telco != undefined && telco != null && telco != "") {
-        listSmsSend.push({
-          PHONE: phone, TELCO: telco, SMS_CONTENT: SMS_TEMPLATE, SENDER_NAME: SENDER_NAME, SCHEDULE_TIME: TIMESCHEDULE,
-          ORDER_NAME: CODE_NAME, ACCOUNT_ID: ACCOUNT_ID, SMS_TYPE: SMS_TYPE,
-          IS_VIRTUAL: IS_VIRTUAL, REPORT_BY_EMAIL: REPORT_BY_EMAIL, SMS_TEMPLATE: SMS_TEMPLATE,
-          STATUS: (is_schedule == 0 && SMS_TYPE == "CSKH") ? 2 : 0,
-          CODE_NAME: CODE_NAME, SENDER_ID: this.selectedItemComboboxSender[0].id
-        });
-      }
-    }
-
-    let sendViettel = 0, sendVMS = 0, sendGPC = 0, sendVNM = 0, sendSfone = 0, sendGtel = 0, sendDD = 0;
-    if (this.isCheckSendVTL) sendViettel = 1;
-    if (this.isCheckSendVMS) sendVMS = 1;
-    if (this.isCheckSendGPC) sendGPC = 1;
-    if (this.isCheckSendVNM) sendVNM = 1;
-    if (this.isCheckSendSFONE) sendSfone = 1;
-    if (this.isCheckSendGTEL) sendGtel = 1;
-    // if (this.isCheckSendDDMBLE) sendDD = 1;
-      debugger
-    let insertSms = await this.dataService.postAsync('/api/SmsHistory/InsertListSMSHistory?isSchedule=' + is_schedule +
-      '&sendViettel=' + sendViettel + '&sendVMS=' + sendVMS + '&sendGPC=' + sendGPC + '&sendVNM=' + sendVNM +
-      '&sendSfone=' + sendSfone + '&sendGtel=' + sendGtel + '&sendDD=' + sendDD, listSmsSend);
-      debugger
+      '&sendSfone=' + sendSfone + '&sendGtel=' + sendGtel + '&sendDD=' + sendDD + '&type=1&phoneList=' + this.lstNameChecked, listSmsSend);
     if (insertSms.err_code == 0)
       this.notificationService.displaySuccessMessage(insertSms.err_message);
     else this.notificationService.displayErrorMessage(insertSms.err_message);
